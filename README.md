@@ -1,2 +1,3 @@
 # datakom
-Unwanted eyes gtfo please
+Unwanted eyes gtfo please, rest are welcome to stay
+

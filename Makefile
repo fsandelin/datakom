@@ -1,18 +1,25 @@
+#----------------------
+#-------Variables------
+#----------------------
 JFLAGS = -g
 JC = javac
+CLASSES = \
+	Game.java
+
+
+#----------------------
+#-------Modules------
+#----------------------
 .SUFFIXES: .java .class
 
 .java.class:
 	$(JC) $(FLAGS) $*.java
 
-CLASSES = \
-	Game.java
-
 default: all
 
 all: $(CLASSES:.java=.class)
 
-run:
+run: all
 	java Game
 
 clean:
