@@ -14,6 +14,9 @@ public class Game {
 	
 	int exit = 0;
 	Color grey_color = new Color(105,105,105);
+	Color red_color = new Color(255, 0, 0);	
+	Color blue_color = new Color(0, 255, 0);
+	Color green_color = new Color(0, 0, 255);
 
 
 	
@@ -24,16 +27,30 @@ public class Game {
 
 	//screen.setIgnoreRepaint(true);
 	Canvas canvas = new Canvas();
-	canvas.setIgnoreRepaint(true);
 	canvas.setSize(800,600);
 	canvas.setBackground(grey_color);
 	    
 	screen.add(canvas);
 	screen.pack();
 	screen.setVisible(true);
-
+	int i = 0;
 	while (true) {
 	    canvas.repaint();
+	    switch (i) {
+	    case 0:
+		canvas.setBackground(red_color);
+		i++;
+		break;
+	    case 1:
+		canvas.setBackground(blue_color);
+		i++;
+		break;
+	    default:
+		canvas.setBackground(green_color);
+		i = 0;
+		break;
+	    }
+	    
 	}	
     }
 }
