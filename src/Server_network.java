@@ -26,10 +26,9 @@ public class Server_network implements Server{
 	try {
 	    Server_network obj = new Server_network();
 	    Server stub = (Server) UnicastRemoteObject.exportObject(obj, 0);
-
 	    Registry registry = LocateRegistry.getRegistry();
 	    registry.bind("Server", stub);
-
+	    System.out.println("List: \n" + registry.list());
 	    System.err.println("Server setup done");
 	} catch(Exception e) {
 	    System.err.println("Server exception: " + e.toString());
