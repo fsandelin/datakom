@@ -1,7 +1,7 @@
 #----------------------
 #-------Variables------
 #----------------------
-JFLAGS = -g -d ../$(BDIR)
+JFLAGS = -g
 JC = javac
 BDIR = bin
 CLASSES = \
@@ -27,13 +27,10 @@ all: classes
 classes: $(CLASSES:.java=.class)
 
 run: classes
-	cd .. && cd $(BDIR) && make run
+	java Game
 
 clean:
 	rm -f *.class
 	rm -f *~
 	rm -f *#
-	rm -f ../$(BDIR)/*.class
-	rm -f ../$(BDIR)/*~
-	rm -f ../$(BDIR)/*#
 
