@@ -13,6 +13,7 @@ public class Player extends Component {
 
     private int playerId;
     private Color playerColor;
+    private int playerStep = 4;
 
     public Player(int playerId, int startXPos, int startYPos, int size) {
         this.pRect = new Rectangle(new Point(startXPos, startYPos), new Dimension(size, size));
@@ -25,11 +26,33 @@ public class Player extends Component {
         this.playerId = playerId;
     }
 
-    void playerUpdatePosition() {
+    void playerUpdatePosition(int newX, int newY) {
+	this.xPos = newX;
+	this.yPos = newY;
         System.out.println("I'm supposed to update the player position.");
+    }
+    
+    void jump() {
+	System.out.println("Player jumped!");
     }
 
     public String toString() {
         return "Player " + playerId + " is at x: " + (int) this.pRect.getX() + " - y: " + (int) this.pRect.getY();
+    }
+
+     public void move(int direction) {
+	switch(direction) {
+	case KeyEvent.VK_LEFT:
+	    playerUpdatePosition(getXPos()-playerStep, getYPos());
+	    break;
+	    
+	case KeyEvent.VK_RIGHT:
+	    playerUpdatePosition(getXPos()+playerStep, getYPos());
+	    break;
+	    
+	default:
+	    break;
+	    
+	}
     }
 }
