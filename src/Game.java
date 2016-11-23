@@ -14,7 +14,7 @@ public class Game {
     private Player[] playerArray = new Player[4];
 
     public Game(int xSize, int ySize) {
-        this.board = new Board(800, 600);
+        this.board = new Board(xSize, ySize);
         int playerSize = 10;
         int padding = 5;
 
@@ -31,6 +31,15 @@ public class Game {
     public static void main(String[] args) {
         Game runningGame = new Game(800, 600);
         System.out.println(runningGame);
+        for(int i = 0; i < 1000; i++) {
+            System.out.println("A game tick");
+            try {
+                Thread.sleep(1);
+            }
+            catch(Exception e) {
+                System.out.println(e);
+            }
+        }
         System.out.println("Finished");
     }
 
