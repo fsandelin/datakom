@@ -57,6 +57,11 @@ public class Game {
 
     private void run() {
 	// game loop
+	while (true) {
+	    playerArray[0].checkFallingState();
+	    playerArray[0].checkJumpingState();
+	    manageKeys();
+	}
     }
 
 }
