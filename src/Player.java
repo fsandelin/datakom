@@ -14,7 +14,7 @@ public class Player extends Component {
 
     private int playerId;
     private Color playerColor;
-    private int playerStep = 4;
+    private static final int playerStep = 4;
     private int xPos;
     private int yPos;
 
@@ -22,7 +22,8 @@ public class Player extends Component {
     private boolean jumping;
 
     public Player(int playerId, int startXPos, int startYPos, int size) {
-        this.pRect = new Rectangle(new Point(startXPos, startYPos), new Dimension(size, size));
+        this.pRect = new Rectangle(new Point(startXPos, startYPos),
+				   new Dimension(size, size));
 
         float red = (float) Math.random();
         float green = (float) Math.random();
@@ -43,7 +44,8 @@ public class Player extends Component {
     }
 
     public String toString() {
-        return "Player " + playerId + " is at x: " + (int) this.pRect.getX() + " - y: " + (int) this.pRect.getY();
+        return "Player " + playerId + " is at x: " + (int) this.pRect.getX() +
+	       " - y: " + (int) this.pRect.getY();
     }
 
      public void move(int direction) {

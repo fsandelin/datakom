@@ -14,6 +14,7 @@ public class Game {
 
     private Board board;
     private Player[] playerArray = new Player[4];
+    private Player player = playerArray[0];
 
     public Game(int xSize, int ySize) {
         this.board = new Board(xSize, ySize);
@@ -21,7 +22,8 @@ public class Game {
         int padding = 5;
 
         for (int i = 0; i < 4; i++) {
-            this.playerArray[i] = new Player(i, 10 + (playerSize + padding)*i, 10, playerSize);
+            this.playerArray[i] = new Player(i, 10 + (playerSize + padding)*i,
+					     10, playerSize);
         }
         board.draw(this.playerArray);
     }
@@ -49,15 +51,15 @@ public class Game {
 	HashSet<Integer> currentKeys = KeyboardController.getActiveKeys();
 	
 	if (currentKeys.contains(KeyEvent.VK_RIGHT)) {
-	    playerArray[0].move(KeyEvent.VK_RIGHT);
+	    player.move(KeyEvent.VK_RIGHT);
 	} else if (currentKeys.contains(KeyEvent.VK_LEFT)) {
-	    playerArray[0].move(KeyEvent.VK_LEFT);
+	    player.move(KeyEvent.VK_LEFT);
 	}
 	
 	if (currentKeys.contains(KeyEvent.VK_SPACE)) {
 	    // Check if player isn't jumping or falling atm
-	    if (!playerArray[0].getJumping() && !playerArray[0].getFalling()) {
-		playerArray[0].jump();
+	    if (!player.getJumping() && !player.getFalling()) {
+		player.jump();
 	    }
 	}
     }
@@ -65,8 +67,8 @@ public class Game {
     private void run() {
 	// Game loop
 	while (true) {
-	    playerArray[0].checkFallingState();
-	    playerArray[0].checkJumpingState();
+	    player.checkFallingState();
+	    player.checkJumpingState();
 	    manageKeys();
 	}
     }
