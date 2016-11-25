@@ -11,6 +11,7 @@ CLASSES = \
 	Server.java \
 	Server_network.java \
 	Client_network.java \
+	KeyboardController.java \
 
 #----------------------
 #-------Modules--------
