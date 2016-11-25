@@ -7,6 +7,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.Component;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 
 public class Player extends Component {
     private Rectangle pRect;
@@ -14,6 +15,8 @@ public class Player extends Component {
     private int playerId;
     private Color playerColor;
     private int playerStep = 4;
+    private int xPos;
+    private int yPos;
 
     public Player(int playerId, int startXPos, int startYPos, int size) {
         this.pRect = new Rectangle(new Point(startXPos, startYPos), new Dimension(size, size));
@@ -43,11 +46,11 @@ public class Player extends Component {
      public void move(int direction) {
 	switch(direction) {
 	case KeyEvent.VK_LEFT:
-	    playerUpdatePosition(getXPos()-playerStep, getYPos());
+	    playerUpdatePosition(this.xPos-playerStep, this.yPos);
 	    break;
 	    
 	case KeyEvent.VK_RIGHT:
-	    playerUpdatePosition(getXPos()+playerStep, getYPos());
+	    playerUpdatePosition(this.xPos+playerStep, this.yPos);
 	    break;
 	    
 	default:
