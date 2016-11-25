@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.Graphics;
 import javax.swing.*;
+import java.util.HashSet;
+import java.awt.event.KeyEvent;
 
 public class Game {
 
@@ -41,6 +43,20 @@ public class Game {
             }
         }
         System.out.println("Finished");
+    }
+
+    private void manageKeys() {
+	HashSet<Integer> currentKeys = KeyboardController.getActiveKeys();
+	
+	if (currentKeys.contains(KeyEvent.VK_RIGHT)) {
+	    playerArray[0].move(KeyEvent.VK_RIGHT);
+	} else if (currentKeys.contains(KeyEvent.VK_LEFT)) {
+	    playerArray[0].move(KeyEvent.VK_LEFT);
+	}
+    }
+
+    private void run() {
+	// game loop
     }
 
 }
