@@ -18,6 +18,9 @@ public class Player extends Component {
     private int xPos;
     private int yPos;
 
+    private boolean falling;
+    private boolean jumping;
+
     public Player(int playerId, int startXPos, int startYPos, int size) {
         this.pRect = new Rectangle(new Point(startXPos, startYPos), new Dimension(size, size));
 
@@ -36,7 +39,7 @@ public class Player extends Component {
     }
     
     void jump() {
-	System.out.println("Player jumped!");
+	this.jumping = true;
     }
 
     public String toString() {
@@ -56,6 +59,20 @@ public class Player extends Component {
 	default:
 	    break;
 	    
+	}
+    }
+
+    public void checkFallingState() {
+	if (jumping) return;
+	if (falling) playerUpdatePosition(this.xPos, this.yPos+playerStep);
+	falling = false;
+    }
+
+    public void checkJumpingState() {
+	if (jumping) {
+	    playerUpdatePosition(this.xPos, this.yPos-playerStep);
+	    jumping = false;
+	    falling = true;
 	}
     }
 }
