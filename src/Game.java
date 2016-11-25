@@ -53,10 +53,17 @@ public class Game {
 	} else if (currentKeys.contains(KeyEvent.VK_LEFT)) {
 	    playerArray[0].move(KeyEvent.VK_LEFT);
 	}
+	
+	if (currentKeys.contains(KeyEvent.VK_SPACE)) {
+	    // Check if player isn't jumping or falling atm
+	    if (!playerArray[0].getJumping() && !playerArray[0].getFalling()) {
+		playerArray[0].jump();
+	    }
+	}
     }
 
     private void run() {
-	// game loop
+	// Game loop
 	while (true) {
 	    playerArray[0].checkFallingState();
 	    playerArray[0].checkJumpingState();

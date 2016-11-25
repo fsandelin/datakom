@@ -75,4 +75,12 @@ public class Player extends Component {
 	    falling = true;
 	}
     }
+
+    public boolean getFalling() {
+	return falling;
+    }
+
+    public boolean getJumping() {
+	return jumping;
+    }
 }
