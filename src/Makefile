@@ -5,14 +5,17 @@ JFLAGS = -g
 JC = javac
 BDIR = bin
 CLASSES = \
-	Player.java \
-	Board.java \
-	Game.java \
 	Server.java \
+	PlayerInfo.java \
 	Server_network.java \
 	Client_network.java \
-	KeyboardController.java \
 
+
+
+#	Player.java \
+#	Board.java \
+#	Game.java \
+#	KeyboardController.java \
 #----------------------
 #-------Modules--------
 #----------------------
