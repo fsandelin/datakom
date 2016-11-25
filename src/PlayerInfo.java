@@ -3,6 +3,12 @@ public class PlayerInfo {
     private int port;
     private String alias;
 
+    public PlayerInfo(String ip, int port, String alias) {
+	this.ip = ip;
+	this.port = port;
+	this.alias = alias;
+    }
+
     public String getIp() {
 	return this.ip;
     }

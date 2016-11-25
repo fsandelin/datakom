@@ -36,6 +36,9 @@ public class Server_network implements Server{
 
     public int connectToGame(String ip, int port, String alias) {
 	try {
+	    PlayerInfo player = new PlayerInfo(ip, port, alias);
+	    playerList.add(player);
+	    this.debug();
 	    return 1;
 	} catch(Exception e) {
 	    System.err.println("Server exception: " + e.toString());	    
