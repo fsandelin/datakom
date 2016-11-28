@@ -14,9 +14,11 @@ public class Player extends JComponent {
 
     private int playerId;
     private Color playerColor;
-    private static final int playerStep = 4;
+    private static final int playerStep = 7;
     private int xPos;
     private int yPos;
+    private int boardX;
+    private int boardY;
 
     private boolean falling;
     private boolean jumping;
@@ -38,9 +40,12 @@ public class Player extends JComponent {
     }
 
     void playerUpdatePosition(int newX, int newY) {
-        this.xPos = newX;
-        this.yPos = newY;
-        System.out.println("I'm supposed to update the player position.");
+        if (validPos(newX, newY)) {
+            this.xPos = newX;
+            this.yPos = newY;
+            this.setLocation(newX, newY);
+            //System.out.println("I'm supposed to update the player position.");
+        }
     }
 
     void jump() {
@@ -70,13 +75,13 @@ public class Player extends JComponent {
 
     public void checkFallingState() {
         if (jumping) return;
-        if (falling) playerUpdatePosition(this.xPos, this.yPos + playerStep);
+        if (falling) playerUpdatePosition(this.xPos, this.yPos + playerSize);
         falling = false;
     }
 
     public void checkJumpingState() {
         if (jumping) {
-            playerUpdatePosition(this.xPos, this.yPos - playerStep);
+            playerUpdatePosition(this.xPos, this.yPos - this.playerSize);
             jumping = false;
             falling = true;
         }
@@ -96,7 +101,7 @@ public class Player extends JComponent {
     public void paintComponent(Graphics g) {
 
         this.setLocation(this.xPos, this.yPos);
-        System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
+//        System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
         g.setColor(this.playerColor);
         g.fillRect(0, 0, this.playerSize, this.playerSize);
     }
@@ -105,4 +110,12 @@ public class Player extends JComponent {
         return this.playerId;
     }
 
+    public void setBoardSize(int x, int y) {
+        this.boardX = x;
+        this.boardY = y;
+    }
+
+    private boolean validPos(int x, int y) {
+        return (x >=  0 && x <= (this.boardX - playerSize) && y >= 0 && y <= (boardY - playerSize));
+    }
 }

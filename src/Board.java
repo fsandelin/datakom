@@ -33,17 +33,17 @@ public class Board {
         dynamicObjects = new ArrayList<Integer>();
 
         drawingSurface = new JPanel();
-        drawingSurface.setPreferredSize(new Dimension(xSize + borderThickness, ySize + borderThickness));
+        drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setPreferredSize(new Dimension(xSize + borderThickness, ySize + borderThickness));
+        window.setPreferredSize(new Dimension(xSize, ySize));
         window.setResizable(false);
         window.pack();
         window.add(drawingSurface);
         window.setVisible(true);
 
-        drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
+        //drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
         drawingSurface.setBackground(white);
     }
 
@@ -59,5 +59,15 @@ public class Board {
         for(Player p: players) {
             p.repaint();
         }
+    }
+
+    public void initKeyboard(KeyboardController key) {
+        this.drawingSurface.setRequestFocusEnabled(true);
+        this.drawingSurface.setFocusable(true);
+        this.drawingSurface.addKeyListener(key);
+    }
+
+    public int getBorderThickness() {
+        return this.borderThickness;
     }
 }
