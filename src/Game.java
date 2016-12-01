@@ -36,11 +36,11 @@ public class Game {
 
         //Creating and adding 4 players and setting the 0-index as current player
         for (int i = 0; i < 4; i++) {
-            this.playerArray[i] = new Player(i, 10 + (playerSize + padding) * i,
-                    ySize - playerSize, playerSize, new Dimension(xSize, ySize));
+            this.playerArray[i] =
+		new Player(i, 10 + (playerSize + padding) * i,
+			   ySize - playerSize, playerSize, board);
             this.board.addPlayer(this.playerArray[i]);
-            playerArray[i].setBoardSize(xSize, ySize);
-        }
+	}
         this.player = this.playerArray[0];
         //
 
@@ -66,18 +66,16 @@ public class Game {
     private void manageKeys() {
         HashSet<Integer> currentKeys = keyboardController.getActiveKeys();
 //        System.out.println(currentKeys);
-
+	
         if (currentKeys.contains(KeyEvent.VK_RIGHT)) {
-            player.move(KeyEvent.VK_RIGHT);
+            // player.move(KeyEvent.VK_RIGHT);
         } else if (currentKeys.contains(KeyEvent.VK_LEFT)) {
-            player.move(KeyEvent.VK_LEFT);
+            // player.move(KeyEvent.VK_LEFT);
         }
 
         if (currentKeys.contains(KeyEvent.VK_SPACE)) {
             // Check if player isn't jumping or falling atm
-            if (!player.getJumping() && !player.getFalling()) {
-                player.jump();
-            }
+           
         }
         //System.out.println("Player Moved");
     }
@@ -87,9 +85,8 @@ public class Game {
         // Game loop
 
         if ((System.currentTimeMillis() - clock) >= timestep) {
-            player.checkFallingState();
-            player.checkJumpingState();
             manageKeys();
+	    player.updatePosition();
             clock = System.currentTimeMillis();
         }
         this.updateBoard();

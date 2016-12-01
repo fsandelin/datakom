@@ -17,16 +17,14 @@ public class Player extends JComponent {
     private static final int playerStep = 7;
     private int xPos;
     private int yPos;
-    private int boardX;
-    private int boardY;
-
-    private boolean falling;
-    private boolean jumping;
-
-    public Player(int playerId, int startXPos, int startYPos, int size, Dimension boardDim) {
+    private int vVelocity;
+    private int hVelocity;
+    private Board board;
+    
+    public Player(int playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
         this.setPreferredSize(new Dimension(size, size));
-        //
+        this.board = b;
         this.playerSize = size;
         this.xPos = startXPos;
         this.yPos = startYPos;
@@ -39,17 +37,8 @@ public class Player extends JComponent {
 
     }
 
-    void playerUpdatePosition(int newX, int newY) {
-        if (validPos(newX, newY)) {
-            this.xPos = newX;
-            this.yPos = newY;
-            this.setLocation(newX, newY);
-            //System.out.println("I'm supposed to update the player position.");
-        }
-    }
-
     void jump() {
-        this.jumping = true;
+        // this.jumping = true;
     }
 
     public String toString() {
@@ -60,39 +49,18 @@ public class Player extends JComponent {
     public void move(int direction) {
         switch (direction) {
             case KeyEvent.VK_LEFT:
-                playerUpdatePosition(this.xPos - playerStep, this.yPos);
+                this.hVelocity = board.getValidHVelocity(-1);
                 break;
 
             case KeyEvent.VK_RIGHT:
-                playerUpdatePosition(this.xPos + playerStep, this.yPos);
+		this.hVelocity = board.getValidHVelocity(1);
                 break;
 
             default:
+		this.hVelocity = board.getValidHVelocity(0);
                 break;
 
         }
-    }
-
-    public void checkFallingState() {
-        if (jumping) return;
-        if (falling) playerUpdatePosition(this.xPos, this.yPos + playerSize);
-        falling = false;
-    }
-
-    public void checkJumpingState() {
-        if (jumping) {
-            playerUpdatePosition(this.xPos, this.yPos - this.playerSize);
-            jumping = false;
-            falling = true;
-        }
-    }
-
-    public boolean getFalling() {
-        return falling;
-    }
-
-    public boolean getJumping() {
-        return jumping;
     }
 
     //===============================================Below this are methods for graphics rendering
@@ -110,12 +78,8 @@ public class Player extends JComponent {
         return this.playerId;
     }
 
-    public void setBoardSize(int x, int y) {
-        this.boardX = x;
-        this.boardY = y;
-    }
-
-    private boolean validPos(int x, int y) {
-        return (x >=  0 && x <= (this.boardX - playerSize) && y >= 0 && y <= (boardY - playerSize));
+    public void updatePosition() {
+	this.xPos = this.xPos + hVelocity;
+	this.yPos = this.yPos + vVelocity;
     }
 }

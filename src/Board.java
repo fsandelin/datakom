@@ -26,6 +26,12 @@ public class Board {
     private Color green = new Color(0, 255, 0);
     private Color blue = new Color(0, 0, 255);
 
+    private int maxVVelocity = 10;
+    private int minVVelocity = -10;
+    private int maxHVelocity = 5;
+    private int minHVelocity = -5;
+    
+    
     public Board(int xSize, int ySize) {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
@@ -82,5 +88,19 @@ public class Board {
 
     public Dimension getBoardDimension() {
         return this.boardRect.getSize();
+    }
+
+    public int getValidVVelocity(int v) {
+	return -1;
+    }
+
+    public int getValidHVelocity(int h) {
+	if (h >= maxHVelocity) {
+	    return maxHVelocity;
+	} else if (h <= minHVelocity){
+	    return minHVelocity;
+	} else {
+	    return h;
+	}
     }
 }
