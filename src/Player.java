@@ -48,17 +48,20 @@ public class Player extends JComponent {
 
     public void move(int direction) {
         switch (direction) {
-            case KeyEvent.VK_LEFT:
-                this.hVelocity = board.getValidHVelocity(-1);
-                break;
+	case KeyEvent.VK_LEFT:
+	    this.hVelocity = board.getValidHVelocity(-playerStep);
+	    break;
+	    
+	case KeyEvent.VK_RIGHT:
+	    this.hVelocity = board.getValidHVelocity(playerStep);
+	    break;
 
-            case KeyEvent.VK_RIGHT:
-		this.hVelocity = board.getValidHVelocity(1);
-                break;
-
-            default:
-		this.hVelocity = board.getValidHVelocity(0);
-                break;
+	case 0:
+	    this.hVelocity = board.getValidHVelocity(0);
+	    break;
+		
+	default:
+	    break;
 
         }
     }

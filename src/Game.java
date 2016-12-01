@@ -68,10 +68,12 @@ public class Game {
 //        System.out.println(currentKeys);
 	
         if (currentKeys.contains(KeyEvent.VK_RIGHT)) {
-            // player.move(KeyEvent.VK_RIGHT);
+            player.move(KeyEvent.VK_RIGHT);
         } else if (currentKeys.contains(KeyEvent.VK_LEFT)) {
-            // player.move(KeyEvent.VK_LEFT);
-        }
+            player.move(KeyEvent.VK_LEFT);
+        } else {
+	    player.move(0);
+	}
 
         if (currentKeys.contains(KeyEvent.VK_SPACE)) {
             // Check if player isn't jumping or falling atm
