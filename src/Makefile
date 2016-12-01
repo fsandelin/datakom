@@ -13,6 +13,7 @@ CLASSES = \
 	Client_network.java \
 	KeyboardController.java \
 	GameGraphic.java \
+	Obstruction.java \
 
 #----------------------
 #-------Modules--------
