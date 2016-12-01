@@ -12,7 +12,7 @@ public class Board {
 
     private ArrayList<Obstruction> fixedObjects;
     private ArrayList<Integer> dynamicObjects;
-    private ArrayList<Player> players;
+    private Player[] players;
 
     private JFrame window;
     private JPanel drawingSurface;
@@ -30,11 +30,11 @@ public class Board {
     private int minVVelocity = -maxVVelocity;
     private int maxHVelocity = 10;
     private int minHVelocity = -maxHVelocity;
-    
-    
+
+
     public Board(int xSize, int ySize) {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
-        players = new ArrayList<Player>();
+        players = new Player[4];
         fixedObjects = new ArrayList<Obstruction>();
         dynamicObjects = new ArrayList<Integer>();
 
@@ -55,9 +55,9 @@ public class Board {
 
 
     public void addPlayer(Player p) {
-        this.players.add(p);
-        this.drawingSurface.add(p);
-        System.out.println("Added player: " + p.getPlayerId());
+        players[0] = p;
+        this.drawingSurface.add(players[0]);
+        //System.out.println(players[0]);
     }
 
     public void addObstruction(Obstruction o) {
@@ -68,11 +68,9 @@ public class Board {
 
     public void update() {
         drawingSurface.setVisible(true);
-        for(Player p: players) {
-            p.repaint();
-        }
-        for(Obstruction o: fixedObjects) {
-            o.repaint();
+        players[0].repaint();
+        for (Obstruction o : fixedObjects) {
+            if(o != null) {o.repaint();}
         }
     }
 
@@ -90,17 +88,39 @@ public class Board {
         return this.boardRect.getSize();
     }
 
-    public int getValidVVelocity(int v) {
-	return -1;
-    }
+    public int[] getValidHVelocity(int[] v) {
+        Player p = players[0];
+        Rectangle nextPos = new Rectangle(p.getPlayerSize()+v[0], p.getPlayerSize()+v[1], p.getX(), p.getY());
+        Rectangle intersection;
 
-    public int getValidHVelocity(int h) {
-	if (h > maxHVelocity) {
-	    return maxHVelocity;
-	} else if (h < minHVelocity){
-	    return minHVelocity;
-	} else {
-	    return h;
-	}
+        int tentXVelocity = v[0];
+        int tentYVelocity = v[1];
+
+        if(v[0] > maxHVelocity) {
+            tentXVelocity = maxHVelocity;
+        }
+        if(v[0] < minHVelocity) {
+            tentXVelocity = minHVelocity;
+        }
+
+        int[] returnV = new int[2];
+        returnV[0] = tentXVelocity;
+        returnV[1] = tentYVelocity;
+
+        for (Obstruction o : fixedObjects) {
+            if (nextPos.intersects(o.getRect())) {
+                intersection = nextPos.intersection(o.getRect());
+                if (intersection.getWidth() > intersection.getHeight()) {
+                    if((tentYVelocity = tentYVelocity - ((int) intersection.getHeight()) + 1) <= returnV[1]) {
+                        returnV[1] = tentYVelocity;
+                    }
+                } else {
+                    if((tentXVelocity = tentXVelocity - ((int) intersection.getWidth()) + 1) < returnV[0]) {
+                        returnV[0] = tentXVelocity;
+                    }
+                }
+            }
+        }
+        return returnV;
     }
 }

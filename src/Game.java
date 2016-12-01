@@ -35,18 +35,13 @@ public class Game {
         board.initKeyboard(keyboardController);
 
         //Creating and adding 4 players and setting the 0-index as current player
-        for (int i = 0; i < 4; i++) {
-            this.playerArray[i] =
-		new Player(i, 10 + (playerSize + padding) * i,
-			   ySize - playerSize, playerSize, board);
-            this.board.addPlayer(this.playerArray[i]);
-	}
-        this.player = this.playerArray[0];
+        player = new Player(0, 10, ySize - playerSize, playerSize, board);
+        board.addPlayer(player);
         //
 
         //Adding some obstructions to the game
         for (int i = 0; i < 1; i++) {
-            Obstruction o =  new Obstruction(400, 450 , new Dimension(150,30));
+            Obstruction o =  new Obstruction(400, 570 , new Dimension(150,30));
             o.setColor(new Color(120,120,120));
             board.addObstruction(o);
         }
@@ -66,7 +61,7 @@ public class Game {
     private void manageKeys() {
         HashSet<Integer> currentKeys = keyboardController.getActiveKeys();
 //        System.out.println(currentKeys);
-	
+
         if (currentKeys.contains(KeyEvent.VK_RIGHT)) {
             player.move(KeyEvent.VK_RIGHT);
         } else if (currentKeys.contains(KeyEvent.VK_LEFT)) {
@@ -77,7 +72,7 @@ public class Game {
 
         if (currentKeys.contains(KeyEvent.VK_SPACE)) {
             // Check if player isn't jumping or falling atm
-           
+
         }
         //System.out.println("Player Moved");
     }

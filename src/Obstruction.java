@@ -27,4 +27,8 @@ public class Obstruction extends JComponent{
         g.setColor(fill);
         g.fillRect(0,0, this.getWidth(), this.getHeight());
     }
+
+    public Rectangle getRect() {
+        return bounds;
+    }
 }

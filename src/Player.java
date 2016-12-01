@@ -16,15 +16,17 @@ public class Player extends JComponent {
     private Color playerColor;
     private static final int playerStep = 2;
     private int playerAcceleration = 0;
+    private int maxAcceleration = 9;
     private int xPos;
     private int yPos;
-    private int vVelocity;
-    private int hVelocity;
+    private int velocity[];
     private Board board;
-    
+
     public Player(int playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
         this.setPreferredSize(new Dimension(size, size));
+        //
+        velocity = new int[2];
         this.board = b;
         this.playerSize = size;
         this.xPos = startXPos;
@@ -34,7 +36,6 @@ public class Player extends JComponent {
         float blue = (float) Math.random();
         this.playerColor = new Color(red, green, blue);
         this.playerId = playerId;
-
 
     }
 
@@ -49,25 +50,28 @@ public class Player extends JComponent {
 
     public void move(int direction) {
         switch (direction) {
-	case KeyEvent.VK_LEFT:
-	    this.playerAcceleration++;
-	    this.hVelocity =
-		board.getValidHVelocity(-playerStep-playerAcceleration);
-	    break;
-	    
-	case KeyEvent.VK_RIGHT:
-	    this.playerAcceleration++;
-	    this.hVelocity =
-		board.getValidHVelocity(playerStep+playerAcceleration);
-	    break;
+            case KeyEvent.VK_LEFT:
+                if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
+                velocity[0] = -playerStep - playerAcceleration;
+                this.velocity =
+                        board.getValidHVelocity(velocity);
+                break;
 
-	case 0:
-	    this.playerAcceleration = 0;
-	    this.hVelocity = board.getValidHVelocity(0);
-	    break;
-		
-	default:
-	    break;
+            case KeyEvent.VK_RIGHT:
+                if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
+                velocity[0] = playerStep + playerAcceleration;
+                this.velocity =
+                        board.getValidHVelocity(velocity);
+                break;
+
+            case 0:
+                this.playerAcceleration = 0;
+                velocity[0] = 0;
+                this.velocity = board.getValidHVelocity(velocity);
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -75,9 +79,8 @@ public class Player extends JComponent {
 
 
     public void paintComponent(Graphics g) {
-
         this.setLocation(this.xPos, this.yPos);
-//        System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
+        //System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
         g.setColor(this.playerColor);
         g.fillRect(0, 0, this.playerSize, this.playerSize);
     }
@@ -86,8 +89,13 @@ public class Player extends JComponent {
         return this.playerId;
     }
 
+    public int getPlayerSize() {
+        return this.playerSize;
+    }
+
     public void updatePosition() {
-	this.xPos = this.xPos + hVelocity;
-	this.yPos = this.yPos + vVelocity;
+        //System.out.printf("%d | %d\n", xPos, yPos);
+        this.xPos = this.xPos + velocity[0];
+        this.yPos = this.yPos + velocity[1];
     }
 }
