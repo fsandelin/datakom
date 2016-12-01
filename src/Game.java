@@ -2,6 +2,8 @@
  * @author Fredrik Sandelin
  */
 
+import src.Obstruction;
+
 import java.awt.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
@@ -29,8 +31,12 @@ public class Game {
         this.board = new Board(xSize, ySize);
         int playerSize = 30;
         int padding = 5;
+
+        //Initialize keyboardcontrols
         keyboardController = new KeyboardController();
         board.initKeyboard(keyboardController);
+
+        //Creating and adding 4 players and setting the 0-index as current player
         for (int i = 0; i < 4; i++) {
             this.playerArray[i] = new Player(i, 10 + (playerSize + padding) * i,
                     ySize - playerSize, playerSize, new Dimension(xSize, ySize));
@@ -38,6 +44,16 @@ public class Game {
             playerArray[i].setBoardSize(xSize, ySize);
         }
         this.player = this.playerArray[0];
+        //
+
+        //Adding some obstructions to the game
+        for (int i = 0; i < 1; i++) {
+            Obstruction o =  new Obstruction(400, 450 , new Dimension(150,30));
+            o.setColor(new Color(120,120,120));
+            board.addObstruction(o);
+        }
+        //
+
         clock = System.currentTimeMillis();
     }
 
@@ -95,15 +111,7 @@ public class Game {
         Game runningGame = new Game(800, 600);
         System.out.println(runningGame);
         while (true) {
-            //System.out.println("A game tick");
-
             runningGame.run();
-//            try {
-//                Thread.sleep(5);
-//            } catch (Exception e) {
-//                System.out.println(e);
-//            }
         }
-//        System.out.println("Finished");
     }
 }

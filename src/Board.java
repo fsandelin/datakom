@@ -1,3 +1,5 @@
+import src.Obstruction;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import javax.swing.BorderFactory;
 public class Board {
     private Rectangle boardRect;
 
-    private ArrayList<Integer> fixedObjects;
+    private ArrayList<Obstruction> fixedObjects;
     private ArrayList<Integer> dynamicObjects;
     private ArrayList<Player> players;
 
@@ -29,7 +31,7 @@ public class Board {
     public Board(int xSize, int ySize) {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
-        fixedObjects = new ArrayList<Integer>();
+        fixedObjects = new ArrayList<Obstruction>();
         dynamicObjects = new ArrayList<Integer>();
 
         drawingSurface = new JPanel();
@@ -54,10 +56,19 @@ public class Board {
         System.out.println("Added player: " + p.getPlayerId());
     }
 
+    public void addObstruction(Obstruction o) {
+        this.fixedObjects.add(o);
+        this.drawingSurface.add(o);
+        System.out.println("Added obstruction");
+    }
+
     public void update() {
         drawingSurface.setVisible(true);
         for(Player p: players) {
             p.repaint();
+        }
+        for(Obstruction o: fixedObjects) {
+            o.repaint();
         }
     }
 
@@ -69,5 +80,9 @@ public class Board {
 
     public int getBorderThickness() {
         return this.borderThickness;
+    }
+
+    public Dimension getBoardDimension() {
+        return this.boardRect.getSize();
     }
 }
