@@ -27,9 +27,9 @@ public class Board {
     private Color blue = new Color(0, 0, 255);
 
     private int maxVVelocity = 10;
-    private int minVVelocity = -10;
-    private int maxHVelocity = 5;
-    private int minHVelocity = -5;
+    private int minVVelocity = -maxVVelocity;
+    private int maxHVelocity = 10;
+    private int minHVelocity = -maxHVelocity;
     
     
     public Board(int xSize, int ySize) {
@@ -95,9 +95,9 @@ public class Board {
     }
 
     public int getValidHVelocity(int h) {
-	if (h >= maxHVelocity) {
+	if (h > maxHVelocity) {
 	    return maxHVelocity;
-	} else if (h <= minHVelocity){
+	} else if (h < minHVelocity){
 	    return minHVelocity;
 	} else {
 	    return h;

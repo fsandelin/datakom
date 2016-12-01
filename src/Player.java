@@ -14,7 +14,8 @@ public class Player extends JComponent {
 
     private int playerId;
     private Color playerColor;
-    private static final int playerStep = 7;
+    private static final int playerStep = 2;
+    private int playerAcceleration = 0;
     private int xPos;
     private int yPos;
     private int vVelocity;
@@ -49,21 +50,26 @@ public class Player extends JComponent {
     public void move(int direction) {
         switch (direction) {
 	case KeyEvent.VK_LEFT:
-	    this.hVelocity = board.getValidHVelocity(-playerStep);
+	    this.playerAcceleration++;
+	    this.hVelocity =
+		board.getValidHVelocity(-playerStep-playerAcceleration);
 	    break;
 	    
 	case KeyEvent.VK_RIGHT:
-	    this.hVelocity = board.getValidHVelocity(playerStep);
+	    this.playerAcceleration++;
+	    this.hVelocity =
+		board.getValidHVelocity(playerStep+playerAcceleration);
 	    break;
 
 	case 0:
+	    this.playerAcceleration = 0;
 	    this.hVelocity = board.getValidHVelocity(0);
 	    break;
 		
 	default:
 	    break;
-
         }
+	System.out.println("My velocity is: " + this.hVelocity);
     }
 
     //===============================================Below this are methods for graphics rendering
