@@ -69,7 +69,6 @@ public class Player extends JComponent {
 	default:
 	    break;
         }
-	System.out.println("My velocity is: " + this.hVelocity);
     }
 
     //===============================================Below this are methods for graphics rendering
