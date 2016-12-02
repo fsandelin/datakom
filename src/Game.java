@@ -29,6 +29,7 @@ public class Game {
         this.board = new Board(xSize, ySize);
         int playerSize = 30;
         int padding = 5;
+        //this.board.addGoal(300,300,60);
 
         //Initialize keyboardcontrols
         keyboardController = new KeyboardController();
@@ -67,11 +68,11 @@ public class Game {
         } else if (currentKeys.contains(KeyEvent.VK_LEFT) || currentKeys.contains(KeyEvent.VK_A)) {
             player.move(KeyEvent.VK_LEFT);
         } else {
-	    player.move(0);
-	}
+            player.move(0);
+        }
 
         if (currentKeys.contains(KeyEvent.VK_SPACE) || currentKeys.contains(KeyEvent.VK_UP)) {
-	    player.jump();
+            player.jump();
         }
         //System.out.println("Player Moved");
     }
@@ -82,8 +83,9 @@ public class Game {
 
         if ((System.currentTimeMillis() - clock) >= timestep) {
             manageKeys();
-	    player.checkJumping();
-	    player.updatePosition();
+            player.checkJumping();
+            player.updatePosition();
+            //board.win();
             clock = System.currentTimeMillis();
         }
         this.updateBoard();

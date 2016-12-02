@@ -32,6 +32,7 @@ public class Board {
     private int maxHVelocity = 10;
     private int minHVelocity = -maxHVelocity;
 
+    private Goal goal;
 
     public Board(int xSize, int ySize) {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
@@ -41,11 +42,10 @@ public class Board {
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
         this.addWalls(xSize, ySize);
 
-
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setPreferredSize(new Dimension(xSize, ySize));
-        // window.setResizable(false);
+        window.setPreferredSize(new Dimension(xSize + 100, ySize + 100));
+        window.setResizable(false);
         window.pack();
         window.add(drawingSurface);
         window.setVisible(true);
@@ -163,6 +163,22 @@ public class Board {
         this.addObstruction(right);
         //this.addObstruction(top);
 
+    }
+
+    public void addGoal(int xPos, int yPos, int size) {
+        this.goal = new Goal(xPos, yPos, size);
+        this.drawingSurface.add(goal);
+    }
+
+    public boolean win() {
+        for(Player p: players) {
+            if(p != null) {
+                if(goal.win(p)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

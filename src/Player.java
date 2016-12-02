@@ -88,7 +88,7 @@ public class Player extends JComponent {
 
     public void paintComponent(Graphics g) {
         this.setLocation(this.xPos, this.yPos);
-        //System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
+        System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
         g.setColor(this.playerColor);
         g.fillRect(0, 0, this.playerSize, this.playerSize);
     }
@@ -99,6 +99,14 @@ public class Player extends JComponent {
 
     public int getPlayerSize() {
         return this.playerSize;
+    }
+
+    public int getPlayerX() {
+        return this.xPos;
+    }
+
+    public int getPlayerY() {
+        return this.yPos;
     }
 
     public void updatePosition() {
