@@ -46,8 +46,7 @@ public class Player extends JComponent {
 	    velocity[1] = -playerJumpStep;
 	    this.velocity = board.getValidVelocity(velocity);
 	    this.jumping = true;
-	} else if (this.jumping && this.velocity[1] == 0) {
-	    this.velocity[1] = 1;
+	} else if (this.velocity[1] == 0 && this.jumping) {
 	    this.jumping = false;
 	}
     }
