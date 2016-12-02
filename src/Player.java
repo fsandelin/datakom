@@ -22,6 +22,7 @@ public class Player extends JComponent {
     private int yPos;
     private int velocity[];
     private Board board;
+    private boolean jumping;
 
     public Player(int playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
@@ -41,9 +42,13 @@ public class Player extends JComponent {
     }
 
     public void jump() {
-	if (this.velocity[1] == 0) {
+	if (this.velocity[1] == 0 && !this.jumping) {	    
 	    velocity[1] = -playerJumpStep;
 	    this.velocity = board.getValidVelocity(velocity);
+	    this.jumping = true;
+	} else if (this.jumping && this.velocity[1] == 0) {
+	    this.velocity[1] = 1;
+	    this.jumping = false;
 	}
     }
 
