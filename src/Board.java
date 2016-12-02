@@ -45,7 +45,7 @@ public class Board {
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setPreferredSize(new Dimension(xSize, ySize));
-        window.setResizable(false);
+        // window.setResizable(false);
         window.pack();
         window.add(drawingSurface);
         window.setVisible(true);

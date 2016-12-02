@@ -41,7 +41,7 @@ public class Game {
 
         //Adding some obstructions to the game
         for (int i = 0; i < 1; i++) {
-            Obstruction o =  new Obstruction(2, 570 , new Dimension(400,30));
+            Obstruction o =  new Obstruction(400, 570 , new Dimension(150,30));
             o.setColor(new Color(120,120,120));
             board.addObstruction(o);
         }
