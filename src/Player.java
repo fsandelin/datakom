@@ -59,26 +59,27 @@ public class Player extends JComponent {
 
     public void move(int direction) {
         switch (direction) {
-            case KeyEvent.VK_LEFT:
-                if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
-                velocity[0] = -playerStep - playerAcceleration;
-                this.velocity = board.getValidVelocity(velocity);
-                break;
+	case KeyEvent.VK_A:
+	case KeyEvent.VK_LEFT:
+	    if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
+	    velocity[0] = -playerStep - playerAcceleration;
+	    this.velocity = board.getValidVelocity(velocity);
+	    break;
+	case KeyEvent.VK_D:
+	case KeyEvent.VK_RIGHT:
+	    if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
+	    velocity[0] = playerStep + playerAcceleration;
+	    this.velocity = board.getValidVelocity(velocity);
+	    break;
 
-            case KeyEvent.VK_RIGHT:
-                if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
-                velocity[0] = playerStep + playerAcceleration;
-                this.velocity = board.getValidVelocity(velocity);
-                break;
+	case 0:
+	    this.playerAcceleration = 0;
+	    velocity[0] = 0;
+	    this.velocity = board.getValidVelocity(velocity);
+	    break;
 
-            case 0:
-                this.playerAcceleration = 0;
-                velocity[0] = 0;
-                this.velocity = board.getValidVelocity(velocity);
-                break;
-
-            default:
-                break;
+	default:
+	    break;
         }
     }
 

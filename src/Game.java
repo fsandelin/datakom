@@ -35,14 +35,14 @@ public class Game {
         board.initKeyboard(keyboardController);
 
         //Creating and adding 4 players and setting the 0-index as current player
-        player = new Player(0, 150, ySize - playerSize, playerSize, board);
+        player = new Player(0, 150, ySize - playerSize - 100, playerSize, board);
         board.addPlayer(player);
         //
 
         //Adding some obstructions to the game
         for (int i = 0; i < 1; i++) {
-            Obstruction o =  new Obstruction(400, 570 , new Dimension(150,30));
-            o.setColor(new Color(120,120,120));
+            Obstruction o = new Obstruction(400, 450, new Dimension(150, 30));
+            o.setColor(new Color(120, 120, 120));
             board.addObstruction(o);
         }
         //
@@ -62,15 +62,15 @@ public class Game {
         HashSet<Integer> currentKeys = keyboardController.getActiveKeys();
 //        System.out.println(currentKeys);
 
-        if (currentKeys.contains(KeyEvent.VK_RIGHT)) {
+        if (currentKeys.contains(KeyEvent.VK_RIGHT) || currentKeys.contains(KeyEvent.VK_D)) {
             player.move(KeyEvent.VK_RIGHT);
-        } else if (currentKeys.contains(KeyEvent.VK_LEFT)) {
+        } else if (currentKeys.contains(KeyEvent.VK_LEFT) || currentKeys.contains(KeyEvent.VK_A)) {
             player.move(KeyEvent.VK_LEFT);
         } else {
 	    player.move(0);
 	}
 
-        if (currentKeys.contains(KeyEvent.VK_SPACE)) {
+        if (currentKeys.contains(KeyEvent.VK_SPACE) || currentKeys.contains(KeyEvent.VK_UP)) {
 	    player.jump();
         }
         //System.out.println("Player Moved");

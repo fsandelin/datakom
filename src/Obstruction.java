@@ -11,8 +11,8 @@ public class Obstruction extends JComponent{
 
 
     public Obstruction(int x, int y, Dimension d) {
-        this.bounds = new Rectangle( x, y, (int) d.getHeight(), (int) d.getWidth());
-        this.setPreferredSize(d);
+        this.bounds = new Rectangle( x, y, (int) d.getWidth(), (int) d.getHeight());
+        this.setPreferredSize(new Dimension((int) d.getWidth(), (int) d.getHeight()));
         this.setLocation(x,y);
     }
 

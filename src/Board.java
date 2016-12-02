@@ -115,34 +115,53 @@ public class Board {
             if (nextPos.intersects(o.getRect())) {
                 intersection = nextPos.intersection(o.getRect());
                 if (intersection.getWidth() > intersection.getHeight()) {
-                    tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
-                    if ( tentYVelocity <= returnV[1] && tentYVelocity >= -returnV[1]) {
-                        returnV[1] = tentYVelocity;
-                    }
+                    if (v[1] > 0) {
+                        tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
+                        if (tentYVelocity < returnV[1]) {
+                            returnV[1] = tentYVelocity;
+                        }
+                    } else if(v[1] < 0){
+                        tentYVelocity = tentYVelocity + ((int) intersection.getHeight());
+                        if (tentYVelocity > returnV[1]) {
+                            returnV[1] = tentYVelocity;
+                        }
+                    } else { returnV[1] = 1;}
+
+//                    if (tentYVelocity <= returnV[1] && tentYVelocity >= -returnV[1]) {
+//                        returnV[1] = tentYVelocity;
+//                    }
                 } else {
-                    if(v[0] >= 0) {
+                    if (v[0] >= 0) {
                         tentXVelocity = tentXVelocity - ((int) intersection.getWidth());
-                        if(tentXVelocity < returnV[0]) {
+                        if (tentXVelocity < returnV[0]) {
                             returnV[0] = tentXVelocity;
                         }
-                    }
-                    else {
+                    } else {
                         tentXVelocity = tentXVelocity + ((int) intersection.getWidth());
-                        if(tentXVelocity > returnV[0]) {
+                        if (tentXVelocity > returnV[0]) {
                             returnV[0] = tentXVelocity;
                         }
                     }
                 }
             }
         }
-       // System.out.printf("%d | %d |||| %d | %d\n", returnV[0], returnV[1], v[0], v[1]);
+        // System.out.printf("%d | %d |||| %d | %d\n", returnV[0], returnV[1], v[0], v[1]);
         return returnV;
     }
 
     public void addWalls(int xSize, int ySize) {
-        Obstruction o = new Obstruction(100, 570, new Dimension(30, 30));
-        o.setColor(new Color(120, 120, 120));
-        this.addObstruction(o);
+        Obstruction floor = new Obstruction(0, (int) boardRect.getHeight() - 30, new Dimension((int) boardRect.getWidth(), 30));
+        floor.setColor(Color.black);
+        Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) boardRect.getHeight()));
+        left.setColor(Color.black);
+        Obstruction top = new Obstruction(30, 0, new Dimension(700, 30));
+        top.setColor(Color.black);
+        Obstruction right = new Obstruction(0, (int) boardRect.getWidth() - 50, new Dimension(30, 30));
+        right.setColor(Color.black);
+        this.addObstruction(floor);
+        this.addObstruction(left);
+//        this.addObstruction(top);
+//        this.addObstruction(right);
     }
 
 }
