@@ -35,13 +35,13 @@ public class Game {
         board.initKeyboard(keyboardController);
 
         //Creating and adding 4 players and setting the 0-index as current player
-        player = new Player(0, 150, ySize - playerSize - 10, playerSize, board);
+        player = new Player(0, 150, ySize - playerSize - 100, playerSize, board);
         board.addPlayer(player);
         //
 
         //Adding some obstructions to the game
         for (int i = 0; i < 1; i++) {
-            Obstruction o = new Obstruction(400, 500, new Dimension(150, 30));
+            Obstruction o = new Obstruction(400, 450, new Dimension(150, 30));
             o.setColor(new Color(120, 120, 120));
             board.addObstruction(o);
         }

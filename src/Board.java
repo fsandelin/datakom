@@ -115,10 +115,21 @@ public class Board {
             if (nextPos.intersects(o.getRect())) {
                 intersection = nextPos.intersection(o.getRect());
                 if (intersection.getWidth() > intersection.getHeight()) {
-                    tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
-                    if (tentYVelocity <= returnV[1] && tentYVelocity >= -returnV[1]) {
-                        returnV[1] = tentYVelocity;
-                    }
+                    if (v[1] > 0) {
+                        tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
+                        if (tentYVelocity < returnV[1]) {
+                            returnV[1] = tentYVelocity;
+                        }
+                    } else if(v[1] < 0){
+                        tentYVelocity = tentYVelocity + ((int) intersection.getHeight());
+                        if (tentYVelocity > returnV[1]) {
+                            returnV[1] = tentYVelocity;
+                        }
+                    } else { returnV[1] = 1;}
+
+//                    if (tentYVelocity <= returnV[1] && tentYVelocity >= -returnV[1]) {
+//                        returnV[1] = tentYVelocity;
+//                    }
                 } else {
                     if (v[0] >= 0) {
                         tentXVelocity = tentXVelocity - ((int) intersection.getWidth());
@@ -149,7 +160,7 @@ public class Board {
         right.setColor(Color.black);
         this.addObstruction(floor);
         this.addObstruction(left);
-        this.addObstruction(top);
+//        this.addObstruction(top);
 //        this.addObstruction(right);
     }
 
