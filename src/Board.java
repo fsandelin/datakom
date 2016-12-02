@@ -154,14 +154,15 @@ public class Board {
         floor.setColor(Color.black);
         Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) boardRect.getHeight()));
         left.setColor(Color.black);
-        Obstruction top = new Obstruction(30, 0, new Dimension(700, 30));
+        Obstruction top = new Obstruction(33, 0, new Dimension(((int) boardRect.getWidth() - 75), 30));
         top.setColor(Color.black);
-        Obstruction right = new Obstruction(0, (int) boardRect.getWidth() - 50, new Dimension(30, 30));
+        Obstruction right = new Obstruction( (int) boardRect.getWidth() - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
         right.setColor(Color.black);
         this.addObstruction(floor);
         this.addObstruction(left);
-//        this.addObstruction(top);
-//        this.addObstruction(right);
+        this.addObstruction(right);
+        //this.addObstruction(top);
+
     }
 
 }
