@@ -42,18 +42,18 @@ public class Player extends JComponent {
     }
 
     public void jump() {
-	if (this.velocity[1] == 0 && !this.jumping) {	    
-	    velocity[1] = -playerJumpStep;
-	    this.velocity = board.getValidVelocity(velocity);
-	    this.jumping = true;
-	} else if (this.velocity[1] == 0 && this.jumping) {
-	    this.jumping = false;
-	}
+        if (this.velocity[1] == 0 && !this.jumping) {
+            velocity[1] = -playerJumpStep;
+            this.velocity = board.getValidVelocity(velocity);
+            this.jumping = true;
+        } else if (this.velocity[1] == 0 && this.jumping) {
+            this.jumping = false;
+        }
     }
 
     public void checkJumping() {
-	velocity[1] = velocity[1] + 2;
-	this.velocity = board.getValidVelocity(velocity);
+        velocity[1] = velocity[1] + 2;
+        this.velocity = board.getValidVelocity(velocity);
     }
 
     public String toString() {
@@ -63,27 +63,31 @@ public class Player extends JComponent {
 
     public void move(int direction) {
         switch (direction) {
-	case KeyEvent.VK_A:
-	case KeyEvent.VK_LEFT:
-	    if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
-	    velocity[0] = -playerStep - playerAcceleration;
-	    this.velocity = board.getValidVelocity(velocity);
-	    break;
-	case KeyEvent.VK_D:
-	case KeyEvent.VK_RIGHT:
-	    if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
-	    velocity[0] = playerStep + playerAcceleration;
-	    this.velocity = board.getValidVelocity(velocity);
-	    break;
+            case KeyEvent.VK_A:
+            case KeyEvent.VK_LEFT:
+                if (this.playerAcceleration < maxAcceleration) {
+                    this.playerAcceleration++;
+                }
+                velocity[0] = -playerStep - playerAcceleration;
+                this.velocity = board.getValidVelocity(velocity);
+                break;
+            case KeyEvent.VK_D:
+            case KeyEvent.VK_RIGHT:
+                if (this.playerAcceleration < maxAcceleration) {
+                    this.playerAcceleration++;
+                }
+                velocity[0] = playerStep + playerAcceleration;
+                this.velocity = board.getValidVelocity(velocity);
+                break;
 
-	case 0:
-	    this.playerAcceleration = 0;
-	    velocity[0] = 0;
-	    this.velocity = board.getValidVelocity(velocity);
-	    break;
+            case 0:
+                this.playerAcceleration = 0;
+                velocity[0] = 0;
+                this.velocity = board.getValidVelocity(velocity);
+                break;
 
-	default:
-	    break;
+            default:
+                break;
         }
     }
 
@@ -92,7 +96,7 @@ public class Player extends JComponent {
 
     public void paintComponent(Graphics g) {
         this.setLocation(this.xPos, this.yPos);
-        System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
+        //System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
         g.setColor(this.playerColor);
         g.fillRect(0, 0, this.playerSize, this.playerSize);
     }
@@ -115,7 +119,7 @@ public class Player extends JComponent {
 
     public void updatePosition() {
         //System.out.printf("%d | %d\n", xPos, yPos);
-	// System.out.println("My vertical velocity is: " + velocity[1]);
+        // System.out.println("My vertical velocity is: " + velocity[1]);
         this.xPos = this.xPos + velocity[0];
         this.yPos = this.yPos + velocity[1];
     }
