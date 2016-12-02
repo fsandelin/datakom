@@ -17,7 +17,7 @@ public class Player extends JComponent {
     private static final int playerJumpStep = 21; // Has to be odd.
     private static final int playerStep = 2;
     private int playerAcceleration = 0;
-    private int maxAcceleration = 9;
+    private int maxAcceleration = 8;
     private int xPos;
     private int yPos;
     private int velocity[];

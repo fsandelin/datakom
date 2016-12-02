@@ -35,7 +35,7 @@ public class Game {
         board.initKeyboard(keyboardController);
 
         //Creating and adding 4 players and setting the 0-index as current player
-        player = new Player(0, 10, ySize - playerSize - 50, playerSize, board);
+        player = new Player(0, 150, ySize - playerSize, playerSize, board);
         board.addPlayer(player);
         //
 

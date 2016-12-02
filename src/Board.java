@@ -3,6 +3,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 
+import static java.lang.Math.abs;
+
 
 /**
  * Created by falapen on 2016-11-14.
@@ -11,7 +13,6 @@ public class Board {
     private Rectangle boardRect;
 
     private ArrayList<Obstruction> fixedObjects;
-    private ArrayList<Integer> dynamicObjects;
     private Player[] players;
 
     private JFrame window;
@@ -36,10 +37,10 @@ public class Board {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new Player[4];
         fixedObjects = new ArrayList<Obstruction>();
-        dynamicObjects = new ArrayList<Integer>();
-
         drawingSurface = new JPanel();
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
+        this.addWalls(xSize, ySize);
+
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,7 +71,9 @@ public class Board {
         drawingSurface.setVisible(true);
         players[0].repaint();
         for (Obstruction o : fixedObjects) {
-            if(o != null) {o.repaint();}
+            if (o != null) {
+                o.repaint();
+            }
         }
     }
 
@@ -90,16 +93,17 @@ public class Board {
 
     public int[] getValidVelocity(int[] v) {
         Player p = players[0];
-        Rectangle nextPos = new Rectangle(p.getPlayerSize()+v[0], p.getPlayerSize()+v[1], p.getX(), p.getY());
+        Rectangle nextPos = new Rectangle(p.getX() + v[0], p.getY() + v[1], p.getPlayerSize(), p.getPlayerSize());
+        //System.out.println(nextPos);
         Rectangle intersection;
 
         int tentXVelocity = v[0];
         int tentYVelocity = v[1];
 
-        if(v[0] > maxHVelocity) {
+        if (v[0] > maxHVelocity) {
             tentXVelocity = maxHVelocity;
         }
-        if(v[0] < minHVelocity) {
+        if (v[0] < minHVelocity) {
             tentXVelocity = minHVelocity;
         }
 
@@ -111,16 +115,34 @@ public class Board {
             if (nextPos.intersects(o.getRect())) {
                 intersection = nextPos.intersection(o.getRect());
                 if (intersection.getWidth() > intersection.getHeight()) {
-                    if((tentYVelocity = tentYVelocity - ((int) intersection.getHeight()) + 1) <= returnV[1]) {
+                    tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
+                    if ( tentYVelocity <= returnV[1] && tentYVelocity >= -returnV[1]) {
                         returnV[1] = tentYVelocity;
                     }
                 } else {
-                    if((tentXVelocity = tentXVelocity - ((int) intersection.getWidth()) + 1) < returnV[0]) {
-                        returnV[0] = tentXVelocity;
+                    if(v[0] >= 0) {
+                        tentXVelocity = tentXVelocity - ((int) intersection.getWidth());
+                        if(tentXVelocity < returnV[0]) {
+                            returnV[0] = tentXVelocity;
+                        }
+                    }
+                    else {
+                        tentXVelocity = tentXVelocity + ((int) intersection.getWidth());
+                        if(tentXVelocity > returnV[0]) {
+                            returnV[0] = tentXVelocity;
+                        }
                     }
                 }
             }
         }
+       // System.out.printf("%d | %d |||| %d | %d\n", returnV[0], returnV[1], v[0], v[1]);
         return returnV;
     }
+
+    public void addWalls(int xSize, int ySize) {
+        Obstruction o = new Obstruction(100, 570, new Dimension(30, 30));
+        o.setColor(new Color(120, 120, 120));
+        this.addObstruction(o);
+    }
+
 }
