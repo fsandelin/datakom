@@ -29,8 +29,7 @@ public class Game {
         this.board = new Board(xSize, ySize);
         int playerSize = 30;
         int padding = 5;
-        //this.board.addGoal(300,300,60);
-
+       
         //Initialize keyboardcontrols
         keyboardController = new KeyboardController();
         board.initKeyboard(keyboardController);
@@ -85,7 +84,7 @@ public class Game {
             manageKeys();
             player.checkJumping();
             player.updatePosition();
-            //board.win();
+            board.win();
             clock = System.currentTimeMillis();
         }
         this.updateBoard();

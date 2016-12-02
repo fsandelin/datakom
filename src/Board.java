@@ -42,6 +42,8 @@ public class Board {
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
         this.addWalls(xSize, ySize);
 
+	this.addGoal(450,350,50);
+
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setPreferredSize(new Dimension(xSize + 100, ySize + 100));
@@ -70,6 +72,7 @@ public class Board {
     public void update() {
         drawingSurface.setVisible(true);
         players[0].repaint();
+	goal.repaint();
         for (Obstruction o : fixedObjects) {
             if (o != null) {
                 o.repaint();
@@ -168,12 +171,14 @@ public class Board {
     public void addGoal(int xPos, int yPos, int size) {
         this.goal = new Goal(xPos, yPos, size);
         this.drawingSurface.add(goal);
+	System.out.println("Added a goal");
     }
 
     public boolean win() {
         for(Player p: players) {
             if(p != null) {
                 if(goal.win(p)) {
+		    System.out.println("You won!");
                     return true;
                 }
             }
