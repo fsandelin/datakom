@@ -8,6 +8,8 @@ CLASSES = \
 	Server.java \
 	PlayerInfo.java \
 	Server_network.java \
+	ServerThread.java \
+	ClientThread.java \
 	Client_network.java \
 
 
