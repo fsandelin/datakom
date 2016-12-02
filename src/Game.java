@@ -62,15 +62,15 @@ public class Game {
         HashSet<Integer> currentKeys = keyboardController.getActiveKeys();
 //        System.out.println(currentKeys);
 
-        if (currentKeys.contains(KeyEvent.VK_RIGHT)) {
+        if (currentKeys.contains(KeyEvent.VK_RIGHT) || currentKeys.contains(KeyEvent.VK_D)) {
             player.move(KeyEvent.VK_RIGHT);
-        } else if (currentKeys.contains(KeyEvent.VK_LEFT)) {
+        } else if (currentKeys.contains(KeyEvent.VK_LEFT) || currentKeys.contains(KeyEvent.VK_A)) {
             player.move(KeyEvent.VK_LEFT);
         } else {
 	    player.move(0);
 	}
 
-        if (currentKeys.contains(KeyEvent.VK_SPACE)) {
+        if (currentKeys.contains(KeyEvent.VK_SPACE) || currentKeys.contains(KeyEvent.VK_UP)) {
 	    player.jump();
         }
         //System.out.println("Player Moved");
