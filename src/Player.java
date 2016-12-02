@@ -48,9 +48,8 @@ public class Player extends JComponent {
     }
 
     public void checkJumping() {
-	if (this.velocity[1] < 0) velocity[1] = velocity[1] + 2;
-        this.velocity = board.getValidVelocity(velocity);
-	System.out.println("My vertical velocity is: " + this.velocity[1]);
+	velocity[1] = velocity[1] + 2;
+	this.velocity = board.getValidVelocity(velocity);
     }
 
     public String toString() {
