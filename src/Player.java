@@ -14,6 +14,7 @@ public class Player extends JComponent {
 
     private int playerId;
     private Color playerColor;
+    private static final int playerJumpStep = 21; // Has to be odd.
     private static final int playerStep = 2;
     private int playerAcceleration = 0;
     private int maxAcceleration = 9;
@@ -39,8 +40,17 @@ public class Player extends JComponent {
 
     }
 
-    void jump() {
-        // this.jumping = true;
+    public void jump() {
+	if (this.velocity[1] == 0) {
+	    velocity[1] = -playerJumpStep;
+	    this.velocity = board.getValidVelocity(velocity);
+	}
+    }
+
+    public void checkJumping() {
+	if (this.velocity[1] < 0) velocity[1] = velocity[1] + 2;
+        this.velocity = board.getValidVelocity(velocity);
+	System.out.println("My vertical velocity is: " + this.velocity[1]);
     }
 
     public String toString() {
@@ -53,21 +63,19 @@ public class Player extends JComponent {
             case KeyEvent.VK_LEFT:
                 if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
                 velocity[0] = -playerStep - playerAcceleration;
-                this.velocity =
-                        board.getValidHVelocity(velocity);
+                this.velocity = board.getValidVelocity(velocity);
                 break;
 
             case KeyEvent.VK_RIGHT:
                 if(this.playerAcceleration < maxAcceleration) {this.playerAcceleration++;}
                 velocity[0] = playerStep + playerAcceleration;
-                this.velocity =
-                        board.getValidHVelocity(velocity);
+                this.velocity = board.getValidVelocity(velocity);
                 break;
 
             case 0:
                 this.playerAcceleration = 0;
                 velocity[0] = 0;
-                this.velocity = board.getValidHVelocity(velocity);
+                this.velocity = board.getValidVelocity(velocity);
                 break;
 
             default:
@@ -95,6 +103,7 @@ public class Player extends JComponent {
 
     public void updatePosition() {
         //System.out.printf("%d | %d\n", xPos, yPos);
+	// System.out.println("My vertical velocity is: " + velocity[1]);
         this.xPos = this.xPos + velocity[0];
         this.yPos = this.yPos + velocity[1];
     }

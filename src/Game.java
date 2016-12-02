@@ -35,13 +35,13 @@ public class Game {
         board.initKeyboard(keyboardController);
 
         //Creating and adding 4 players and setting the 0-index as current player
-        player = new Player(0, 10, ySize - playerSize, playerSize, board);
+        player = new Player(0, 10, ySize - playerSize - 50, playerSize, board);
         board.addPlayer(player);
         //
 
         //Adding some obstructions to the game
         for (int i = 0; i < 1; i++) {
-            Obstruction o =  new Obstruction(400, 570 , new Dimension(150,30));
+            Obstruction o =  new Obstruction(2, 570 , new Dimension(400,30));
             o.setColor(new Color(120,120,120));
             board.addObstruction(o);
         }
@@ -71,8 +71,7 @@ public class Game {
 	}
 
         if (currentKeys.contains(KeyEvent.VK_SPACE)) {
-            // Check if player isn't jumping or falling atm
-
+	    player.jump();
         }
         //System.out.println("Player Moved");
     }
@@ -83,6 +82,7 @@ public class Game {
 
         if ((System.currentTimeMillis() - clock) >= timestep) {
             manageKeys();
+	    player.checkJumping();
 	    player.updatePosition();
             clock = System.currentTimeMillis();
         }

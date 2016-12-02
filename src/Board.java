@@ -26,7 +26,7 @@ public class Board {
     private Color green = new Color(0, 255, 0);
     private Color blue = new Color(0, 0, 255);
 
-    private int maxVVelocity = 10;
+    private int maxVVelocity = 21;
     private int minVVelocity = -maxVVelocity;
     private int maxHVelocity = 10;
     private int minHVelocity = -maxHVelocity;
@@ -88,7 +88,7 @@ public class Board {
         return this.boardRect.getSize();
     }
 
-    public int[] getValidHVelocity(int[] v) {
+    public int[] getValidVelocity(int[] v) {
         Player p = players[0];
         Rectangle nextPos = new Rectangle(p.getPlayerSize()+v[0], p.getPlayerSize()+v[1], p.getX(), p.getY());
         Rectangle intersection;
