@@ -16,7 +16,7 @@ public class Player extends JComponent {
     private Color playerColor;
     private static final int playerStep = 2;
     private int playerAcceleration = 0;
-    private int maxAcceleration = 9;
+    private int maxAcceleration = 8;
     private int xPos;
     private int yPos;
     private int velocity[];
