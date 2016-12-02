@@ -55,6 +55,9 @@ public class Server_network implements Server{
 	    registry.bind("Server", stub);
 	    System.out.println("List: \n" + registry.list());
 	    System.err.println("Server setup done");
+	    for(int i = 0; i < 10; i++) {
+		System.out.println("a");
+	    }
 	} catch(Exception e) {
 	    System.err.println("Server exception: " + e.toString());
 	    e.printStackTrace();
