@@ -1,7 +1,8 @@
+//import sun.awt.windows.WingDings;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import javax.swing.BorderFactory;
 
 import static java.lang.Math.abs;
 
@@ -42,7 +43,7 @@ public class Board {
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
         this.addWalls(xSize, ySize);
 
-	this.addGoal(450,350,50);
+        this.addGoal(450, 350, 50);
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,7 +73,7 @@ public class Board {
     public void update() {
         drawingSurface.setVisible(true);
         players[0].repaint();
-	goal.repaint();
+        goal.repaint();
         for (Obstruction o : fixedObjects) {
             if (o != null) {
                 o.repaint();
@@ -123,12 +124,14 @@ public class Board {
                         if (tentYVelocity < returnV[1]) {
                             returnV[1] = tentYVelocity;
                         }
-                    } else if(v[1] < 0){
+                    } else if (v[1] < 0) {
                         tentYVelocity = tentYVelocity + ((int) intersection.getHeight());
                         if (tentYVelocity > returnV[1]) {
                             returnV[1] = tentYVelocity;
                         }
-                    } else { returnV[1] = 1;}
+                    } else {
+                        returnV[1] = 1;
+                    }
 
 //                    if (tentYVelocity <= returnV[1] && tentYVelocity >= -returnV[1]) {
 //                        returnV[1] = tentYVelocity;
@@ -159,7 +162,7 @@ public class Board {
         left.setColor(Color.black);
         Obstruction top = new Obstruction(33, 0, new Dimension(((int) boardRect.getWidth() - 75), 30));
         top.setColor(Color.black);
-        Obstruction right = new Obstruction( (int) boardRect.getWidth() - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
+        Obstruction right = new Obstruction((int) boardRect.getWidth() - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
         right.setColor(Color.black);
         this.addObstruction(floor);
         this.addObstruction(left);
@@ -171,14 +174,14 @@ public class Board {
     public void addGoal(int xPos, int yPos, int size) {
         this.goal = new Goal(xPos, yPos, size);
         this.drawingSurface.add(goal);
-	System.out.println("Added a goal");
+        System.out.println("Added a goal");
     }
 
     public boolean win() {
-        for(Player p: players) {
-            if(p != null) {
-                if(goal.win(p)) {
-		    System.out.println("You won!");
+        for (Player p : players) {
+            if (p != null) {
+                if (goal.win(p)) {
+                    System.out.println("You won!");
                     return true;
                 }
             }

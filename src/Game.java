@@ -19,6 +19,8 @@ public class Game {
     private long clock;
     private int timestep = 33;
 
+    private boolean win;
+
     /**
      * Game setup
      *
@@ -29,7 +31,8 @@ public class Game {
         this.board = new Board(xSize, ySize);
         int playerSize = 30;
         int padding = 5;
-       
+        this.win = false;
+
         //Initialize keyboardcontrols
         keyboardController = new KeyboardController();
         board.initKeyboard(keyboardController);
@@ -84,7 +87,7 @@ public class Game {
             manageKeys();
             player.checkJumping();
             player.updatePosition();
-            board.win();
+            win = board.win();
             clock = System.currentTimeMillis();
         }
         this.updateBoard();
@@ -94,7 +97,9 @@ public class Game {
         this.board.update();
     }
 
-
+    public boolean checkWinState() {
+        return win;
+    }
     /**
      * Main method
      *
@@ -103,7 +108,7 @@ public class Game {
     public static void main(String[] args) {
         Game runningGame = new Game(800, 600);
         System.out.println(runningGame);
-        while (true) {
+        while (!runningGame.checkWinState()) {
             runningGame.run();
         }
     }
