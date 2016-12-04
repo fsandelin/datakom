@@ -1,12 +1,17 @@
+import java.net.*;
 public class PlayerInfo {
-    private String ip;
+    private InetAddress ip;
     private int port;
     private String alias;
-    private Short x;
-    private Short y;
+    private short x;
+    private short y;
 
     public PlayerInfo(String ip, int port, String alias) {
-	this.ip = ip;
+	try {
+	    this.ip = InetAddress.getByName(ip);
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}	
 	this.port = port;
 	this.alias = alias;
 	this.x = 0;
@@ -14,14 +19,18 @@ public class PlayerInfo {
     }
     
     public PlayerInfo(String ip, int port, String alias, Short x, Short y) {
-	this.ip = ip;
+	try {
+	    this.ip = InetAddress.getByName(ip);
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
 	this.port = port;
 	this.alias = alias;
 	this.x = x;
 	this.y = y;
     }    
 
-    public String getIp() {
+    public InetAddress getIp() {
 	return this.ip;
     }
 
@@ -31,6 +40,13 @@ public class PlayerInfo {
 
     public String getAlias() {
 	return this.alias;
+    }
+
+    public short getX() {
+	return this.x;
+    }
+    public short getY() {
+	return this.y;
     }
 
     public String toString() {

@@ -5,19 +5,21 @@ import java.nio.*;
 
 public class DatagramServerThread extends Thread {
     protected DatagramSocket socket;
-    ArrayList <PlayerInfo> playerList;
+    private int hz;
+    ArrayList<PlayerInfo> playerList;
     
     public DatagramServerThread() throws IOException{
 	super("DatagramServerThread");
-	this.socket = new DatagramSocket(1098);
+	this.socket = new DatagramSocket(1099);
 	this.playerList = new ArrayList<PlayerInfo>();
+	this.hz = 16;
     }
     
     public DatagramServerThread(ArrayList<PlayerInfo> list) throws IOException{
 	super("DatagramServerThread");
 	this.socket = new DatagramSocket(1098);
 	this.playerList = list;
-
+	this.hz = 16;   
     }    
 
     public void addPlayer(PlayerInfo info){
@@ -27,26 +29,69 @@ public class DatagramServerThread extends Thread {
     public void removePlayer(int index) {
 	this.playerList.remove(index);
     }
-    
-    public void run() {
-	byte[] receiveBuff = new byte[4];
-	while(true) {
-	    DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
-	    try {
-		this.socket.receive(receivePacket);
-	    }catch(Exception e) {
-		System.out.println(e.toString());
+
+    public void sendInfo() {
+	int players = this.playerList.size();
+	byte[] sendBuff = new byte[players*4];
+	for(int i = 0; i < players; i++) {
+	    sendBuff[0 + (i*4)] = (byte) (this.playerList.get(i).getX() >> 8);
+	    sendBuff[1 + (i*4)] = (byte) (this.playerList.get(i).getX());
+	    sendBuff[2 + (i*4)] = (byte) (this.playerList.get(i).getY() >> 8);
+	    sendBuff[3 + (i*4)] = (byte) (this.playerList.get(i).getY());
+	}
+	//this.debugByteArray(sendBuff);
+	try {
+	    for(int i = 0; i < players; i++) {
+		DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, playerList.get(i).getIp(), playerList.get(i).getPort());
+		this.socket.send(sendPacket);
 	    }
-	    byte[] receivedData = receivePacket.getData();
-	    ByteBuffer bb = ByteBuffer.allocate(4);
-	    bb.order(ByteOrder.BIG_ENDIAN);
-	    bb.put(receivedData[0]);
-	    bb.put(receivedData[1]);
-	    bb.put(receivedData[2]);
-	    bb.put(receivedData[3]);
-	    Short x = bb.getShort(0);
-	    Short y = bb.getShort(2);
-	    System.out.println("Server received | " + Short.toString(x) + " " + Short.toString(y));
+	}catch(Exception e){
+	    System.out.println(e.toString());
 	}
     }
+
+    private void receiveInfo(byte[] receiveBuff) {
+	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
+	try {
+	    this.socket.receive(receivePacket);
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	byte[] receivedData = receivePacket.getData();
+	ByteBuffer bb = ByteBuffer.allocate(4);
+	bb.order(ByteOrder.BIG_ENDIAN);
+	bb.put(receivedData[0]);
+	bb.put(receivedData[1]);
+	bb.put(receivedData[2]);
+	bb.put(receivedData[3]);
+	short x = bb.getShort(0);
+	short y = bb.getShort(2);
+	System.out.println("Server received | " + Short.toString(x) + " " + Short.toString(y));
+    }
+
+    public void debugByteArray(byte[] bytearray) {
+	String array = "";
+	for(int i = 0; i < bytearray.length; i++) {
+	    String str = String.format("%8s", Integer.toBinaryString(bytearray[i] & 0xFF)).replace(' ','0');
+	    array = array + str + " "; 
+	}
+	System.out.println(array);
+    }    
+    
+    public void run() {
+	int timeToSleep = 1000/this.hz;	
+	byte[] receiveBuff = new byte[4];
+	while(true) {
+	    this.sendInfo();
+	    //this.sleep(timeToSleep);
+	}
+    }
+    
+    public void sleep(int time){
+	try {
+	    Thread.sleep(time);
+	}catch(InterruptedException e) {
+	    System.out.println(e.toString());
+	}	
+    }    
 }

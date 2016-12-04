@@ -1,6 +1,7 @@
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import java.nio.*;
     
 public class DatagramClientThread extends Thread{
 
@@ -18,7 +19,7 @@ public class DatagramClientThread extends Thread{
 	this.playerX = 0;
 	this.playerY = 0;
 	this.hz = 16;
-	this.socket = new DatagramSocket(1099);
+	this.socket = new DatagramSocket(1097);
     }
     public DatagramClientThread(String serverIp, int serverPort, short x, short y) throws IOException{
 	super("Data_client_thread");
@@ -27,7 +28,7 @@ public class DatagramClientThread extends Thread{
 	this.playerX = x;
 	this.playerY = y;
 	this.hz = 16;
-	this.socket = new DatagramSocket(1099);	
+	this.socket = new DatagramSocket(1097);	
     }
 
     public DatagramClientThread(String serverIp, int serverPort, short x, short y, int hz) throws IOException{
@@ -37,7 +38,7 @@ public class DatagramClientThread extends Thread{
 	this.playerX = x;
 	this.playerY = y;
 	this.hz = hz;
-	this.socket = new DatagramSocket(1099);	
+	this.socket = new DatagramSocket(1097);	
     }    
 
     public void update(short x, short y) {
@@ -53,24 +54,48 @@ public class DatagramClientThread extends Thread{
 	return this.playerY;	
     }
 
+    public void sendInfo(byte[] sendBuff) {
+	sendBuff[0] = (byte) (this.playerX >> 8);	    
+	sendBuff[1] = (byte) this.playerX;
+	sendBuff[2] = (byte) (this.playerY >> 8);
+	sendBuff[3] = (byte) this.playerY;
+	//this.debugByteArray(sendBuff);
+	try {
+	    DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, this.serverIp, this.serverPort);
+	    this.socket.send(sendPacket);
+	    System.out.println("Client sent from port " + Integer.toString(this.serverPort) + " | " + Integer.toString(this.playerX) + "," + Integer.toString(this.playerY));
+	}catch(IOException e) {
+	    System.out.println(e.toString());
+	}	
+    }
+
+    public void receiveInfo(int players) {
+	byte[] receiveBuff = new byte[players*4];
+	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
+	try {
+	    this.socket.receive(receivePacket);
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	byte[] receivedData = receivePacket.getData();
+	ByteBuffer bb = ByteBuffer.allocate(4*players);
+	bb.order(ByteOrder.BIG_ENDIAN);
+	for(int i = 0; i < players; i++) {
+	    bb.put(receivedData[0 + (i*4)]);
+	    bb.put(receivedData[1 + (i*4)]);
+	    bb.put(receivedData[2 + (i*4)]);
+	    bb.put(receivedData[3 + (i*4)]);
+	    short x = bb.getShort(0 + (i*4));
+	    short y = bb.getShort(2 + (i*4));
+	    System.out.println("Server received | " + Short.toString(x) + " " + Short.toString(y));	    
+	}	
+    }
+
     public void run(){
 	int timeToSleep = 1000/this.hz;
 	byte[] sendBuff = new byte[4];	
 	while(true){
-	    sendBuff[0] = (byte) (this.playerX >> 8);	    
-	    sendBuff[1] = (byte) this.playerX;
-	    sendBuff[2] = (byte) (this.playerY >> 8);
-	    sendBuff[3] = (byte) this.playerY;
-	    //this.debugByteArray(sendBuff);
-	    try {
-		DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, this.serverIp, this.serverPort);
-		this.socket.send(sendPacket);
-		System.out.println("Client sent from port " + Integer.toString(this.serverPort) + " | " + Integer.toString(this.playerX) + "," + Integer.toString(this.playerY));
-	    }catch(IOException e) {
-		System.out.println(e.toString());
-	    }
-	    
-	    this.sleep(timeToSleep);
+	    this.receiveInfo(3);
 	}
     }
 
