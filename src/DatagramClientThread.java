@@ -47,7 +47,10 @@ public class DatagramClientThread extends Thread{
 
     public short getX(){
 	return this.playerX;
-	return this.playerY;
+    }
+
+    public short getY() {
+	return this.playerY;	
     }
 
     public void run(){

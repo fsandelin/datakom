@@ -7,6 +7,7 @@ BDIR = bin
 CLASSES = \
 	Server.java \
 	PlayerInfo.java \
+	PlayerPosInfo.java \
 	ServerNetwork.java \
 	ServerThread.java \
 	ClientThread.java \
