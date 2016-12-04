@@ -7,10 +7,13 @@ BDIR = bin
 CLASSES = \
 	Server.java \
 	PlayerInfo.java \
-	Server_network.java \
+	ServerNetwork.java \
 	ServerThread.java \
 	ClientThread.java \
-	Client_network.java \
+	ClientNetwork.java \
+	DatagramClient.java \
+	DatagramClientThread.java \
+	DatagramServerThread.java \
 
 
 
