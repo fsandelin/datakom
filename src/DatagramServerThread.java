@@ -5,10 +5,27 @@ import java.nio.*;
 
 public class DatagramServerThread extends Thread {
     protected DatagramSocket socket;
+    ArrayList <PlayerInfo> playerList;
     
     public DatagramServerThread() throws IOException{
 	super("DatagramServerThread");
 	this.socket = new DatagramSocket(1098);
+	this.playerList = new ArrayList<PlayerInfo>();
+    }
+    
+    public DatagramServerThread(ArrayList<PlayerInfo> list) throws IOException{
+	super("DatagramServerThread");
+	this.socket = new DatagramSocket(1098);
+	this.playerList = list;
+
+    }    
+
+    public void addPlayer(PlayerInfo info){
+        this.playerList.add(info);
+    }
+
+    public void removePlayer(int index) {
+	this.playerList.remove(index);
     }
     
     public void run() {
