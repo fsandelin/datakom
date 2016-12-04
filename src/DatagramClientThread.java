@@ -44,7 +44,12 @@ public class DatagramClientThread extends Thread{
 	this.playerX = x;
 	this.playerY = y;
     }
-    
+
+    public short getX(){
+	return this.playerX;
+	return this.playerY;
+    }
+
     public void run(){
 	int timeToSleep = 1000/this.hz;
 	byte[] sendBuff = new byte[4];	
