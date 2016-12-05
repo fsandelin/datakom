@@ -11,8 +11,9 @@ public class DatagramClientThread extends Thread{
     private short playerY;
     private int hz;
     protected DatagramSocket socket;
+    private GameThread gamethread;
     
-    public DatagramClientThread(String serverIp, int serverPort) throws IOException{
+    public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort) throws IOException{
 	super("DataClientThread");
 	this.serverIp = InetAddress.getByName(serverIp);
 	this.serverPort = serverPort;
@@ -20,30 +21,35 @@ public class DatagramClientThread extends Thread{
 	this.playerY = 0;
 	this.hz = 16;
 	this.socket = new DatagramSocket(1097);
+	this.gamethread = gamethread;	
     }
-    public DatagramClientThread(String serverIp, int serverPort, short x, short y) throws IOException{
+    
+    public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort, short x, short y) throws IOException{
 	super("Data_client_thread");
 	this.serverIp = InetAddress.getByName(serverIp);
 	this.serverPort = serverPort;
 	this.playerX = x;
 	this.playerY = y;
 	this.hz = 16;
-	this.socket = new DatagramSocket(1097);	
+	this.socket = new DatagramSocket(1097);
+	this.gamethread = gamethread;	
     }
 
-    public DatagramClientThread(String serverIp, int serverPort, short x, short y, int hz) throws IOException{
+    public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort, short x, short y, int hz) throws IOException{
 	super("Data_client_thread");
 	this.serverIp = InetAddress.getByName(serverIp);
 	this.serverPort = serverPort;
 	this.playerX = x;
 	this.playerY = y;
 	this.hz = hz;
-	this.socket = new DatagramSocket(1097);	
+	this.socket = new DatagramSocket(1097);
+	this.gamethread = gamethread;
     }    
 
-    public void update(short x, short y) {
-	this.playerX = x;
-	this.playerY = y;
+    private void updatePlayerPos() {
+	Player player = this.gamethread.getPlayer();
+	this.playerX = player.getPlayerXShort();
+	this.playerY = player.getPlayerYShort();
     }
 
     public short getX(){
@@ -55,6 +61,7 @@ public class DatagramClientThread extends Thread{
     }
 
     public void sendInfo(byte[] sendBuff) {
+	this.updatePlayerPos();
 	sendBuff[0] = (byte) (this.playerX >> 8);	    
 	sendBuff[1] = (byte) this.playerX;
 	sendBuff[2] = (byte) (this.playerY >> 8);

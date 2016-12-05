@@ -7,20 +7,33 @@ public class DatagramServerThread extends Thread {
     protected DatagramSocket socket;
     private int hz;
     ArrayList<PlayerInfo> playerList;
+    private short playerX;
+    private short playerY;
+    private GameThread gamethread;  
     
-    public DatagramServerThread() throws IOException{
+    public DatagramServerThread(GameThread gamethread){
 	super("DatagramServerThread");
-	this.socket = new DatagramSocket(1099);
-	this.playerList = new ArrayList<PlayerInfo>();
+	try {
+	    this.socket = new DatagramSocket(1099);
+	}catch(SocketException e) {
+	    System.out.println(e.toString());
+	}
 	this.hz = 16;
+	this.gamethread = gamethread;
+	this.playerList = new ArrayList<PlayerInfo>();
+	this.playerX = 0;
+	this.playerY = 0;
     }
     
-    public DatagramServerThread(ArrayList<PlayerInfo> list) throws IOException{
+    public DatagramServerThread(short playerX, short playerY, GameThread gamethread, ArrayList<PlayerInfo> list) throws IOException{
 	super("DatagramServerThread");
 	this.socket = new DatagramSocket(1098);
 	this.playerList = list;
-	this.hz = 16;   
-    }    
+	this.hz = 16;
+	this.gamethread = gamethread;
+	this.playerX = playerX;
+	this.playerY = playerY;
+    }
 
     public void addPlayer(PlayerInfo info){
         this.playerList.add(info);
@@ -30,7 +43,13 @@ public class DatagramServerThread extends Thread {
 	this.playerList.remove(index);
     }
 
+    private void updatePlayerList(){
+	short x = this.gamethread.getPlayer().getPlayerXShort();
+	short y = this.gamethread.getPlayer().getPlayerYShort();
+	System.out.println(Short.toString(x) + " | " + Short.toString(y));
+    }
     public void sendInfo() {
+	this.updatePlayerList();
 	int players = this.playerList.size();
 	byte[] sendBuff = new byte[players*4];
 	for(int i = 0; i < players; i++) {
@@ -83,7 +102,7 @@ public class DatagramServerThread extends Thread {
 	byte[] receiveBuff = new byte[4];
 	while(true) {
 	    this.sendInfo();
-	    //this.sleep(timeToSleep);
+	    this.sleep(timeToSleep);
 	}
     }
     

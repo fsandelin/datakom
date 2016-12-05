@@ -1,104 +1,22 @@
-/**
- * @author Fredrik Sandelin
- */
+import java.net.*;
+import java.util.*;
 
-import java.awt.*;
-import java.awt.Graphics2D;
-import java.awt.image.BufferStrategy;
-import java.awt.Graphics;
-import javax.swing.*;
-import java.util.HashSet;
-import java.awt.event.KeyEvent;
-
-public class Game {
-
-    private Board board;
-    private Player[] playerArray = new Player[4];
-    private Player player = playerArray[0];
-    private KeyboardController keyboardController;
-    private long clock;
-    private int timestep = 33;
-
-    private boolean win;
-
-    /**
-     * Game setup
-     *
-     * @param xSize Width of the game-board
-     * @param ySize Heigth of the game-board
-     */
-    public Game(int xSize, int ySize) {
-        this.board = new Board(xSize, ySize);
-        int playerSize = 30;
-        int padding = 5;
-        this.win = false;
-
-        //Initialize keyboardcontrols
-        keyboardController = new KeyboardController();
-        board.initKeyboard(keyboardController);
-
-        //Creating and adding 4 players and setting the 0-index as current player
-        player = new Player(0, 150, ySize - playerSize - 100, playerSize, board);
-        board.addPlayer(player);
-        //
-
-        //Adding some obstructions to the game
-        for (int i = 0; i < 1; i++) {
-            Obstruction o = new Obstruction(400, 450, new Dimension(150, 30));
-            o.setColor(new Color(120, 120, 120));
-            board.addObstruction(o);
-        }
-        //
-
-        clock = System.currentTimeMillis();
+public class Game{
+    private static void runAsClient(String ip, int port) {
+	GameThread game = new GameThread(800, 600);	
     }
-
-    public String toString() {
-        return "Current game is running";
-    }
-
-    /**
-     * Following block is for keyboard control and ticks
-     */
-
-    private void manageKeys() {
-        HashSet<Integer> currentKeys = keyboardController.getActiveKeys();
-//        System.out.println(currentKeys);
-
-        if (currentKeys.contains(KeyEvent.VK_RIGHT) || currentKeys.contains(KeyEvent.VK_D)) {
-            player.move(KeyEvent.VK_RIGHT);
-        } else if (currentKeys.contains(KeyEvent.VK_LEFT) || currentKeys.contains(KeyEvent.VK_A)) {
-            player.move(KeyEvent.VK_LEFT);
-        } else {
-            player.move(0);
-        }
-
-        if (currentKeys.contains(KeyEvent.VK_SPACE) || currentKeys.contains(KeyEvent.VK_UP)) {
-            player.jump();
-        }
-        //System.out.println("Player Moved");
-    }
-
-
-    private void run() {
-        // Game loop
-
-        if ((System.currentTimeMillis() - clock) >= timestep) {
-            manageKeys();
-            player.checkJumping();
-            player.updatePosition();
-            win = board.win();
-            clock = System.currentTimeMillis();
-        }
-        this.updateBoard();
-    }
-
-    public void updateBoard() {
-        this.board.update();
-    }
-
-    public boolean checkWinState() {
-        return win;
+    private static void runAsServer(String ip, int port) {
+	GameThread game = new GameThread(800, 600);
+	System.out.println("Starting Server RMI thread...");    
+	ServerNetworkThread serverRMI = new ServerNetworkThread(game);
+	serverRMI.start();
+	sleep(500);
+	System.out.println("Starting Server UDP thread...");
+	DatagramServerThread serverUDP = new DatagramServerThread(game);
+	serverUDP.start();
+	System.out.println("UDP up and running");
+	game.start();
+	
     }
     /**
      * Main method
@@ -106,10 +24,53 @@ public class Game {
      * @param args
      */
     public static void main(String[] args) {
-        Game runningGame = new Game(800, 600);
-        System.out.println(runningGame);
-        while (!runningGame.checkWinState()) {
-            runningGame.run();
-        }
+	int port;
+	String ip;
+	Scanner reader = new Scanner(System.in);
+	System.out.println("Enter port to use (recommended 1099):");;
+	port = reader.nextInt();
+	
+	System.out.println("0.Exit  |  1.Host  |  2.Client");
+	int response = reader.nextInt();
+
+	switch (response) {
+	case 1: {
+	    System.out.println("Enter your IP:");
+	    ip = reader.next();
+	    try {	
+		InetAddress check = InetAddress.getByName(ip);
+	    }catch(UnknownHostException e) {
+		System.out.println("UnknowHostException. Försök igen och kotrollera IPn.");
+		System.out.println(e.toString());
+		System.exit(0);
+	    }
+	    runAsServer(ip, port);	    
+	    break;
+	}
+	case 2: {
+	    System.out.println("Enter IP to connect to:");
+	    ip = reader.next();
+	    try {	
+		InetAddress check = InetAddress.getByName(ip);
+	    }catch(UnknownHostException e) {
+		System.out.println("UnknowHostException. Försök igen och kotrollera IPn.");
+		System.out.println(e.toString());
+		System.exit(0);
+	    }
+	    runAsClient(ip, port);
+	    break;
+	}
+	default:
+	    System.exit(0);
+	    break;
+	}
     }
+    private static void sleep(int time){
+	try {
+	    Thread.sleep(time);
+	}catch(InterruptedException e) {
+	    System.out.println(e.toString());
+	}	
+    }    
 }
+
