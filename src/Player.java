@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 
 public class Player extends JComponent {
     private int playerSize;
-
     private int playerId;
     private Color playerColor;
     private static final int playerJumpStep = 21; // Has to be odd.
@@ -112,10 +111,17 @@ public class Player extends JComponent {
     public int getPlayerX() {
         return this.xPos;
     }
-
     public int getPlayerY() {
         return this.yPos;
     }
+    public short getPlayerXShort() {
+        return (short) this.xPos;
+    }
+    public short getPlayerYShort() {
+        return (short) this.yPos;
+    }
+
+    
 
     public void updatePosition() {
         //System.out.printf("%d | %d\n", xPos, yPos);

@@ -7,20 +7,29 @@ public class DatagramServerThread extends Thread {
     protected DatagramSocket socket;
     private int hz;
     ArrayList<PlayerInfo> playerList;
+    private short playerX;
+    private short playerY;
+    private GameThread gamethread;  
     
-    public DatagramServerThread() throws IOException{
+    public DatagramServerThread(GameThread gamethread) throws IOException{
 	super("DatagramServerThread");
 	this.socket = new DatagramSocket(1099);
 	this.playerList = new ArrayList<PlayerInfo>();
 	this.hz = 16;
+	this.gamethread = gamethread;
+	this.playerX = 0;
+	this.playerY = 0;
     }
     
-    public DatagramServerThread(ArrayList<PlayerInfo> list) throws IOException{
+    public DatagramServerThread(short playerX, short playerY, GameThread gamethread, ArrayList<PlayerInfo> list) throws IOException{
 	super("DatagramServerThread");
 	this.socket = new DatagramSocket(1098);
 	this.playerList = list;
-	this.hz = 16;   
-    }    
+	this.hz = 16;
+	this.gamethread = gamethread;
+	this.playerX = playerX;
+	this.playerY = playerY;
+    }
 
     public void addPlayer(PlayerInfo info){
         this.playerList.add(info);
