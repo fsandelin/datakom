@@ -56,6 +56,10 @@ public class GameThread extends Thread{
     public Player getPlayer() {
 	return this.player;
     }
+
+    public ArrayList<Player> getPlayerArray() {
+	return this.playerArray;
+    }
     
     public String toString() {
         return "Current game is running";

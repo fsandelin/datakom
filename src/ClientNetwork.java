@@ -23,10 +23,10 @@ public class ClientNetwork{
 	try {
 	    Registry registry = LocateRegistry.getRegistry(host,1099);
 	    Server stub = (Server) registry.lookup("Server");
-	    int[] response = stub.getState();
+	    int[] response = stub.getGameState();
 	    int response2 = stub.connectToGame(ownIp, ownPort, ownAlias);
 	    System.out.println(response2);
-	    stub.debug();
+	    stub.debugRMI();
 	} catch(Exception e) {
 	    System.err.println("Client network got Exceptiob: " + e.toString());
 	    e.printStackTrace();

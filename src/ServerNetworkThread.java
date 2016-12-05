@@ -6,23 +6,26 @@ import java.rmi.registry.*;
 import java.rmi.server.*;
 import java.util.*;
 
-public class ServerNetwork implements Server{
+public class ServerNetworkThread extends Thread implements Server{
     int map;
     int hz;
     ArrayList <PlayerInfo> playerList;
+    GameThread gamethread;
     
-    public ServerNetwork() {
+    public ServerNetworkThread(GameThread gamethread) {
+	super("ServerNetworkThread");
 	this.map = 1;
 	this.hz = 16;
 	this.playerList = new ArrayList<PlayerInfo>();
+	this.gamethread = gamethread;
     }
     
-    public int[] getState() {
+    public int[] getGameState() {
 	int[] state = {this.map, this.hz};
 	return state;
     }
 
-    public void debug() {
+    public void debugRMI() {
 	System.out.println("Map: " + this.map);
 	System.out.println("Hz: " + this.hz);
 	ListIterator<PlayerInfo> iterator = this.playerList.listIterator();
@@ -38,7 +41,7 @@ public class ServerNetwork implements Server{
 	try {
 	    PlayerInfo player = new PlayerInfo(ip, port, alias);
 	    playerList.add(player);
-	    this.debug();
+	    this.debugRMI();
 	    return 1;
 	} catch(Exception e) {
 	    System.err.println("Server exception: " + e.toString());	    
@@ -47,20 +50,19 @@ public class ServerNetwork implements Server{
     }
 
 
-    public static void main(String args[]) {
+    public void run(){
 	try {
-	    ServerNetwork obj = new ServerNetwork();
-	    Server stub = (Server) UnicastRemoteObject.exportObject(obj, 0);
+	    Server stub = (Server) UnicastRemoteObject.exportObject(this, 0);
 	    Registry registry = LocateRegistry.getRegistry();
 	    registry.bind("Server", stub);
 	    System.out.println("List: \n" + registry.list());
-	    System.err.println("Server setup done");
-	    for(int i = 0; i < 10; i++) {
-		System.out.println("a");
-	    }
+	    System.err.println("Server RMI setup done");
 	} catch(Exception e) {
 	    System.err.println("Server exception: " + e.toString());
-	    e.printStackTrace();
+	    System.out.println("IF YOU GOT ALREADY BOUND EXCEPTION!");
+	    System.out.println("Run rmiregistry & before hosting.");
+	    System.out.println("Use ps and kill if you already have rmiregistry running and want to kill it.");
+	    System.exit(0);
 	}
 	
     }

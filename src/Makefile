@@ -8,7 +8,7 @@ CLASSES = \
 	Server.java \
 	PlayerInfo.java \
 	PlayerPosInfo.java \
-	ServerNetwork.java \
+	ServerNetworkThread.java \
 	ServerThread.java \
 	ClientThread.java \
 	ClientNetwork.java \

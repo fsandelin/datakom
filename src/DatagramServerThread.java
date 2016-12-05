@@ -11,12 +11,16 @@ public class DatagramServerThread extends Thread {
     private short playerY;
     private GameThread gamethread;  
     
-    public DatagramServerThread(GameThread gamethread) throws IOException{
+    public DatagramServerThread(GameThread gamethread){
 	super("DatagramServerThread");
-	this.socket = new DatagramSocket(1099);
-	this.playerList = new ArrayList<PlayerInfo>();
+	try {
+	    this.socket = new DatagramSocket(1099);
+	}catch(SocketException e) {
+	    System.out.println(e.toString());
+	}
 	this.hz = 16;
 	this.gamethread = gamethread;
+	this.playerList = new ArrayList<PlayerInfo>();
 	this.playerX = 0;
 	this.playerY = 0;
     }
@@ -39,7 +43,13 @@ public class DatagramServerThread extends Thread {
 	this.playerList.remove(index);
     }
 
+    private void updatePlayerList(){
+	short x = this.gamethread.getPlayer().getPlayerXShort();
+	short y = this.gamethread.getPlayer().getPlayerYShort();
+	System.out.println(Short.toString(x) + " | " + Short.toString(y));
+    }
     public void sendInfo() {
+	this.updatePlayerList();
 	int players = this.playerList.size();
 	byte[] sendBuff = new byte[players*4];
 	for(int i = 0; i < players; i++) {
@@ -92,7 +102,7 @@ public class DatagramServerThread extends Thread {
 	byte[] receiveBuff = new byte[4];
 	while(true) {
 	    this.sendInfo();
-	    //this.sleep(timeToSleep);
+	    this.sleep(timeToSleep);
 	}
     }
     
