@@ -13,7 +13,6 @@ public class ClientNetwork{
 	this.map = 1;
 	this.hz = 32;
     }
-
     
     public static void main(String args[]) {
 	String host = (args.length < 4) ? null : args[0];
