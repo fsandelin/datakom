@@ -12,6 +12,8 @@ CLASSES = \
 	Server_network.java \
 	Client_network.java \
 	KeyboardController.java \
+	Obstruction.java \
+	Goal.java \
 
 #----------------------
 #-------Modules--------
