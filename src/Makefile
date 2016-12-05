@@ -15,13 +15,13 @@ CLASSES = \
 	DatagramClient.java \
 	DatagramClientThread.java \
 	DatagramServerThread.java \
-
-
-
-#	Player.java \
-#	Board.java \
-#	Game.java \
-#	KeyboardController.java \
+	Player.java \
+	Board.java \
+	Game.java \
+	KeyboardController.java \
+	KeyboardController.java \
+	Obstruction.java \
+	Goal.java \
 #----------------------
 #-------Modules--------
 #----------------------
