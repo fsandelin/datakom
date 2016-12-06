@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 
 public class Player extends JComponent {
     private int playerSize;
-    private int playerId;
+    private String playerId;
     private Color playerColor;
     private static final int playerJumpStep = 21; // Has to be odd.
     private static final int playerStep = 2;
@@ -23,7 +23,7 @@ public class Player extends JComponent {
     private Board board;
     private boolean jumping;
 
-    public Player(int playerId, int startXPos, int startYPos, int size, Board b) {
+    public Player(String playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
         this.setPreferredSize(new Dimension(size, size));
         //
@@ -100,7 +100,7 @@ public class Player extends JComponent {
         g.fillRect(0, 0, this.playerSize, this.playerSize);
     }
 
-    public int getPlayerId() {
+    public String getPlayerId() {
         return this.playerId;
     }
 
@@ -121,12 +121,22 @@ public class Player extends JComponent {
         return (short) this.yPos;
     }
 
-    
+    public void setX(int x) {
+        this.xPos = x;
+    }
+
+    public void setY(int y) {
+        this.yPos = y;
+    }
 
     public void updatePosition() {
         //System.out.printf("%d | %d\n", xPos, yPos);
         // System.out.println("My vertical velocity is: " + velocity[1]);
         this.xPos = this.xPos + velocity[0];
         this.yPos = this.yPos + velocity[1];
+    }
+
+    public Color getPlayerColor() {
+        return this.playerColor;
     }
 }

@@ -14,7 +14,7 @@ public class Board {
     private Rectangle boardRect;
 
     private ArrayList<Obstruction> fixedObjects;
-    private Player[] players;
+    private ArrayList<Player> players;
 
     private JFrame window;
     private JPanel drawingSurface;
@@ -33,11 +33,14 @@ public class Board {
     private int maxHVelocity = 10;
     private int minHVelocity = -maxHVelocity;
 
+    private int boardLowerXBounds;
+    private int pSize = 30;
+
     private Goal goal;
 
     public Board(int xSize, int ySize) {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
-        players = new Player[4];
+        players = new ArrayList<Player>();
         fixedObjects = new ArrayList<Obstruction>();
         drawingSurface = new JPanel();
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
@@ -59,8 +62,8 @@ public class Board {
 
 
     public void addPlayer(Player p) {
-        players[0] = p;
-        this.drawingSurface.add(players[0]);
+        players.add(p);
+        this.drawingSurface.add(p);
         //System.out.println(players[0]);
     }
 
@@ -72,8 +75,12 @@ public class Board {
 
     public void update() {
         drawingSurface.setVisible(true);
-        players[0].repaint();
         goal.repaint();
+        for (Player p : players) {
+            if (p != null) {
+                p.repaint();
+            }
+        }
         for (Obstruction o : fixedObjects) {
             if (o != null) {
                 o.repaint();
@@ -96,7 +103,7 @@ public class Board {
     }
 
     public int[] getValidVelocity(int[] v) {
-        Player p = players[0];
+        Player p = players.get(0);
         Rectangle nextPos = new Rectangle(p.getX() + v[0], p.getY() + v[1], p.getPlayerSize(), p.getPlayerSize());
         //System.out.println(nextPos);
         Rectangle intersection;
@@ -158,6 +165,7 @@ public class Board {
     public void addWalls(int xSize, int ySize) {
         Obstruction floor = new Obstruction(0, (int) boardRect.getHeight() - 30, new Dimension((int) boardRect.getWidth(), 30));
         floor.setColor(Color.black);
+        boardLowerXBounds = (int) boardRect.getHeight() - 30;
         Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) boardRect.getHeight()));
         left.setColor(Color.black);
         Obstruction top = new Obstruction(33, 0, new Dimension(((int) boardRect.getWidth() - 75), 30));
@@ -178,15 +186,17 @@ public class Board {
     }
 
     public boolean win() {
-        for (Player p : players) {
-            if (p != null) {
-                if (goal.win(p)) {
-                    System.out.println("You won!");
-                    return true;
-                }
-            }
-        }
-        return false;
+        Player p = players.get(0);
+        return goal.win(p);
+    }
+
+    public int[] getValidPlayerPosition() {
+        int playerSize = this.pSize;
+        int[] returnArray = new int[2];
+        returnArray[0] =boardLowerXBounds;
+        returnArray[1] = 500;
+        return returnArray;
+
     }
 
 }
