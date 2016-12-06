@@ -2,6 +2,7 @@
 import java.net.*;
 import java.util.*;
 
+
 public class Game{
     private static void runAsClient(String alias, String serverIp, int serverPort ,int ownPort) {
 	GameThread game = new GameThread(800, 600);
@@ -29,7 +30,8 @@ public class Game{
 	System.out.println("UDP up and running");
 	game.start();
 	
-    }
+
+
     /**
      * Main method
      *
@@ -81,13 +83,12 @@ public class Game{
 	    System.exit(0);
 	    break;
 	}
+    private static void sleep(int time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            System.out.println(e.toString());
+        }
     }
-    private static void sleep(int time){
-	try {
-	    Thread.sleep(time);
-	}catch(InterruptedException e) {
-	    System.out.println(e.toString());
-	}	
-    }    
 }
 
