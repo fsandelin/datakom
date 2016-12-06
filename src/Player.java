@@ -120,9 +120,13 @@ public class Player extends JComponent {
     public short getPlayerYShort() {
         return (short) this.yPos;
     }
-
+    public void setX(int x) {
+	this.xPos = x;
+    }
+    public void setY(int y) {
+	this.yPos = y;
+    }
     
-
     public void updatePosition() {
         //System.out.printf("%d | %d\n", xPos, yPos);
         // System.out.println("My vertical velocity is: " + velocity[1]);

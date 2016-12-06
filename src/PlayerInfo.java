@@ -3,8 +3,8 @@ public class PlayerInfo {
     private InetAddress ip;
     private int port;
     private String alias;
-    private short x;
-    private short y;
+    private int x;
+    private int y;
 
     public PlayerInfo(String ip, int port, String alias) {
 	try {
@@ -18,7 +18,7 @@ public class PlayerInfo {
 	this.y = 0;
     }
     
-    public PlayerInfo(String ip, int port, String alias, Short x, Short y) {
+    public PlayerInfo(String ip, int port, String alias, int x, int y) {
 	try {
 	    this.ip = InetAddress.getByName(ip);
 	}catch(Exception e) {
@@ -42,10 +42,10 @@ public class PlayerInfo {
 	return this.alias;
     }
 
-    public short getX() {
+    public int getX() {
 	return this.x;
     }
-    public short getY() {
+    public int getY() {
 	return this.y;
     }
 

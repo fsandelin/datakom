@@ -15,10 +15,12 @@ public class ClientNetworkThread extends Thread{
     String ownIp;
     GameThread gamethread;
     String alias;
+    ArrayList <PlayerInfo> playerList;    
 
     public ClientNetworkThread(GameThread gamethread, String ip, int port, int ownPort, String alias) {
 	super("ClientNetworkThread");
 	this.serverIp = ip;
+	this.playerList = new ArrayList<PlayerInfo>();	
 	this.serverPort = port;
 	this.ownPort = ownPort;
 	this.alias = alias;
@@ -39,8 +41,18 @@ public class ClientNetworkThread extends Thread{
 	    Registry registry = LocateRegistry.getRegistry(serverIp,serverPort);
 	    Server stub = (Server) registry.lookup("Server");
 	    int[] response = stub.getGameState();
-	    int response2 = stub.connectToGame(ownIp, ownPort, alias);
-	    System.out.println(response2);
+	    ArrayList<PlayerInfo> list = stub.connectToGame(ownIp, ownPort, alias);
+	    this.playerList = list;
+	    int x = this.playerList.get(playerList.size() - 1).getX();
+	    int y = this.playerList.get(playerList.size() - 1).getY();	    
+	    Player player = this.gamethread.getPlayer();
+	    player.setX(x);
+	    player.setY(y);
+	    for(int i = 0; i < this.playerList.size() - 1; i++) {
+		int xValue = this.playerList.get(i).getX();
+		int yValue = this.playerList.get(i).getY();
+		this.gamethread.addPlayerClient(x,y);
+	    }
 	    stub.debugRMI();
 	} catch(Exception e) {
 	    System.err.println("Client network got Exception: " + e.toString());

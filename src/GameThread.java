@@ -110,4 +110,14 @@ public class GameThread extends Thread{
     public boolean checkWinState() {
         return win;
     }
+
+    public int[] addPlayerServer() {
+	int[] foo = {100,200};
+	return foo;
+    }
+
+    public void addPlayerClient(int x, int y) {
+	System.out.println("Placeholder");
+    }
+       
 }

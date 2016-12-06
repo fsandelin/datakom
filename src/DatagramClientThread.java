@@ -12,16 +12,23 @@ public class DatagramClientThread extends Thread{
     private int hz;
     protected DatagramSocket socket;
     private GameThread gamethread;
+    private boolean listener;
     
-    public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort) throws IOException{
-	super("DataClientThread");
-	this.serverIp = InetAddress.getByName(serverIp);
+    
+    public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort, int ownPort, boolean listener){
+	super("DataClientThread");	
+	try {
+	    this.serverIp = InetAddress.getByName(serverIp);
+	    this.socket = new DatagramSocket(ownPort);
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
 	this.serverPort = serverPort;
 	this.playerX = 0;
 	this.playerY = 0;
 	this.hz = 16;
-	this.socket = new DatagramSocket(1097);
-	this.gamethread = gamethread;	
+	this.gamethread = gamethread;
+	this.listener = listener;
     }
     
     public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort, short x, short y) throws IOException{
@@ -102,7 +109,12 @@ public class DatagramClientThread extends Thread{
 	int timeToSleep = 1000/this.hz;
 	byte[] sendBuff = new byte[4];	
 	while(true){
-	    this.receiveInfo(3);
+	    if(listener) {
+		this.receiveInfo(3);
+	    }
+	    else {
+		this.sendInfo(sendBuff);
+	    }
 	}
     }
 

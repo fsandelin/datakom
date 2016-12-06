@@ -11,13 +11,19 @@ public class ServerNetworkThread extends Thread implements Server{
     int hz;
     ArrayList <PlayerInfo> playerList;
     GameThread gamethread;
+    String ownIp;
+    int ownPort;
+    String ownAlias;
     
-    public ServerNetworkThread(GameThread gamethread) {
+    public ServerNetworkThread(GameThread gamethread, String ownIp, int ownPort, String ownAlias) {
 	super("ServerNetworkThread");
 	this.map = 1;
 	this.hz = 16;
 	this.playerList = new ArrayList<PlayerInfo>();
 	this.gamethread = gamethread;
+	this.ownIp = ownIp;
+	this.ownPort = ownPort;
+	this.ownAlias = ownAlias;
     }
     
     public int[] getGameState() {
@@ -41,20 +47,25 @@ public class ServerNetworkThread extends Thread implements Server{
 	return this.playerList;
     }
     
-    public int connectToGame(String ip, int port, String alias) {
+    public ArrayList<PlayerInfo> connectToGame(String ip, int port, String alias) {
 	try {
-	    PlayerInfo player = new PlayerInfo(ip, port, alias);
+	    int[] xy = this.gamethread.addPlayerServer(alias, gamethread.getPlayer().getColor());
+	    PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1]);
 	    playerList.add(player);
 	    this.debugRMI();
-	    return 1;
+	    return this.playerList;
 	} catch(Exception e) {
-	    System.err.println("Server exception: " + e.toString());	    
-	    return 0;
+	    System.err.println("Server exception: " + e.toString());
+	    return null;
 	}
     }
 
-
     public void run(){
+	Player ownPlayer = this.gamethread.getPlayer();
+	int ownX = ownPlayer.getPlayerX();
+	int ownY = ownPlayer.getPlayerY();
+	PlayerInfo player = new PlayerInfo(this.ownIp, this.ownPort, this.ownAlias, ownX, ownY);
+	playerList.add(player);
 	try {
 	    Server stub = (Server) UnicastRemoteObject.exportObject(this, 0);
 	    Registry registry = LocateRegistry.getRegistry();

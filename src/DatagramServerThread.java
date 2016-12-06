@@ -11,10 +11,10 @@ public class DatagramServerThread extends Thread {
     private short playerY;
     private GameThread gamethread;  
     
-    public DatagramServerThread(GameThread gamethread){
+    public DatagramServerThread(GameThread gamethread, int port){
 	super("DatagramServerThread");
 	try {
-	    this.socket = new DatagramSocket(1099);
+	    this.socket = new DatagramSocket(port);
 	}catch(SocketException e) {
 	    System.out.println(e.toString());
 	}
