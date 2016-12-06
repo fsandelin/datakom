@@ -9,9 +9,7 @@ CLASSES = \
 	PlayerInfo.java \
 	PlayerPosInfo.java \
 	ServerNetworkThread.java \
-	ServerThread.java \
-	ClientThread.java \
-	ClientNetwork.java \
+	ClientNetworkThread.java \
 	DatagramClientThread.java \
 	DatagramServerThread.java \
 	Player.java \

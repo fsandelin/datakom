@@ -37,6 +37,10 @@ public class ServerNetworkThread extends Thread implements Server{
 
     }
 
+    public ArrayList<PlayerInfo> getPlayerList() {
+	return this.playerList;
+    }
+    
     public int connectToGame(String ip, int port, String alias) {
 	try {
 	    PlayerInfo player = new PlayerInfo(ip, port, alias);

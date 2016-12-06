@@ -1,13 +1,19 @@
+
 import java.net.*;
 import java.util.*;
 
 public class Game{
-    private static void runAsClient(String ip, int port) {
-	GameThread game = new GameThread(800, 600);	
-    }
-    private static void runAsServer(String ip, int port) {
+    private static void runAsClient(String alias, String serverIp, int serverPort ,int ownPort) {
 	GameThread game = new GameThread(800, 600);
-	System.out.println("Starting Server RMI thread...");    
+	System.out.println("Starting Client RMI thread...");
+	ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, serverPort, ownPort, alias);
+	clientRMI.start();
+	//DatagramClientThread clientUDP = new DatagramClientThread(
+	
+    }
+    private static void runAsServer(String alias, String ip, int port) {
+	GameThread game = new GameThread(800, 600);
+	System.out.println("Starting Server RMI thread...");
 	ServerNetworkThread serverRMI = new ServerNetworkThread(game);
 	serverRMI.start();
 	sleep(500);
@@ -26,7 +32,10 @@ public class Game{
     public static void main(String[] args) {
 	int port;
 	String ip;
+	String alias;
 	Scanner reader = new Scanner(System.in);
+	System.out.println("Enter your alias:");
+	alias = reader.next();
 	System.out.println("Enter port to use (recommended 1099):");;
 	port = reader.nextInt();
 	
@@ -44,7 +53,7 @@ public class Game{
 		System.out.println(e.toString());
 		System.exit(0);
 	    }
-	    runAsServer(ip, port);	    
+	    runAsServer(alias, ip, port);	    
 	    break;
 	}
 	case 2: {
@@ -57,7 +66,9 @@ public class Game{
 		System.out.println(e.toString());
 		System.exit(0);
 	    }
-	    runAsClient(ip, port);
+	    System.out.println("Enter port to connect to:");
+	    int serverPort = reader.nextInt();
+	    runAsClient(alias, ip, serverPort, port);
 	    break;
 	}
 	default:
