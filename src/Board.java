@@ -51,7 +51,7 @@ public class Board {
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setPreferredSize(new Dimension(xSize + 100, ySize + 100));
-        window.setResizable(false);
+        window.setResizable(true);
         window.pack();
         window.add(drawingSurface);
         window.setVisible(true);
@@ -76,8 +76,11 @@ public class Board {
     public void update() {
         drawingSurface.setVisible(true);
         goal.repaint();
+	System.out.println("Size på ritnings listan: " + Integer.toString(players.size()));
         for (Player p : players) {
             if (p != null) {
+		System.out.println(p.toString());
+		p.setVisible(true);
                 p.repaint();
             }
         }

@@ -1,5 +1,6 @@
 import java.net.*;
-public class PlayerInfo {
+import java.io.*;
+public class PlayerInfo implements Serializable{
     private InetAddress ip;
     private int port;
     private String alias;

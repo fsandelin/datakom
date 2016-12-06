@@ -6,7 +6,7 @@ import java.nio.*;
 public class DatagramServerThread extends Thread {
     protected DatagramSocket socket;
     private int hz;
-    ArrayList<PlayerInfo> playerList;
+    private ArrayList<PlayerInfo> playerList;
     private short playerX;
     private short playerY;
     private GameThread gamethread;  

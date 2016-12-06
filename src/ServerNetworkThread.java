@@ -5,6 +5,7 @@ import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
 import java.util.*;
+import java.awt.*;
 
 public class ServerNetworkThread extends Thread implements Server{
     int map;
@@ -40,7 +41,6 @@ public class ServerNetworkThread extends Thread implements Server{
 	    PlayerInfo cur = iterator.next();
 	    System.out.println("Player " + Integer.toString(i) + "\n" +cur.toString());
 	}
-
     }
 
     public ArrayList<PlayerInfo> getPlayerList() {
@@ -49,7 +49,7 @@ public class ServerNetworkThread extends Thread implements Server{
     
     public ArrayList<PlayerInfo> connectToGame(String ip, int port, String alias) {
 	try {
-	    int[] xy = this.gamethread.addPlayerServer(alias, gamethread.getPlayer().getColor());
+	    int[] xy = this.gamethread.addPlayerToServer(alias, gamethread.getPlayer().getPlayerColor());
 	    PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1]);
 	    playerList.add(player);
 	    this.debugRMI();
@@ -66,6 +66,7 @@ public class ServerNetworkThread extends Thread implements Server{
 	int ownY = ownPlayer.getPlayerY();
 	PlayerInfo player = new PlayerInfo(this.ownIp, this.ownPort, this.ownAlias, ownX, ownY);
 	playerList.add(player);
+	System.out.println("Gjorde player i listan");
 	try {
 	    Server stub = (Server) UnicastRemoteObject.exportObject(this, 0);
 	    Registry registry = LocateRegistry.getRegistry();

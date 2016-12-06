@@ -9,12 +9,12 @@ public class Game{
 	System.out.println("Starting Client RMI thread...");
 	ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, serverPort, ownPort, alias);
 	clientRMI.start();
-	System.out.println("Starting client UDP thread...");
-	DatagramClientThread clientUDPSender = new DatagramClientThread(game, serverIp, serverPort, ownPort, false);
-	clientUDPSender.start();
-	DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, serverIp, serverPort, ownPort, true);
-	clientUDPReceiver.start();
-	System.out.println("UDP up and running");
+	//System.out.println("Starting client UDP thread...");
+	//DatagramClientThread clientUDPSender = new DatagramClientThread(game, serverIp, serverPort, ownPort, false);
+	//clientUDPSender.start();
+	//DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, serverIp, serverPort, ownPort, true);
+	//clientUDPReceiver.start();
+	//System.out.println("UDP up and running");
 	game.start();
 	
     }
@@ -23,14 +23,14 @@ public class Game{
 	System.out.println("Starting Server RMI thread...");
 	ServerNetworkThread serverRMI = new ServerNetworkThread(game, ip, port, alias);
 	serverRMI.start();
-	sleep(500);
-	System.out.println("Starting Server UDP thread...");
-	DatagramServerThread serverUDP = new DatagramServerThread(game, port);
-	serverUDP.start();
-	System.out.println("UDP up and running");
+	//sleep(500);
+	//System.out.println("Starting Server UDP thread...");
+	//DatagramServerThread serverUDP = new DatagramServerThread(game, port);
+	//serverUDP.start();
+	//System.out.println("UDP up and running");
 	game.start();
 	
-
+    }
 
     /**
      * Main method
@@ -83,12 +83,12 @@ public class Game{
 	    System.exit(0);
 	    break;
 	}
+    }
     private static void sleep(int time) {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
             System.out.println(e.toString());
-        }
+	}
     }
 }
-

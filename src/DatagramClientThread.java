@@ -77,7 +77,6 @@ public class DatagramClientThread extends Thread{
 	try {
 	    DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, this.serverIp, this.serverPort);
 	    this.socket.send(sendPacket);
-	    System.out.println("Client sent from port " + Integer.toString(this.serverPort) + " | " + Integer.toString(this.playerX) + "," + Integer.toString(this.playerY));
 	}catch(IOException e) {
 	    System.out.println(e.toString());
 	}	
@@ -101,7 +100,7 @@ public class DatagramClientThread extends Thread{
 	    bb.put(receivedData[3 + (i*4)]);
 	    short x = bb.getShort(0 + (i*4));
 	    short y = bb.getShort(2 + (i*4));
-	    System.out.println("Server received | " + Short.toString(x) + " " + Short.toString(y));	    
+	    System.out.println("Client received | " + Short.toString(x) + " " + Short.toString(y));	    
 	}	
     }
 
@@ -110,10 +109,11 @@ public class DatagramClientThread extends Thread{
 	byte[] sendBuff = new byte[4];	
 	while(true){
 	    if(listener) {
-		this.receiveInfo(3);
+		this.receiveInfo(1);
 	    }
 	    else {
 		this.sendInfo(sendBuff);
+		sleep(timeToSleep);
 	    }
 	}
     }
