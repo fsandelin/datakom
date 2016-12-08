@@ -42,22 +42,20 @@ public class ClientNetworkThread extends Thread{
 	    Registry registry = LocateRegistry.getRegistry(serverIp,serverPort);
 	    System.out.println("Looking stub");
 	    Server stub = (Server) registry.lookup("Server");
-	    System.out.println("Get game state");
-	    int[] response = stub.getGameState();
-	    System.out.println("connect with ownIP: " + ownIp + " ownPort: " + Integer.toString(ownPort) + " alias: " + alias);	    
+	    System.out.println("connect with ownIP: " + ownIp + " ownPort: " + Integer.toString(ownPort) + " alias: " + alias);
 	    ArrayList<PlayerInfo> list = stub.connectToGame(ownIp, ownPort, alias);
 	    this.playerList = list;
 	    System.out.println("Satt list till serverns list");
 	    this.debugRMI();
 	    int x = this.playerList.get(playerList.size() - 1).getX();
 	    int y = this.playerList.get(playerList.size() - 1).getY();	    
-	    Player player = this.gamethread.getPlayer();
-	    player.setX(x);
-	    player.setY(y);
+	    this.gamethread.setPlayerX(x);
+	    this.gamethread.setPlayerY(y);
 	    for(int i = 0; i < this.playerList.size() - 1; i++) {
+		System.out.println("Kommer be att lägga till spelare i listan med i " + Integer.toString(i));
 		int xValue = this.playerList.get(i).getX();
 		int yValue = this.playerList.get(i).getY();
-		this.gamethread.addPlayerToClient(x,y, "snopp");
+		this.gamethread.addPlayerToClient(xValue, yValue, this.playerList.get(i).getAlias());
 	    }
 	    stub.debugRMI();
 	} catch(Exception e) {
@@ -73,6 +71,7 @@ public class ClientNetworkThread extends Thread{
 	while (iterator.hasNext()) {
 	    PlayerInfo cur = iterator.next();
 	    System.out.println("Player " + Integer.toString(i) + "\n" +cur.toString());
+	    System.out.println("X: " + Integer.toString(cur.getX()) + "Y: " + Integer.toString(cur.getY()));	    
 	}
     }    
 }

@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Game{
     private static void runAsClient(String alias, String serverIp, int serverPort ,int ownPort) {
-	GameThread game = new GameThread(800, 600);
+	GameThread game = new GameThread(800, 600, alias);
 	System.out.println("Starting Client RMI thread...");
 	ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, serverPort, ownPort, alias);
 	clientRMI.start();
@@ -19,7 +19,7 @@ public class Game{
 	
     }
     private static void runAsServer(String alias, String ip, int port) {
-	GameThread game = new GameThread(800, 600);
+	GameThread game = new GameThread(800, 600, alias);
 	System.out.println("Starting Server RMI thread...");
 	ServerNetworkThread serverRMI = new ServerNetworkThread(game, ip, port, alias);
 	serverRMI.start();

@@ -64,6 +64,7 @@ public class Board {
     public void addPlayer(Player p) {
         players.add(p);
         this.drawingSurface.add(p);
+	System.out.println("Det finns nu " + Integer.toString(players.size()) + " i boards listan.");
         //System.out.println(players[0]);
     }
 

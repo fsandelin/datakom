@@ -25,7 +25,7 @@ public class GameThread extends Thread{
      * @param xSize Width of the game-board
      * @param ySize Heigth of the game-board
      */
-    public GameThread(int xSize, int ySize) {
+    public GameThread(int xSize, int ySize, String alias) {
 	super("GameThread");
         this.board = new Board(xSize, ySize);
         int padding = 5;
@@ -37,7 +37,7 @@ public class GameThread extends Thread{
 
         //Creating and adding playerarray and 1 player and setting the 0-index as current player
 	playerArray = new ArrayList<Player>();
-        player = new Player("Snoop Dogg", 150, ySize - playerSize - 100, playerSize, board);
+        player = new Player(alias, 150, ySize - playerSize - 100, playerSize, board);
 	playerArray.add(player);
         board.addPlayer(player);
         //
@@ -119,6 +119,9 @@ public class GameThread extends Thread{
     }
 
     public void addPlayerToClient(int x, int y, String alias) {
+	System.out.println("Got add player to client on:");
+	System.out.println(x);
+	System.out.println(y);	
         Player p = new Player(alias, x, y, playerSize, board);
         playerArray.add(p);
         board.addPlayer(p);
@@ -131,6 +134,18 @@ public class GameThread extends Thread{
 
     public boolean checkWinState() {
         return win;
+    }
+    public void setPlayerX(int x){
+	this.player.setX(x);
+    }
+    public void setPlayerY(int y){
+	this.player.setY(y);
+    }
+    public int getPlayerX() {
+	return this.player.getPlayerX();
+    }
+    public int getPlayerY() {
+	return this.player.getPlayerY();
     }
        
 }

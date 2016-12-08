@@ -40,6 +40,7 @@ public class ServerNetworkThread extends Thread implements Server{
 	while (iterator.hasNext()) {
 	    PlayerInfo cur = iterator.next();
 	    System.out.println("Player " + Integer.toString(i) + "\n" +cur.toString());
+	    System.out.println("X: " + Integer.toString(cur.getX()) + "Y: " + Integer.toString(cur.getY()));
 	}
     }
 
@@ -49,9 +50,11 @@ public class ServerNetworkThread extends Thread implements Server{
     
     public ArrayList<PlayerInfo> connectToGame(String ip, int port, String alias) {
 	try {
+	    this.playerList.get(0).setX(this.gamethread.getPlayerX());
+	    this.playerList.get(0).setY(this.gamethread.getPlayerY());
 	    int[] xy = this.gamethread.addPlayerToServer(alias, gamethread.getPlayer().getPlayerColor());
 	    PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1]);
-	    playerList.add(player);
+	    this.playerList.add(player);
 	    this.debugRMI();
 	    return this.playerList;
 	} catch(Exception e) {

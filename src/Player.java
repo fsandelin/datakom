@@ -92,8 +92,9 @@ public class Player extends JComponent {
 
     //===============================================Below this are methods for graphics rendering
 
-
+    @Override
     public void paintComponent(Graphics g) {
+	super.paintComponent(g);	
         this.setLocation(this.xPos, this.yPos);
         //System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
         g.setColor(this.playerColor);
