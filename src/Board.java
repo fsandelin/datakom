@@ -3,6 +3,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 
 import static java.lang.Math.abs;
 
@@ -38,6 +41,8 @@ public class Board {
 
     private Goal goal;
 
+    private final Lock _mutex = new ReentrantLock(true);
+
     public Board(int xSize, int ySize) {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
@@ -62,10 +67,12 @@ public class Board {
 
 
     public void addPlayer(Player p) {
+	_mutex.lock();
         players.add(p);
         this.drawingSurface.add(p);
 	System.out.println("Det finns nu " + Integer.toString(players.size()) + " i boards listan.");
         //System.out.println(players[0]);
+	_mutex.unlock();
     }
 
     public void addObstruction(Obstruction o) {
@@ -78,13 +85,15 @@ public class Board {
         drawingSurface.setVisible(true);
         goal.repaint();
 	System.out.println("Size på ritnings listan: " + Integer.toString(players.size()));
+	_mutex.lock();
         for (Player p : players) {
             if (p != null) {
-		System.out.println(p.toString());
+		//System.out.println(p.toString());
 		p.setVisible(true);
                 p.repaint();
             }
         }
+	_mutex.unlock();
         for (Obstruction o : fixedObjects) {
             if (o != null) {
                 o.repaint();
