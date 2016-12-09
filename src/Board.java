@@ -70,6 +70,7 @@ public class Board {
 	_mutex.lock();
         players.add(p);
         this.drawingSurface.add(p);
+	p.revalidate();
 	System.out.println("Det finns nu " + Integer.toString(players.size()) + " i boards listan.");
         //System.out.println(players[0]);
 	_mutex.unlock();
@@ -88,7 +89,7 @@ public class Board {
 	_mutex.lock();
         for (Player p : players) {
             if (p != null) {
-		//System.out.println(p.toString());
+		System.out.println(p.toString());
 		p.setVisible(true);
                 p.repaint();
             }
