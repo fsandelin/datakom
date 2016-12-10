@@ -46,7 +46,7 @@ public class DatagramServerThread extends Thread {
     private void updatePlayerList(){
 	short x = this.gamethread.getPlayer().getPlayerXShort();
 	short y = this.gamethread.getPlayer().getPlayerYShort();
-	System.out.println(Short.toString(x) + " | " + Short.toString(y));
+	//System.out.println(Short.toString(x) + " | " + Short.toString(y));
     }
     public void sendInfo() {
 	this.updatePlayerList();
