@@ -85,11 +85,11 @@ public class Board {
     public void update() {
         drawingSurface.setVisible(true);
         goal.repaint();
-	//System.out.println("Size på ritnings listan: " + Integer.toString(players.size()));
+	System.out.println("Size på ritnings listan: " + Integer.toString(players.size()));
 	_mutex.lock();
         for (Player p : players) {
             if (p != null) {
-		//System.out.println(p.toString());
+		System.out.println(p.toString());
 		p.setVisible(true);
                 p.repaint();
             }
