@@ -48,6 +48,15 @@ public class DatagramServerThread extends Thread {
 	short y = this.gamethread.getPlayer().getPlayerYShort();
 	//System.out.println(Short.toString(x) + " | " + Short.toString(y));
     }
+
+    public boolean isByteBufferEmpty(byte[] buff){
+	for (byte b : buff) {
+	    if (b != 0) {
+		return false;
+	    }
+	}
+	return true;
+    }
     public void sendInfo() {
 	this.updatePlayerList();
 	int players = this.playerList.size();
@@ -59,16 +68,27 @@ public class DatagramServerThread extends Thread {
 	    sendBuff[3 + (i*4)] = (byte) (this.playerList.get(i).getY());
 	}
 	//this.debugByteArray(sendBuff);
-	try {
-	    for(int i = 0; i < players; i++) {
-		DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, playerList.get(i).getIp(), playerList.get(i).getPort());
-		this.socket.send(sendPacket);
+	
+	if(isByteBufferEmpty(sendBuff)){
+	    //System.out.println("Trying to send empty sendBuff to");	    
 	    }
-	}catch(Exception e){
-	    System.out.println(e.toString());
+	else {	    
+	    try {
+		for(int i = 0; i < players; i++) {
+		    System.out.println("Trying to send sendBuff: ");
+		    debugByteArray(sendBuff);
+		    DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, playerList.get(i).getIp(), playerList.get(i).getPort());
+			
+		    this.socket.send(sendPacket);
+		}
+
+	    }catch(Exception e){
+		System.out.println(e.toString());
+	    }
 	}
     }
-
+	    
+	
     private void receiveInfo(byte[] receiveBuff) {
 	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
 	try {

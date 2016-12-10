@@ -67,6 +67,16 @@ public class DatagramClientThread extends Thread{
 	return this.playerY;	
     }
 
+
+    public boolean isByteBufferEmpty(byte[] buff){
+	for (byte b : buff) {
+	    if (b != 0) {
+		return false;
+	    }
+	}
+	return true;
+    }
+    
     public void sendInfo(byte[] sendBuff) {
 	this.updatePlayerPos();
 	sendBuff[0] = (byte) (this.playerX >> 8);	    
@@ -74,34 +84,46 @@ public class DatagramClientThread extends Thread{
 	sendBuff[2] = (byte) (this.playerY >> 8);
 	sendBuff[3] = (byte) this.playerY;
 	//this.debugByteArray(sendBuff);
-	try {
-	    DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, this.serverIp, this.serverPort);
-	    this.socket.send(sendPacket);
-	}catch(IOException e) {
-	    System.out.println(e.toString());
-	}	
+
+	if(isByteBufferEmpty(sendBuff)){
+	    System.out.println("Trying to send empty sendBuff to Server");
+	}
+	else{
+	    try {
+		DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, this.serverIp, this.serverPort);
+		this.socket.send(sendPacket);
+	    }catch(IOException e) {
+		System.out.println(e.toString());
+	    }	
+	}
     }
 
     public void receiveInfo(int players) {
 	byte[] receiveBuff = new byte[players*4];
 	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
-	try {
-	    this.socket.receive(receivePacket);
-	}catch(Exception e) {
-	    System.out.println(e.toString());
+	if(isByteBufferEmpty(receiveBuff)){
+	    System.out.println("Got empty receiveBuff from Server");
+	    sleep(100);
 	}
-	byte[] receivedData = receivePacket.getData();
-	ByteBuffer bb = ByteBuffer.allocate(4*players);
-	bb.order(ByteOrder.BIG_ENDIAN);
-	for(int i = 0; i < players; i++) {
-	    bb.put(receivedData[0 + (i*4)]);
-	    bb.put(receivedData[1 + (i*4)]);
-	    bb.put(receivedData[2 + (i*4)]);
-	    bb.put(receivedData[3 + (i*4)]);
-	    short x = bb.getShort(0 + (i*4));
-	    short y = bb.getShort(2 + (i*4));
-	    System.out.println("Client received | " + Short.toString(x) + " " + Short.toString(y));	    
-	}	
+	else{
+	    try {
+		this.socket.receive(receivePacket);
+	    }catch(Exception e) {
+		System.out.println(e.toString());
+	    }
+	    byte[] receivedData = receivePacket.getData();
+	    ByteBuffer bb = ByteBuffer.allocate(4*players);
+	    bb.order(ByteOrder.BIG_ENDIAN);
+	    for(int i = 0; i < players; i++) {
+		bb.put(receivedData[0 + (i*4)]);
+		bb.put(receivedData[1 + (i*4)]);
+		bb.put(receivedData[2 + (i*4)]);
+		bb.put(receivedData[3 + (i*4)]);
+		short x = bb.getShort(0 + (i*4));
+		short y = bb.getShort(2 + (i*4));
+		System.out.println("Client received | " + Short.toString(x) + " " + Short.toString(y));	    
+	    }
+	}
     }
 
     public void run(){
@@ -109,7 +131,7 @@ public class DatagramClientThread extends Thread{
 	byte[] sendBuff = new byte[4];	
 	while(true){
 	    if(listener) {
-		this.receiveInfo(1);
+		this.receiveInfo(1); //TODO
 	    }
 	    else {
 		this.sendInfo(sendBuff);
