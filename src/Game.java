@@ -12,9 +12,9 @@ public class Game{
 	sleep(500);
 	System.out.println("Starting client UDP thread...");
 	DatagramClientThread clientUDPSender = new DatagramClientThread(game, clientRMI, serverIp, false, debug);
-	DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, clientRMI, serverIp, true, debug);	
+	DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, clientRMI, serverIp, true, debug);
+	clientUDPReceiver.start();	
 	//clientUDPSender.start();
-	//clientUDPReceiver.start();
 	//System.out.println("UDP up and running");
 	game.start();
 	
@@ -28,7 +28,7 @@ public class Game{
 	System.out.println("Starting Server UDP thread...");
 	DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
 	DatagramServerThread serverUDPreceiver = new DatagramServerThread(game, serverRMI, true);	
-	//serverUDP.start();
+	serverUDPsender.start();
 	//System.out.println("UDP up and running");
 	game.start();
 	

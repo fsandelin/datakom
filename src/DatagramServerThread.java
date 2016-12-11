@@ -30,7 +30,7 @@ public class DatagramServerThread extends Thread {
 	this.hz = 16;
 	this.gamethread = gamethread;
 	this.RMIthread = RMIthread;
-	this.playerList = new ArrayList<PlayerInfo>();
+	this.playerList = this.RMIthread.getPlayerList();
 	this.playerX = 0;
 	this.playerY = 0;
 	this.listener = listener;
@@ -45,25 +45,34 @@ public class DatagramServerThread extends Thread {
     }
 
     private void updatePlayerList(){
-	short x = this.gamethread.getPlayer().getPlayerXShort();
-	short y = this.gamethread.getPlayer().getPlayerYShort();
+	short x = this.gamethread.getPlayerXShort();
+	short y = this.gamethread.getPlayerYShort();
 	System.out.println(Short.toString(x) + " | " + Short.toString(y));
     }
     public void sendInfo() {
-	this.updatePlayerList();
+	//System.out.println("updating");
+	this.gamethread.updatePlayerList(this.playerList);
 	int players = this.playerList.size();
-	byte[] sendBuff = new byte[players*4];
+	//System.out.println(players);	
+	byte[] sendBuff = new byte[players*8];
 	for(int i = 0; i < players; i++) {
-	    sendBuff[0 + (i*4)] = (byte) (this.playerList.get(i).getX() >> 8);
-	    sendBuff[1 + (i*4)] = (byte) (this.playerList.get(i).getX());
-	    sendBuff[2 + (i*4)] = (byte) (this.playerList.get(i).getY() >> 8);
-	    sendBuff[3 + (i*4)] = (byte) (this.playerList.get(i).getY());
+	    sendBuff[0 + (i*8)] = (byte) (this.playerList.get(i).getX() >> 8);
+	    sendBuff[1 + (i*8)] = (byte) (this.playerList.get(i).getX());
+	    sendBuff[2 + (i*8)] = (byte) (this.playerList.get(i).getY() >> 8);
+	    sendBuff[3 + (i*8)] = (byte) (this.playerList.get(i).getY());
+	    sendBuff[4 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 24);
+	    sendBuff[5 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 16);
+	    sendBuff[6 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 8);
+	    sendBuff[7 + (i*8)] = (byte) (this.playerList.get(i).getId());	    
 	}
-	//this.debugByteArray(sendBuff);
 	try {
-	    for(int i = 0; i < players; i++) {
+	    for(int i = 1; i < players; i++) { //börjar vid 1 för att inte skicka till sig själv
 		DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, playerList.get(i).getIp(), playerList.get(i).getPort());
 		this.socket.send(sendPacket);
+		//System.out.println("===============UDP SENT=================");
+		//System.out.println("IP: " + playerList.get(i).getIp());
+		//System.out.println("Port: " + playerList.get(i).getPort());
+		//this.debugByteArray(sendBuff);
 	    }
 	}catch(Exception e){
 	    System.out.println(e.toString());
@@ -100,10 +109,15 @@ public class DatagramServerThread extends Thread {
     
     public void run() {
 	int timeToSleep = 1000/this.hz;	
-	byte[] receiveBuff = new byte[4];
+	byte[] receiveBuff = new byte[8];
 	while(true) {
-	    this.sendInfo();
-	    this.sleep(timeToSleep);
+	    if(this.listener) {
+		this.receiveInfo(receiveBuff);
+	    }
+	    else {
+		this.sendInfo();
+		sleep(timeToSleep);
+	    } 
 	}
     }
     

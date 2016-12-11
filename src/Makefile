@@ -47,3 +47,5 @@ clean:
 	rm -f *~
 	rm -f *#
 
+test: TestClass.class
+	java TestClass

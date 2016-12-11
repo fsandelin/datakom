@@ -152,5 +152,21 @@ public class GameThread extends Thread{
     public int getPlayerY() {
 	return this.player.getPlayerY();
     }
+    public short getPlayerXShort() {
+	return this.player.getPlayerXShort();
+    }
+    public short getPlayerYShort() {
+	return this.player.getPlayerYShort();
+    }
+
+    //Denna här för att dett inte skall "läcka". 
+    public void updatePlayerList(ArrayList<PlayerInfo> list) {
+	this.board.updatePlayerList(list);
+    }
+
+    //skickar vidare till board
+    public void updatePlayer(int x, int y, int id) {
+	this.board.updatePlayer(x, y, id);
+    }
        
 }

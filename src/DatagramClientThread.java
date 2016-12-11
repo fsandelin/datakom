@@ -14,6 +14,7 @@ public class DatagramClientThread extends Thread{
     private GameThread gamethread;    //Own Gamethread
     private ClientNetworkThread RMIthread; //Own RMIthread
     private boolean listener;         //If it is a receiver or sender
+    private ArrayList<PlayerInfo> playerList;
     
     
     public DatagramClientThread(GameThread gamethread, ClientNetworkThread RMIthread, String serverIp, boolean listener, boolean debug){
@@ -49,6 +50,7 @@ public class DatagramClientThread extends Thread{
 	this.hz = 16;
 	this.gamethread = gamethread;
 	this.RMIthread = RMIthread;
+	this.playerList = this.RMIthread.getPlayerList();	
 	this.listener = listener;
     }
     
@@ -83,7 +85,7 @@ public class DatagramClientThread extends Thread{
     }
 
     public void receiveInfo(int players) {
-	byte[] receiveBuff = new byte[players*4];
+	byte[] receiveBuff = new byte[players*8];
 	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
 	try {
 	    this.socket.receive(receivePacket);
@@ -91,16 +93,27 @@ public class DatagramClientThread extends Thread{
 	    System.out.println(e.toString());
 	}
 	byte[] receivedData = receivePacket.getData();
-	ByteBuffer bb = ByteBuffer.allocate(4*players);
+	ByteBuffer bb = ByteBuffer.allocate(8*players);
 	bb.order(ByteOrder.BIG_ENDIAN);
 	for(int i = 0; i < players; i++) {
-	    bb.put(receivedData[0 + (i*4)]);
-	    bb.put(receivedData[1 + (i*4)]);
-	    bb.put(receivedData[2 + (i*4)]);
-	    bb.put(receivedData[3 + (i*4)]);
-	    short x = bb.getShort(0 + (i*4));
-	    short y = bb.getShort(2 + (i*4));
-	    System.out.println("Client received | " + Short.toString(x) + " " + Short.toString(y));	    
+	    bb.put(receivedData[0 + (i*8)]);
+	    bb.put(receivedData[1 + (i*8)]);
+	    bb.put(receivedData[2 + (i*8)]);
+	    bb.put(receivedData[3 + (i*8)]);
+	    bb.put(receivedData[4 + (i*8)]);
+	    bb.put(receivedData[5 + (i*8)]);
+	    bb.put(receivedData[6 + (i*8)]);
+	    bb.put(receivedData[7 + (i*8)]);	    
+	    short x = bb.getShort(0 + (i*8));
+	    short y = bb.getShort(2 + (i*8));
+	    int id = bb.getInt(4 + (i*8));
+
+	    if (id != this.RMIthread.getMyId()) {
+		int xInt = x;
+		int yInt = y;
+		this.gamethread.updatePlayer(xInt, yInt, id);
+	    }
+
 	}	
     }
 
@@ -108,8 +121,8 @@ public class DatagramClientThread extends Thread{
 	int timeToSleep = 1000/this.hz;
 	byte[] sendBuff = new byte[4];	
 	while(true){
-	    if(listener) {
-		this.receiveInfo(1);
+	    if(this.listener) {
+		this.receiveInfo(this.playerList.size());
 	    }
 	    else {
 		this.sendInfo(sendBuff);

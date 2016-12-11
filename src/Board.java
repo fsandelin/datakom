@@ -89,7 +89,7 @@ public class Board {
 	_mutex.lock();
         for (Player p : players) {
             if (p != null) {
-		System.out.println(p.toString());
+		//System.out.println(p.toString());
 		p.setVisible(true);
                 p.repaint();
             }
@@ -211,6 +211,36 @@ public class Board {
         returnArray[1] = 500;
         return returnArray;
 
+    }
+
+    public void updatePlayer(int x, int y, int id) {
+	_mutex.lock();
+	for (int i = 0; i < this.players.size(); i++) {
+	    int playerId = this.players.get(i).getPlayerId();
+	    if(id==playerId) {
+		this.players.get(i).setX(x);
+		this.players.get(i).setY(y);
+	    }
+	}
+	_mutex.unlock();
+    }
+
+    //Uppdaterar listan som kommer som input med vad som finns i listan hos board.
+    public void updatePlayerList(ArrayList<PlayerInfo> list) {
+	_mutex.lock();	
+	for (int i = 0; i < list.size(); i++) {
+	    int id = list.get(i).getId();
+	    for (int j = 0; j < this.players.size(); j++) {
+		if (players.get(j).getPlayerId() == id) {
+		    int x = players.get(j).getPlayerX();
+		    int y = players.get(j).getPlayerY();
+		    list.get(i).setX(x);
+		    list.get(i).setY(y);
+		    break;
+		}
+	    }
+	}
+	_mutex.unlock();
     }
 
 }

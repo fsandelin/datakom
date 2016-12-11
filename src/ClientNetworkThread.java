@@ -70,6 +70,15 @@ public class ClientNetworkThread extends Thread{
 	    e.printStackTrace();
 	}
     }
+    
+    public ArrayList<PlayerInfo> getPlayerList() {
+	return this.playerList;
+    }
+
+    public int getMyId() {
+	return this.myId;
+    }
+    
     private void debugRMI() {
 	ListIterator<PlayerInfo> iterator = this.playerList.listIterator();
 	int i = 0;

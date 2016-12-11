@@ -100,7 +100,7 @@ public class Player extends JComponent {
         g.fillRect(0, 0, this.playerSize, this.playerSize);
     }
 
-    public String getPlayerId() {
+    public String getPlayerAlias() {
         return this.playerAlias;
     }
 
@@ -129,6 +129,9 @@ public class Player extends JComponent {
     }
     public void setPlayerId(int id) {
 	this.playerId = id;
+    }
+    public int getPlayerId() {
+	return this.playerId;
     }
     
 
