@@ -11,7 +11,8 @@ import java.awt.event.KeyEvent;
 
 public class Player extends JComponent {
     private int playerSize;
-    private String playerId;
+    private String playerAlias;
+    private int playerId;
     private Color playerColor;
     private static final int playerJumpStep = 21; // Has to be odd.
     private static final int playerStep = 2;
@@ -23,7 +24,7 @@ public class Player extends JComponent {
     private Board board;
     private boolean jumping;
 
-    public Player(String playerId, int startXPos, int startYPos, int size, Board b) {
+    public Player(String playerAlias, int playerId ,int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
         this.setPreferredSize(new Dimension(size, size));
         //
@@ -36,8 +37,9 @@ public class Player extends JComponent {
         float green = (float) Math.random();
         float blue = (float) Math.random();
         this.playerColor = new Color(red, green, blue);
-        this.playerId = playerId;
-
+        this.playerAlias = playerAlias;
+	this.playerId = playerId;
+	System.out.println("Player created with id: " + Integer.toString(this.playerId));
     }
 
     public void jump() {
@@ -56,8 +58,7 @@ public class Player extends JComponent {
     }
 
     public String toString() {
-        return "Player " + playerId + " is at x: " + (int) this.xPos +
-                " - y: " + (int) this.yPos;
+        return "Player " + playerAlias + " is at x: " + (int) this.xPos + " - y: " + (int) this.yPos + " and has id: " + (int) this.playerId;
     }
 
     public void move(int direction) {
@@ -90,19 +91,17 @@ public class Player extends JComponent {
         }
     }
 
-    //===============================================Below this are methods for graphics rendering
-
     @Override
     public void paintComponent(Graphics g) {
 	super.paintComponent(g);	
         this.setLocation(this.xPos, this.yPos);
-        //System.out.println("Player: " + playerId + " is at: xpos: " + xPos + ", yPos: " + yPos);
+        //System.out.println("Player: " + playerAlias + " is at: xpos: " + xPos + ", yPos: " + yPos);
         g.setColor(this.playerColor);
         g.fillRect(0, 0, this.playerSize, this.playerSize);
     }
 
     public String getPlayerId() {
-        return this.playerId;
+        return this.playerAlias;
     }
 
     public int getPlayerSize() {
@@ -128,6 +127,10 @@ public class Player extends JComponent {
     public void setY(int y) {
 	this.yPos = y;
     }
+    public void setPlayerId(int id) {
+	this.playerId = id;
+    }
+    
 
     public void updatePosition() {
         //System.out.printf("%d | %d\n", xPos, yPos);

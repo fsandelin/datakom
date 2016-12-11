@@ -4,54 +4,54 @@ import java.io.*;
 import java.nio.*;
     
 public class DatagramClientThread extends Thread{
-
-    private InetAddress serverIp;
-    private int serverPort;
-    private short playerX;
-    private short playerY;
-    private int hz;
-    protected DatagramSocket socket;
-    private GameThread gamethread;
-    private boolean listener;
+    
+    private int hz;                   //Amount of time per second to send updates
+    private InetAddress serverIp;     //Server IP to send to
+    private int serverPort;           //Server port to send to
+    private short playerX;            //Value X to send
+    private short playerY;            //Value Y to send
+    protected DatagramSocket socket;  //Own socket
+    private GameThread gamethread;    //Own Gamethread
+    private ClientNetworkThread RMIthread; //Own RMIthread
+    private boolean listener;         //If it is a receiver or sender
     
     
-    public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort, int ownPort, boolean listener){
+    public DatagramClientThread(GameThread gamethread, ClientNetworkThread RMIthread, String serverIp, boolean listener, boolean debug){
 	super("DataClientThread");	
 	try {
 	    this.serverIp = InetAddress.getByName(serverIp);
-	    this.socket = new DatagramSocket(ownPort);
+	    if (debug = true) {
+		if (listener == true) {
+		    System.out.println("Creating socket on port 1097");
+		    this.socket = new DatagramSocket(1097);
+		}
+		else {
+		    System.out.println("Creating socket on port 1096");
+		    this.socket = new DatagramSocket(1096);
+		}
+	    }
+	    else {
+		if (listener == true) {
+		    System.out.println("Creating socket on port 1099");
+		    this.socket = new DatagramSocket(1099);
+		}
+		else {
+		    System.out.println("Creating socket on port 1098");		    
+		    this.socket = new DatagramSocket(1098);
+		}
+	    }
 	}catch(Exception e) {
 	    System.out.println(e.toString());
 	}
-	this.serverPort = serverPort;
+	this.serverPort = 1099;
 	this.playerX = 0;
 	this.playerY = 0;
 	this.hz = 16;
 	this.gamethread = gamethread;
+	this.RMIthread = RMIthread;
 	this.listener = listener;
     }
     
-    public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort, short x, short y) throws IOException{
-	super("Data_client_thread");
-	this.serverIp = InetAddress.getByName(serverIp);
-	this.serverPort = serverPort;
-	this.playerX = x;
-	this.playerY = y;
-	this.hz = 16;
-	this.socket = new DatagramSocket(1097);
-	this.gamethread = gamethread;	
-    }
-
-    public DatagramClientThread(GameThread gamethread, String serverIp, int serverPort, short x, short y, int hz) throws IOException{
-	super("Data_client_thread");
-	this.serverIp = InetAddress.getByName(serverIp);
-	this.serverPort = serverPort;
-	this.playerX = x;
-	this.playerY = y;
-	this.hz = hz;
-	this.socket = new DatagramSocket(1097);
-	this.gamethread = gamethread;
-    }    
 
     private void updatePlayerPos() {
 	Player player = this.gamethread.getPlayer();

@@ -8,31 +8,32 @@ public class DatagramServerThread extends Thread {
     private int hz;
     private ArrayList<PlayerInfo> playerList;
     private short playerX;
-    private short playerY;
-    private GameThread gamethread;  
+    private short playerY; 
+    private GameThread gamethread;
+    private ServerNetworkThread RMIthread;
+    private boolean listener;
     
-    public DatagramServerThread(GameThread gamethread, int port){
+    public DatagramServerThread(GameThread gamethread, ServerNetworkThread RMIthread, boolean listener){
 	super("DatagramServerThread");
 	try {
-	    this.socket = new DatagramSocket(port);
+	    if (listener == true) {
+		System.out.println("Creating socket on port 1099");		
+		this.socket = new DatagramSocket(1099);
+	    }
+	    else {
+		System.out.println("Creating socket on port 1098");				
+		this.socket = new DatagramSocket(1098);
+	    }
 	}catch(SocketException e) {
 	    System.out.println(e.toString());
 	}
 	this.hz = 16;
 	this.gamethread = gamethread;
+	this.RMIthread = RMIthread;
 	this.playerList = new ArrayList<PlayerInfo>();
 	this.playerX = 0;
 	this.playerY = 0;
-    }
-    
-    public DatagramServerThread(short playerX, short playerY, GameThread gamethread, ArrayList<PlayerInfo> list) throws IOException{
-	super("DatagramServerThread");
-	this.socket = new DatagramSocket(1098);
-	this.playerList = list;
-	this.hz = 16;
-	this.gamethread = gamethread;
-	this.playerX = playerX;
-	this.playerY = playerY;
+	this.listener = listener;
     }
 
     public void addPlayer(PlayerInfo info){

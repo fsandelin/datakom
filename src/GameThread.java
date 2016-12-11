@@ -37,7 +37,7 @@ public class GameThread extends Thread{
 
         //Creating and adding playerarray and 1 player and setting the 0-index as current player
 	playerArray = new ArrayList<Player>();
-        player = new Player(alias, 150, ySize - playerSize - 100, playerSize, board);
+        player = new Player(alias, 0,150, ySize - playerSize - 100, playerSize, board);
 	playerArray.add(player);
         board.addPlayer(player);
         //
@@ -56,7 +56,11 @@ public class GameThread extends Thread{
     public Player getPlayer() {
 	return this.player;
     }
-
+    
+    public void setPlayerId(int id) {
+	this.player.setPlayerId(id);
+    }
+    
     public ArrayList<Player> getPlayerArray() {
 	return this.playerArray;
     }
@@ -103,26 +107,27 @@ public class GameThread extends Thread{
 	
     }
 
-    public int[] addPlayerToServer(String alias, Color playerColor) {
-
+    public int[] addPlayerToServer(String alias, Color playerColor, int id) {
+	System.out.println("---------------Got add player to server with id-----------------");
+	System.out.println(id);
+	System.out.println("------------------------------------------------------------");
         int[] validPosition = board.getValidPlayerPosition();
         int x = validPosition[0];
         int y = validPosition[1];
-
-        //public Player(String playerId, int startXPos, int startYPos, int size, Board b)
-
-        Player p = new Player(alias, x, y, playerSize, board);
+        Player p = new Player(alias, id, x, y, playerSize, board);
         playerArray.add(p);
         board.addPlayer(p);
 
         return validPosition;
     }
 
-    public void addPlayerToClient(int x, int y, String alias) {
-	System.out.println("Got add player to client on:");
+    public void addPlayerToClient(int x, int y, String alias, int id) {
+	System.out.println("---------------Got add player to client on-----------------");
 	System.out.println(x);
-	System.out.println(y);	
-        Player p = new Player(alias, x, y, playerSize, board);
+	System.out.println(y);
+	System.out.println(id);
+	System.out.println("------------------------------------------------------------");
+        Player p = new Player(alias, id, x, y, playerSize, board);
         playerArray.add(p);
         board.addPlayer(p);
 

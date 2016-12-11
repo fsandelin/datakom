@@ -6,6 +6,7 @@ public class PlayerInfo implements Serializable{
     private String alias;
     private int x;
     private int y;
+    private int id;
 
     public PlayerInfo(String ip, int port, String alias) {
 	try {
@@ -19,7 +20,7 @@ public class PlayerInfo implements Serializable{
 	this.y = 0;
     }
     
-    public PlayerInfo(String ip, int port, String alias, int x, int y) {
+    public PlayerInfo(String ip, int port, String alias, int x, int y, int id) {
 	try {
 	    this.ip = InetAddress.getByName(ip);
 	}catch(Exception e) {
@@ -29,6 +30,7 @@ public class PlayerInfo implements Serializable{
 	this.alias = alias;
 	this.x = x;
 	this.y = y;
+	this.id = id;
     }    
 
     public InetAddress getIp() {
@@ -38,7 +40,9 @@ public class PlayerInfo implements Serializable{
     public int getPort() {
 	return this.port;
     }
-
+    public int getId() {
+	return this.id;
+    }
     public String getAlias() {
 	return this.alias;
     }

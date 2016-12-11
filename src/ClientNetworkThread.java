@@ -7,22 +7,28 @@ import java.util.*;
 import java.net.*;
 
 public class ClientNetworkThread extends Thread{
-    int map;
-    int hz;
-    String serverIp;
-    int serverPort;
-    int ownPort;
-    String ownIp;
-    GameThread gamethread;
-    String alias;
-    ArrayList <PlayerInfo> playerList;    
+    private int map;
+    private int hz;
+    private String serverIp;
+    private int serverPort;
+    private int ownPort;
+    private String ownIp;
+    private GameThread gamethread;
+    private String alias;
+    private ArrayList <PlayerInfo> playerList;
+    private int myId;
 
-    public ClientNetworkThread(GameThread gamethread, String ip, int port, int ownPort, String alias) {
+    public ClientNetworkThread(GameThread gamethread, String ip, String alias, boolean debug) {
 	super("ClientNetworkThread");
 	this.serverIp = ip;
-	this.playerList = new ArrayList<PlayerInfo>();	
-	this.serverPort = port;
-	this.ownPort = ownPort;
+	this.playerList = new ArrayList<PlayerInfo>();
+	this.serverPort = 1099;
+	if (debug==true){
+	    this.ownPort = 1097;
+	}
+	else {
+	    this.ownPort = 1097;    
+	}
 	this.alias = alias;
 	this.map = 1;
 	this.hz = 32;
@@ -42,20 +48,21 @@ public class ClientNetworkThread extends Thread{
 	    Registry registry = LocateRegistry.getRegistry(serverIp,serverPort);
 	    System.out.println("Looking stub");
 	    Server stub = (Server) registry.lookup("Server");
-	    System.out.println("connect with ownIP: " + ownIp + " ownPort: " + Integer.toString(ownPort) + " alias: " + alias);
 	    ArrayList<PlayerInfo> list = stub.connectToGame(ownIp, ownPort, alias);
 	    this.playerList = list;
-	    System.out.println("Satt list till serverns list");
 	    this.debugRMI();
 	    int x = this.playerList.get(playerList.size() - 1).getX();
-	    int y = this.playerList.get(playerList.size() - 1).getY();	    
+	    int y = this.playerList.get(playerList.size() - 1).getY();
+	    this.myId = this.playerList.get(playerList.size() - 1).getId();
+	    this.gamethread.setPlayerId(this.myId);
 	    this.gamethread.setPlayerX(x);
 	    this.gamethread.setPlayerY(y);
 	    for(int i = 0; i < this.playerList.size() - 1; i++) {
-		System.out.println("Kommer be att lägga till spelare i listan med i " + Integer.toString(i));
 		int xValue = this.playerList.get(i).getX();
 		int yValue = this.playerList.get(i).getY();
-		this.gamethread.addPlayerToClient(xValue, yValue, this.playerList.get(i).getAlias());
+		String alias = this.playerList.get(i).getAlias();
+		int id = this.playerList.get(i).getId();
+		this.gamethread.addPlayerToClient(xValue, yValue, alias, id);
 	    }
 	    stub.debugRMI();
 	} catch(Exception e) {
@@ -64,14 +71,16 @@ public class ClientNetworkThread extends Thread{
 	}
     }
     private void debugRMI() {
-	System.out.println("Map: " + this.map);
-	System.out.println("Hz: " + this.hz);
 	ListIterator<PlayerInfo> iterator = this.playerList.listIterator();
 	int i = 0;
+	System.out.println("==============DEBUGGING LIST PRINT================");
 	while (iterator.hasNext()) {
 	    PlayerInfo cur = iterator.next();
 	    System.out.println("Player " + Integer.toString(i) + "\n" +cur.toString());
-	    System.out.println("X: " + Integer.toString(cur.getX()) + "Y: " + Integer.toString(cur.getY()));	    
+	    System.out.println("Id: " + Integer.toString(cur.getId()));
+	    System.out.println("X: " + Integer.toString(cur.getX()) + "Y: " + Integer.toString(cur.getY()));
+	    System.out.println("================================================");
+	    i++;
 	}
     }    
 }

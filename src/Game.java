@@ -4,28 +4,30 @@ import java.util.*;
 
 
 public class Game{
-    private static void runAsClient(String alias, String serverIp, int serverPort ,int ownPort) {
+    private static void runAsClient(String alias, String serverIp, boolean debug) {
 	GameThread game = new GameThread(800, 600, alias);
 	System.out.println("Starting Client RMI thread...");
-	ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, serverPort, ownPort, alias);
+	ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, alias, debug);
 	clientRMI.start();
-	//System.out.println("Starting client UDP thread...");
-	//DatagramClientThread clientUDPSender = new DatagramClientThread(game, serverIp, serverPort, ownPort, false);
+	sleep(500);
+	System.out.println("Starting client UDP thread...");
+	DatagramClientThread clientUDPSender = new DatagramClientThread(game, clientRMI, serverIp, false, debug);
+	DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, clientRMI, serverIp, true, debug);	
 	//clientUDPSender.start();
-	//DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, serverIp, serverPort, ownPort, true);
 	//clientUDPReceiver.start();
 	//System.out.println("UDP up and running");
 	game.start();
 	
     }
-    private static void runAsServer(String alias, String ip, int port) {
+    private static void runAsServer(String alias) {
 	GameThread game = new GameThread(800, 600, alias);
 	System.out.println("Starting Server RMI thread...");
-	ServerNetworkThread serverRMI = new ServerNetworkThread(game, ip, port, alias);
+	ServerNetworkThread serverRMI = new ServerNetworkThread(game, alias);
 	serverRMI.start();
-	//sleep(500);
-	//System.out.println("Starting Server UDP thread...");
-	//DatagramServerThread serverUDP = new DatagramServerThread(game, port);
+	sleep(500);
+	System.out.println("Starting Server UDP thread...");
+	DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
+	DatagramServerThread serverUDPreceiver = new DatagramServerThread(game, serverRMI, true);	
 	//serverUDP.start();
 	//System.out.println("UDP up and running");
 	game.start();
@@ -42,46 +44,47 @@ public class Game{
 	String ip;
 	String alias;
 	Scanner reader = new Scanner(System.in);
-	System.out.println("Enter your alias:");
-	alias = reader.next();
-	System.out.println("Enter port to use (recommended 1099):");;
-	port = reader.nextInt();
-	
-	System.out.println("0.Exit  |  1.Host  |  2.Client");
-	int response = reader.nextInt();
-
-	switch (response) {
-	case 1: {
-	    System.out.println("Enter your IP:");
-	    ip = reader.next();
-	    try {	
-		InetAddress check = InetAddress.getByName(ip);
-	    }catch(UnknownHostException e) {
-		System.out.println("UnknowHostException. Försök igen och kotrollera IPn.");
-		System.out.println(e.toString());
-		System.exit(0);
+	System.out.println("Debug mode (0/1)?");
+	int dbug = reader.nextInt();
+	if (dbug==1) {
+	    System.out.println("Server (0/1)?");
+	    int s = reader.nextInt();
+	    if (s==1) {
+		runAsServer("1"); 
 	    }
-	    runAsServer(alias, ip, port); //VIKTIG
-	    break;
-	}
-	case 2: {
-	    System.out.println("Enter IP to connect to:");
-	    ip = reader.next();
-	    try {	
-		InetAddress check = InetAddress.getByName(ip);
-	    }catch(UnknownHostException e) {
-		System.out.println("UnknowHostException. Försök igen och kotrollera IPn.");
-		System.out.println(e.toString());
-		System.exit(0);
+	    else {
+		runAsClient("2", "127.0.0.1", true);
 	    }
-	    System.out.println("Enter port to connect to:");
-	    int serverPort = reader.nextInt();
-	    runAsClient(alias, ip, serverPort, port); //VIKTIG
-	    break;
 	}
-	default:
-	    System.exit(0);
-	    break;
+	else {
+	    System.out.println("Enter your alias:");
+	    alias = reader.next();
+	    System.out.println("Enter port to use (recommended 1099):");;
+	    port = reader.nextInt();
+	    System.out.println("0.Exit  |  1.Host  |  2.Client");
+	    int response = reader.nextInt();
+	    switch (response) {
+	    case 1: {
+		runAsServer(alias); //VIKTIG
+		break;
+	    }
+	    case 2: {
+		System.out.println("Enter IP to connect to:");
+		ip = reader.next();
+		try {	
+		    InetAddress check = InetAddress.getByName(ip);
+		}catch(UnknownHostException e) {
+		    System.out.println("UnknowHostException. Försök igen och kotrollera IPn.");
+		    System.out.println(e.toString());
+		    System.exit(0);
+		}
+		runAsClient(alias, ip, false); //VIKTIG
+		break;
+	    }
+	    default:
+		System.exit(0);
+		break;
+	    }
 	}
     }
     private static void sleep(int time) {
