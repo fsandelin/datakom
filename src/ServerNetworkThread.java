@@ -86,6 +86,12 @@ public class ServerNetworkThread extends Thread implements Server {
 	this.gamethread.setWin(true);
     }
 
+
+
+    /**
+     * Kör tråden. Helt vanlig RMI setup. Mera info stubs och registry
+     *  finns i javas dokumentation om RMI.
+     */
     public void run() {
         Player ownPlayer = this.gamethread.getPlayer();
         int ownX = ownPlayer.getPlayerX();

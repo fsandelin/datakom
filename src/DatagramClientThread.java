@@ -71,6 +71,16 @@ public class DatagramClientThread extends Thread{
 	return this.playerY;	
     }
 
+
+
+    
+    /**
+     * @brief "Populates" the buffer with info on it's own x and y values and it's id. Sends it to this.serverIp at this.serverPort
+     *
+     * Serializes the data in BIG endian.
+     *
+     * @param sendBuff The buffer in which to send info from
+     */
     public void sendInfo(byte[] sendBuff) {
 	this.updatePlayerPos();
 	sendBuff[0] = (byte) (this.playerX >> 8);	    
@@ -95,8 +105,16 @@ public class DatagramClientThread extends Thread{
 	}	
     }
 
+    /**
+     * @brief Receives UDP packet which contains all connected players to the game id, x and y valure. Updates the current game state with what it got.
+     *
+     * This funktion calls this.gamethread.updatePlayer and will only do so for player whos Ids isn't it's own, this.myId.
+     * Deserializes in BIG endian since it is the standard of this application.
+     *
+     * @param players Amount of players it expect to receive.
+     */
     public void receiveInfo(int players) {
-	byte[] receiveBuff = new byte[players*8];
+	byte[] receiveBuff = new byte[4 + (players*8)];
 	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
 	try {
 	    this.socket.receive(receivePacket);
@@ -104,25 +122,38 @@ public class DatagramClientThread extends Thread{
 	    System.out.println(e.toString());
 	}
 	byte[] receivedData = receivePacket.getData();
-	ByteBuffer bb = ByteBuffer.allocate(8*players);
+	ByteBuffer bb = ByteBuffer.allocate(4 + (8*players));
 	bb.order(ByteOrder.BIG_ENDIAN);
+	bb.put(receivedData[0]);
+	bb.put(receivedData[1]);
+	bb.put(receivedData[2]);
+	bb.put(receivedData[3]);
+	int playersInDatagram = bb.getInt(0);
+	//System.out.println("=======================UDP RECEIVED==================");
+	if (playersInDatagram!=players) {
+	    int foo = 123;
+	    //CALL RMI THREAD TO UPDATE
+	}
+	//System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
 	for(int i = 0; i < players; i++) {
-	    bb.put(receivedData[0 + (i*8)]);
-	    bb.put(receivedData[1 + (i*8)]);
-	    bb.put(receivedData[2 + (i*8)]);
-	    bb.put(receivedData[3 + (i*8)]);
-	    bb.put(receivedData[4 + (i*8)]);
-	    bb.put(receivedData[5 + (i*8)]);
-	    bb.put(receivedData[6 + (i*8)]);
-	    bb.put(receivedData[7 + (i*8)]);	    
-	    short x = bb.getShort(0 + (i*8));
-	    short y = bb.getShort(2 + (i*8));
-	    int id = bb.getInt(4 + (i*8));
+	    bb.put(receivedData[0 + 4 + (i*8)]);
+	    bb.put(receivedData[1 + 4 + (i*8)]);
+	    bb.put(receivedData[2 + 4 + (i*8)]);
+	    bb.put(receivedData[3 + 4 + (i*8)]);
+	    bb.put(receivedData[4 + 4 + (i*8)]);
+	    bb.put(receivedData[5 + 4 + (i*8)]);
+	    bb.put(receivedData[6 + 4 + (i*8)]);
+	    bb.put(receivedData[7 + 4 + (i*8)]);	    
+	    short x = bb.getShort(0 + 4 + (i*8));
+	    short y = bb.getShort(2 + 4 + (i*8));
+	    int id = bb.getInt(4 + 4 + (i*8));
+	    //System.out.println("Player ID: " + Integer.toString(id) + " x: " + Short.toString(x) + " y: " + Short.toString(y));
 	    if (id != this.RMIthread.getMyId()) {
 		int xInt = x;
 		int yInt = y;
 		this.gamethread.updatePlayer(xInt, yInt, id);
 	    }
+	    //System.out.println("============================================");
 
 	}	
     }
@@ -140,7 +171,7 @@ public class DatagramClientThread extends Thread{
 	    }
 	}
     }
-
+    
     public void debugByteArray(byte[] bytearray) {
 	String array = "";
 	for(int i = 0; i < bytearray.length; i++) {

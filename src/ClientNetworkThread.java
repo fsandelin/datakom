@@ -27,7 +27,7 @@ public class ClientNetworkThread extends Thread {
         if (debug == true) {
             this.ownPort = 1097;
         } else {
-            this.ownPort = 1097;
+            this.ownPort = 1099; //var 1097 förr
         }
         this.alias = alias;
         this.map = 1;
