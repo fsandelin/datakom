@@ -10,7 +10,6 @@ import java.util.*;
 public class GameThread extends Thread {
 
     private Board board;
-    private ArrayList<Player> playerArray;
     private Player player;
     private KeyboardController keyboardController;
     private long clock;
@@ -35,10 +34,7 @@ public class GameThread extends Thread {
         keyboardController = new KeyboardController();
         board.initKeyboard(keyboardController);
 
-        //Creating and adding playerarray and 1 player and setting the 0-index as current player
-        playerArray = new ArrayList<Player>();
         player = new Player(alias, 0, 150, ySize - playerSize - 100, playerSize, board);
-        playerArray.add(player);
         board.addPlayer(player);
         //
 
@@ -59,10 +55,6 @@ public class GameThread extends Thread {
 
     public void setPlayerId(int id) {
         this.player.setPlayerId(id);
-    }
-
-    public ArrayList<Player> getPlayerArray() {
-        return this.playerArray;
     }
 
     public String toString() {
@@ -115,7 +107,6 @@ public class GameThread extends Thread {
         int x = validPosition[0];
         int y = validPosition[1];
         Player p = new Player(alias, id, x, y, playerSize, board);
-        playerArray.add(p);
         board.addPlayer(p);
         p.setPlayerColor(playerColor);
         return validPosition;
@@ -129,7 +120,6 @@ public class GameThread extends Thread {
         System.out.println("------------------------------------------------------------");
         Player p = new Player(alias, id, x, y, playerSize, board);
         p.setPlayerColor(playerColor);
-        playerArray.add(p);
         board.addPlayer(p);
 
     }
