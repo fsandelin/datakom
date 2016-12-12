@@ -38,6 +38,7 @@ public class Board {
 
     private int boardLowerXBounds;
     private int pSize = 30;
+    private static final int aliasPadding = 20;
 
     private Goal goal;
 
@@ -67,13 +68,13 @@ public class Board {
 
 
     public void addPlayer(Player p) {
-	_mutex.lock();
+        _mutex.lock();
         players.add(p);
         this.drawingSurface.add(p);
-	p.revalidate();
-	System.out.println("Det finns nu " + Integer.toString(players.size()) + " i boards listan.");
+        p.revalidate();
+        System.out.println("Det finns nu " + Integer.toString(players.size()) + " i boards listan.");
         //System.out.println(players[0]);
-	_mutex.unlock();
+        _mutex.unlock();
     }
 
     public void addObstruction(Obstruction o) {
@@ -85,16 +86,16 @@ public class Board {
     public void update() {
         drawingSurface.setVisible(true);
         goal.repaint();
-	//System.out.println("Size på ritnings listan: " + Integer.toString(players.size()));
-	_mutex.lock();
+        //System.out.println("Size på ritnings listan: " + Integer.toString(players.size()));
+        _mutex.lock();
         for (Player p : players) {
             if (p != null) {
-		//System.out.println(p.toString());
-		p.setVisible(true);
+                //System.out.println(p.toString());
+                p.setVisible(true);
                 p.repaint();
             }
         }
-	_mutex.unlock();
+        _mutex.unlock();
         for (Obstruction o : fixedObjects) {
             if (o != null) {
                 o.repaint();
@@ -118,7 +119,7 @@ public class Board {
 
     public int[] getValidVelocity(int[] v) {
         Player p = players.get(0);
-        Rectangle nextPos = new Rectangle(p.getX() + v[0], p.getY() + v[1], p.getPlayerSize(), p.getPlayerSize());
+        Rectangle nextPos = new Rectangle(p.getX() + v[0], p.getY() + v[1] + aliasPadding, p.getPlayerSize(), p.getPlayerSize());
         //System.out.println(nextPos);
         Rectangle intersection;
 
@@ -154,9 +155,6 @@ public class Board {
                         returnV[1] = 1;
                     }
 
-//                    if (tentYVelocity <= returnV[1] && tentYVelocity >= -returnV[1]) {
-//                        returnV[1] = tentYVelocity;
-//                    }
                 } else {
                     if (v[0] >= 0) {
                         tentXVelocity = tentXVelocity - ((int) intersection.getWidth());
@@ -207,40 +205,40 @@ public class Board {
     public int[] getValidPlayerPosition() {
         int playerSize = this.pSize;
         int[] returnArray = new int[2];
-        returnArray[0] =boardLowerXBounds;
+        returnArray[0] = boardLowerXBounds;
         returnArray[1] = 500;
         return returnArray;
 
     }
 
     public void updatePlayer(int x, int y, int id) {
-	_mutex.lock();
-	for (int i = 0; i < this.players.size(); i++) {
-	    int playerId = this.players.get(i).getPlayerId();
-	    if(id==playerId) {
-		this.players.get(i).setX(x);
-		this.players.get(i).setY(y);
-	    }
-	}
-	_mutex.unlock();
+        _mutex.lock();
+        for (int i = 0; i < this.players.size(); i++) {
+            int playerId = this.players.get(i).getPlayerId();
+            if (id == playerId) {
+                this.players.get(i).setX(x);
+                this.players.get(i).setY(y);
+            }
+        }
+        _mutex.unlock();
     }
 
     //Uppdaterar listan som kommer som input med vad som finns i listan hos board.
     public void updatePlayerList(ArrayList<PlayerInfo> list) {
-	_mutex.lock();	
-	for (int i = 0; i < list.size(); i++) {
-	    int id = list.get(i).getId();
-	    for (int j = 0; j < this.players.size(); j++) {
-		if (players.get(j).getPlayerId() == id) {
-		    int x = players.get(j).getPlayerX();
-		    int y = players.get(j).getPlayerY();
-		    list.get(i).setX(x);
-		    list.get(i).setY(y);
-		    break;
-		}
-	    }
-	}
-	_mutex.unlock();
+        _mutex.lock();
+        for (int i = 0; i < list.size(); i++) {
+            int id = list.get(i).getId();
+            for (int j = 0; j < this.players.size(); j++) {
+                if (players.get(j).getPlayerId() == id) {
+                    int x = players.get(j).getPlayerX();
+                    int y = players.get(j).getPlayerY();
+                    list.get(i).setX(x);
+                    list.get(i).setY(y);
+                    break;
+                }
+            }
+        }
+        _mutex.unlock();
     }
 
 }

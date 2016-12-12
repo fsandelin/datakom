@@ -24,22 +24,24 @@ public class Player extends JComponent {
     private Board board;
     private boolean jumping;
 
-    public Player(String playerAlias, int playerId ,int startXPos, int startYPos, int size, Board b) {
+    private static final int aliasPadding = 20;
+
+    public Player(String playerAlias, int playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
-        this.setPreferredSize(new Dimension(size, size));
+        this.setPreferredSize(new Dimension(size, size + aliasPadding));
         //
         velocity = new int[2];
         this.board = b;
         this.playerSize = size;
         this.xPos = startXPos;
-        this.yPos = startYPos;
+        this.yPos = startYPos - aliasPadding;
         float red = (float) Math.random();
         float green = (float) Math.random();
         float blue = (float) Math.random();
         this.playerColor = new Color(red, green, blue);
         this.playerAlias = playerAlias;
-	this.playerId = playerId;
-	System.out.println("Player created with id: " + Integer.toString(this.playerId));
+        this.playerId = playerId;
+        System.out.println("Player created with id: " + Integer.toString(this.playerId));
     }
 
     public void jump() {
@@ -93,11 +95,13 @@ public class Player extends JComponent {
 
     @Override
     public void paintComponent(Graphics g) {
-	super.paintComponent(g);	
-        this.setLocation(this.xPos, this.yPos);
+        super.paintComponent(g);
+        this.setLocation(this.xPos, this.yPos - aliasPadding);
         //System.out.println("Player: " + playerAlias + " is at: xpos: " + xPos + ", yPos: " + yPos);
         g.setColor(this.playerColor);
-        g.fillRect(0, 0, this.playerSize, this.playerSize);
+        g.fillRect(0, aliasPadding, this.playerSize, this.playerSize);
+        g.setColor(Color.black);
+        g.drawString(this.playerAlias, 0, aliasPadding - 5);
     }
 
     public String getPlayerAlias() {
@@ -111,29 +115,35 @@ public class Player extends JComponent {
     public int getPlayerX() {
         return this.xPos;
     }
+
     public int getPlayerY() {
         return this.yPos;
     }
+
     public short getPlayerXShort() {
         return (short) this.xPos;
     }
+
     public short getPlayerYShort() {
         return (short) this.yPos;
     }
 
     public void setX(int x) {
-	this.xPos = x;
+        this.xPos = x;
     }
+
     public void setY(int y) {
-	this.yPos = y;
+        this.yPos = y;
     }
+
     public void setPlayerId(int id) {
-	this.playerId = id;
+        this.playerId = id;
     }
+
     public int getPlayerId() {
-	return this.playerId;
+        return this.playerId;
     }
-    
+
 
     public void updatePosition() {
         //System.out.printf("%d | %d\n", xPos, yPos);
