@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.awt.event.KeyEvent;
 import java.util.*;
 
-public class GameThread extends Thread{
+public class GameThread extends Thread {
 
     private Board board;
     private ArrayList<Player> playerArray;
@@ -26,7 +26,7 @@ public class GameThread extends Thread{
      * @param ySize Heigth of the game-board
      */
     public GameThread(int xSize, int ySize, String alias) {
-	super("GameThread");
+        super("GameThread");
         this.board = new Board(xSize, ySize);
         int padding = 5;
         this.win = false;
@@ -36,9 +36,9 @@ public class GameThread extends Thread{
         board.initKeyboard(keyboardController);
 
         //Creating and adding playerarray and 1 player and setting the 0-index as current player
-	playerArray = new ArrayList<Player>();
-        player = new Player(alias, 0,150, ySize - playerSize - 100, playerSize, board);
-	playerArray.add(player);
+        playerArray = new ArrayList<Player>();
+        player = new Player(alias, 0, 150, ySize - playerSize - 100, playerSize, board);
+        playerArray.add(player);
         board.addPlayer(player);
         //
 
@@ -54,17 +54,17 @@ public class GameThread extends Thread{
     }
 
     public Player getPlayer() {
-	return this.player;
+        return this.player;
     }
-    
+
     public void setPlayerId(int id) {
-	this.player.setPlayerId(id);
+        this.player.setPlayerId(id);
     }
-    
+
     public ArrayList<Player> getPlayerArray() {
-	return this.playerArray;
+        return this.playerArray;
     }
-    
+
     public String toString() {
         return "Current game is running";
     }
@@ -90,44 +90,45 @@ public class GameThread extends Thread{
         }
         //System.out.println("Player Moved");
     }
-    
-    
+
+
     public void run() {
         // Game loop
-	while (!this.checkWinState()) {
-	    if ((System.currentTimeMillis() - clock) >= timestep) {
-		manageKeys();
-		player.checkJumping();
-		player.updatePosition();
-		win = board.win();
-		clock = System.currentTimeMillis();
-	    }
-	    this.updateBoard();
+        while (!this.checkWinState()) {
+            if ((System.currentTimeMillis() - clock) >= timestep) {
+                manageKeys();
+                player.checkJumping();
+                player.updatePosition();
+                win = board.win();
+                clock = System.currentTimeMillis();
+            }
+            this.updateBoard();
         }
-	
+
     }
 
     public int[] addPlayerToServer(String alias, Color playerColor, int id) {
-	System.out.println("---------------Got add player to server with id-----------------");
-	System.out.println(id);
-	System.out.println("------------------------------------------------------------");
+        System.out.println("---------------Got add player to server with id-----------------");
+        System.out.println(id);
+        System.out.println("------------------------------------------------------------");
         int[] validPosition = board.getValidPlayerPosition();
         int x = validPosition[0];
         int y = validPosition[1];
         Player p = new Player(alias, id, x, y, playerSize, board);
         playerArray.add(p);
         board.addPlayer(p);
-
+        p.setPlayerColor(playerColor);
         return validPosition;
     }
 
-    public void addPlayerToClient(int x, int y, String alias, int id) {
-	System.out.println("---------------Got add player to client on-----------------");
-	System.out.println(x);
-	System.out.println(y);
-	System.out.println(id);
-	System.out.println("------------------------------------------------------------");
+    public void addPlayerToClient(int x, int y, String alias, int id, Color playerColor) {
+        System.out.println("---------------Got add player to client on-----------------");
+        System.out.println(x);
+        System.out.println(y);
+        System.out.println(id);
+        System.out.println("------------------------------------------------------------");
         Player p = new Player(alias, id, x, y, playerSize, board);
+        p.setPlayerColor(playerColor);
         playerArray.add(p);
         board.addPlayer(p);
 
@@ -140,33 +141,39 @@ public class GameThread extends Thread{
     public boolean checkWinState() {
         return win;
     }
-    public void setPlayerX(int x){
-	this.player.setX(x);
+
+    public void setPlayerX(int x) {
+        this.player.setX(x);
     }
-    public void setPlayerY(int y){
-	this.player.setY(y);
+
+    public void setPlayerY(int y) {
+        this.player.setY(y);
     }
+
     public int getPlayerX() {
-	return this.player.getPlayerX();
+        return this.player.getPlayerX();
     }
+
     public int getPlayerY() {
-	return this.player.getPlayerY();
+        return this.player.getPlayerY();
     }
+
     public short getPlayerXShort() {
-	return this.player.getPlayerXShort();
+        return this.player.getPlayerXShort();
     }
+
     public short getPlayerYShort() {
-	return this.player.getPlayerYShort();
+        return this.player.getPlayerYShort();
     }
 
     //Denna här för att dett inte skall "läcka". 
     public void updatePlayerList(ArrayList<PlayerInfo> list) {
-	this.board.updatePlayerList(list);
+        this.board.updatePlayerList(list);
     }
 
     //skickar vidare till board
     public void updatePlayer(int x, int y, int id) {
-	this.board.updatePlayer(x, y, id);
+        this.board.updatePlayer(x, y, id);
     }
-       
+
 }

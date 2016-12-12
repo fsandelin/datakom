@@ -145,4 +145,8 @@ public class Player extends JComponent {
     public Color getPlayerColor() {
         return this.playerColor;
     }
+
+    public void setPlayerColor(Color c) {
+        this.playerColor = c;
+    }
 }
