@@ -9,9 +9,7 @@ CLASSES = \
 	PlayerInfo.java \
 	PlayerPosInfo.java \
 	ServerNetworkThread.java \
-	ServerThread.java \
-	ClientThread.java \
-	ClientNetwork.java \
+	ClientNetworkThread.java \
 	DatagramClientThread.java \
 	DatagramServerThread.java \
 	Player.java \
@@ -39,8 +37,15 @@ classes: $(CLASSES:.java=.class)
 run: classes
 	java Game
 
+rmi:
+	rmiregistry &
+kill:
+	killall "rmiregistry"
+#for pid in $(ps -f | grep "rmiregistry" | awk '{print $2}'); do kill -9 $pid; done;
 clean:
 	rm -f *.class
 	rm -f *~
 	rm -f *#
 
+test: TestClass.class
+	java TestClass
