@@ -49,7 +49,7 @@ public class DatagramClientThread extends Thread{
 	this.serverPort = 1099;
 	this.playerX = 0;
 	this.playerY = 0;
-	this.hz = 16;
+	this.hz = 32;
 	this.gamethread = gamethread;
 	this.RMIthread = RMIthread;
 	this.myId = RMIthread.getMyId();
