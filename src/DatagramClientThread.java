@@ -26,21 +26,41 @@ public class DatagramClientThread extends Thread{
 	    if (debug = true) {
 		if (listener == true) {
 		    System.out.println("Creating socket on port 1097");
-		    this.socket = new DatagramSocket(1097);
+		    try {
+			this.socket = new DatagramSocket(1097);
+		    }catch(Exception e) {
+			System.out.println(e.toString());
+			System.out.println("Closing application due to exception");
+		    }
 		}
 		else {
 		    System.out.println("Creating socket on port 1096");
-		    this.socket = new DatagramSocket(1096);
+		    try {
+			this.socket = new DatagramSocket(1096);
+		    }catch(Exception e) {
+			System.out.println(e.toString());
+			System.out.println("Closing application due to exception");
+		    }
 		}
 	    }
 	    else {
 		if (listener == true) {
 		    System.out.println("Creating socket on port 1099");
-		    this.socket = new DatagramSocket(1099);
+		    try {
+			this.socket = new DatagramSocket(1099);
+		    }catch(Exception e) {
+			System.out.println(e.toString());
+			System.out.println("Closing application due to exception");
+		    }
 		}
 		else {
 		    System.out.println("Creating socket on port 1098");		    
-		    this.socket = new DatagramSocket(1098);
+		    try {
+			this.socket = new DatagramSocket(1098);
+		    }catch(Exception e) {
+			System.out.println(e.toString());
+			System.out.println("Closing application due to exception");
+		    }
 		}
 	    }
 	}catch(Exception e) {
@@ -131,8 +151,10 @@ public class DatagramClientThread extends Thread{
 	int playersInDatagram = bb.getInt(0);
 	//System.out.println("=======================UDP RECEIVED==================");
 	if (playersInDatagram!=players) {
-	    int foo = 123;
-	    //CALL RMI THREAD TO UPDATE
+	    //Ber RMI att uppdaterar sin lista eftersom den är fel.
+	    this.RMIthread.updateList();
+	    //Sätter sin lista till RMIs nya lista
+	    this.playerList = this.RMIthread.getPlayerList();
 	}
 	//System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
 	for(int i = 0; i < players; i++) {
