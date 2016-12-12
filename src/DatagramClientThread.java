@@ -14,7 +14,9 @@ public class DatagramClientThread extends Thread{
     private GameThread gamethread;    //Own Gamethread
     private ClientNetworkThread RMIthread; //Own RMIthread
     private boolean listener;         //If it is a receiver or sender
-    private ArrayList<PlayerInfo> playerList;
+    private ArrayList<PlayerInfo> playerList; //Referens to the list created by RMI thread
+    private int myId; //Same as the RMI thread got.
+    
     
     
     public DatagramClientThread(GameThread gamethread, ClientNetworkThread RMIthread, String serverIp, boolean listener, boolean debug){
@@ -50,15 +52,15 @@ public class DatagramClientThread extends Thread{
 	this.hz = 16;
 	this.gamethread = gamethread;
 	this.RMIthread = RMIthread;
+	this.myId = RMIthread.getMyId();
 	this.playerList = this.RMIthread.getPlayerList();	
 	this.listener = listener;
     }
     
 
     private void updatePlayerPos() {
-	Player player = this.gamethread.getPlayer();
-	this.playerX = player.getPlayerXShort();
-	this.playerY = player.getPlayerYShort();
+	this.playerX = this.gamethread.getPlayerXShort();
+	this.playerY = this.gamethread.getPlayerYShort();
     }
 
     public short getX(){
@@ -72,13 +74,22 @@ public class DatagramClientThread extends Thread{
     public void sendInfo(byte[] sendBuff) {
 	this.updatePlayerPos();
 	sendBuff[0] = (byte) (this.playerX >> 8);	    
-	sendBuff[1] = (byte) this.playerX;
+	sendBuff[1] = (byte) (this.playerX);
 	sendBuff[2] = (byte) (this.playerY >> 8);
-	sendBuff[3] = (byte) this.playerY;
-	//this.debugByteArray(sendBuff);
+	sendBuff[3] = (byte) (this.playerY);
+	sendBuff[4] = (byte) (this.myId >> 24);
+	sendBuff[5] = (byte) (this.myId >> 16);
+	sendBuff[6] = (byte) (this.myId >> 8);
+	sendBuff[7] = (byte) (this.myId);
 	try {
 	    DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, this.serverIp, this.serverPort);
 	    this.socket.send(sendPacket);
+	    //System.out.println("==================UDP SENDING======================");
+	    //this.debugByteArray(sendBuff);
+	    //System.out.println("Server: " + this.serverIp);
+	    //System.out.println("Port: " + Integer.toString(this.serverPort));
+	    //System.out.println("==================================================");		    
+	    
 	}catch(IOException e) {
 	    System.out.println(e.toString());
 	}	
@@ -107,7 +118,6 @@ public class DatagramClientThread extends Thread{
 	    short x = bb.getShort(0 + (i*8));
 	    short y = bb.getShort(2 + (i*8));
 	    int id = bb.getInt(4 + (i*8));
-
 	    if (id != this.RMIthread.getMyId()) {
 		int xInt = x;
 		int yInt = y;
@@ -119,7 +129,7 @@ public class DatagramClientThread extends Thread{
 
     public void run(){
 	int timeToSleep = 1000/this.hz;
-	byte[] sendBuff = new byte[4];	
+	byte[] sendBuff = new byte[8];	
 	while(true){
 	    if(this.listener) {
 		this.receiveInfo(this.playerList.size());

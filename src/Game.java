@@ -1,4 +1,3 @@
-
 import java.net.*;
 import java.util.*;
 
@@ -14,8 +13,8 @@ public class Game {
         DatagramClientThread clientUDPSender = new DatagramClientThread(game, clientRMI, serverIp, false, debug);
         DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, clientRMI, serverIp, true, debug);
         clientUDPReceiver.start();
-        //clientUDPSender.start();
-        //System.out.println("UDP up and running");
+        clientUDPSender.start();
+        System.out.println("UDP up and running");
         game.start();
 
     }
@@ -30,7 +29,8 @@ public class Game {
         DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
         DatagramServerThread serverUDPreceiver = new DatagramServerThread(game, serverRMI, true);
         serverUDPsender.start();
-        //System.out.println("UDP up and running");
+	serverUDPreceiver.start();
+        System.out.println("UDP up and running");
         game.start();
 
     }

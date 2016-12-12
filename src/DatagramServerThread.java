@@ -87,15 +87,24 @@ public class DatagramServerThread extends Thread {
 	    System.out.println(e.toString());
 	}
 	byte[] receivedData = receivePacket.getData();
-	ByteBuffer bb = ByteBuffer.allocate(4);
+	ByteBuffer bb = ByteBuffer.allocate(8);
 	bb.order(ByteOrder.BIG_ENDIAN);
 	bb.put(receivedData[0]);
 	bb.put(receivedData[1]);
 	bb.put(receivedData[2]);
 	bb.put(receivedData[3]);
-	short x = bb.getShort(0);
-	short y = bb.getShort(2);
-	System.out.println("Server received | " + Short.toString(x) + " " + Short.toString(y));
+	bb.put(receivedData[4]);
+	bb.put(receivedData[5]);
+	bb.put(receivedData[6]);
+	bb.put(receivedData[7]);
+	int x = bb.getShort(0);
+	int y = bb.getShort(2);
+	int id = bb.getInt(4);
+	//System.out.println("========================RECEIVED==============================");
+	//System.out.println("Server received | " + Integer.toString(x) + " " + Integer.toString(y) + " for ID: " + Integer.toString(id));
+	//System.out.println("From ---- IP: "+ receivePacket.getAddress().toString() + " ------ Port: " + Integer.toString(receivePacket.getPort()));
+	//System.out.println("===============================================================");
+	this.gamethread.updatePlayer(x, y, id);	
     }
 
     public void debugByteArray(byte[] bytearray) {
