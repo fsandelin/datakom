@@ -78,8 +78,6 @@ public class ClientNetworkThread extends Thread {
                 this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
             }
 
-            stub.debugRMI();
-
 	    while(!this.gamethread.checkWinState()){
 		try {
 		    Thread.sleep(1000);
