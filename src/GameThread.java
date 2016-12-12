@@ -31,6 +31,7 @@ public class GameThread extends Thread {
         this.win = false;
 
         //Initialize keyboardcontrols
+	
         keyboardController = new KeyboardController();
         board.initKeyboard(keyboardController);
 
