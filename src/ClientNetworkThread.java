@@ -42,6 +42,11 @@ public class ClientNetworkThread extends Thread {
 
     }
 
+     public void setWinState() throws RemoteException{
+	this.gamethread.setWin(true);
+    }
+
+
     public void run() {
         try {
             System.out.println("LocateRegistry -> serverIP: " + serverIp + " serverPort:" + Integer.toString(serverPort));
@@ -65,6 +70,15 @@ public class ClientNetworkThread extends Thread {
                 this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
             }
             stub.debugRMI();
+
+	    while(!this.gamethread.checkWinState()){
+		try {
+		    Thread.sleep(1000);
+		}catch(InterruptedException e) {
+		    System.out.println(e.toString());
+		}	
+	    }
+	    
         } catch (Exception e) {
             System.err.println("Client network got Exception: " + e.toString());
             e.printStackTrace();

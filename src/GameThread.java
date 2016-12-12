@@ -104,6 +104,7 @@ public class GameThread extends Thread {
             }
             this.updateBoard();
         }
+	System.out.println("Someone won, WOHO GZ!, remove");
 
     }
 
@@ -149,6 +150,11 @@ public class GameThread extends Thread {
     public void setPlayerY(int y) {
         this.player.setY(y);
     }
+    
+    public void setWin(boolean winState) {
+	this.win = winState;
+    }
+    
 
     public int getPlayerX() {
         return this.player.getPlayerX();
@@ -175,5 +181,5 @@ public class GameThread extends Thread {
     public void updatePlayer(int x, int y, int id) {
         this.board.updatePlayer(x, y, id);
     }
-
+    
 }
