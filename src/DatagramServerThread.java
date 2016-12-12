@@ -6,33 +6,34 @@ import java.nio.*;
 public class DatagramServerThread extends Thread {
     protected DatagramSocket socket;
     private int hz;
-    ArrayList<PlayerInfo> playerList;
+    private ArrayList<PlayerInfo> playerList;
     private short playerX;
-    private short playerY;
-    private GameThread gamethread;  
+    private short playerY; 
+    private GameThread gamethread;
+    private ServerNetworkThread RMIthread;
+    private boolean listener;
     
-    public DatagramServerThread(GameThread gamethread){
+    public DatagramServerThread(GameThread gamethread, ServerNetworkThread RMIthread, boolean listener){
 	super("DatagramServerThread");
 	try {
-	    this.socket = new DatagramSocket(1099);
+	    if (listener == true) {
+		System.out.println("Creating socket on port 1099");		
+		this.socket = new DatagramSocket(1099);
+	    }
+	    else {
+		System.out.println("Creating socket on port 1098");				
+		this.socket = new DatagramSocket(1098);
+	    }
 	}catch(SocketException e) {
 	    System.out.println(e.toString());
 	}
 	this.hz = 16;
 	this.gamethread = gamethread;
-	this.playerList = new ArrayList<PlayerInfo>();
+	this.RMIthread = RMIthread;
+	this.playerList = this.RMIthread.getPlayerList();
 	this.playerX = 0;
 	this.playerY = 0;
-    }
-    
-    public DatagramServerThread(short playerX, short playerY, GameThread gamethread, ArrayList<PlayerInfo> list) throws IOException{
-	super("DatagramServerThread");
-	this.socket = new DatagramSocket(1098);
-	this.playerList = list;
-	this.hz = 16;
-	this.gamethread = gamethread;
-	this.playerX = playerX;
-	this.playerY = playerY;
+	this.listener = listener;
     }
 
     public void addPlayer(PlayerInfo info){
@@ -44,25 +45,34 @@ public class DatagramServerThread extends Thread {
     }
 
     private void updatePlayerList(){
-	short x = this.gamethread.getPlayer().getPlayerXShort();
-	short y = this.gamethread.getPlayer().getPlayerYShort();
+	short x = this.gamethread.getPlayerXShort();
+	short y = this.gamethread.getPlayerYShort();
 	System.out.println(Short.toString(x) + " | " + Short.toString(y));
     }
     public void sendInfo() {
-	this.updatePlayerList();
+	//System.out.println("updating");
+	this.gamethread.updatePlayerList(this.playerList);
 	int players = this.playerList.size();
-	byte[] sendBuff = new byte[players*4];
+	//System.out.println(players);	
+	byte[] sendBuff = new byte[players*8];
 	for(int i = 0; i < players; i++) {
-	    sendBuff[0 + (i*4)] = (byte) (this.playerList.get(i).getX() >> 8);
-	    sendBuff[1 + (i*4)] = (byte) (this.playerList.get(i).getX());
-	    sendBuff[2 + (i*4)] = (byte) (this.playerList.get(i).getY() >> 8);
-	    sendBuff[3 + (i*4)] = (byte) (this.playerList.get(i).getY());
+	    sendBuff[0 + (i*8)] = (byte) (this.playerList.get(i).getX() >> 8);
+	    sendBuff[1 + (i*8)] = (byte) (this.playerList.get(i).getX());
+	    sendBuff[2 + (i*8)] = (byte) (this.playerList.get(i).getY() >> 8);
+	    sendBuff[3 + (i*8)] = (byte) (this.playerList.get(i).getY());
+	    sendBuff[4 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 24);
+	    sendBuff[5 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 16);
+	    sendBuff[6 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 8);
+	    sendBuff[7 + (i*8)] = (byte) (this.playerList.get(i).getId());	    
 	}
-	//this.debugByteArray(sendBuff);
 	try {
-	    for(int i = 0; i < players; i++) {
+	    for(int i = 1; i < players; i++) { //börjar vid 1 för att inte skicka till sig själv
 		DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, playerList.get(i).getIp(), playerList.get(i).getPort());
 		this.socket.send(sendPacket);
+		//System.out.println("===============UDP SENT=================");
+		//System.out.println("IP: " + playerList.get(i).getIp());
+		//System.out.println("Port: " + playerList.get(i).getPort());
+		//this.debugByteArray(sendBuff);
 	    }
 	}catch(Exception e){
 	    System.out.println(e.toString());
@@ -77,15 +87,24 @@ public class DatagramServerThread extends Thread {
 	    System.out.println(e.toString());
 	}
 	byte[] receivedData = receivePacket.getData();
-	ByteBuffer bb = ByteBuffer.allocate(4);
+	ByteBuffer bb = ByteBuffer.allocate(8);
 	bb.order(ByteOrder.BIG_ENDIAN);
 	bb.put(receivedData[0]);
 	bb.put(receivedData[1]);
 	bb.put(receivedData[2]);
 	bb.put(receivedData[3]);
-	short x = bb.getShort(0);
-	short y = bb.getShort(2);
-	System.out.println("Server received | " + Short.toString(x) + " " + Short.toString(y));
+	bb.put(receivedData[4]);
+	bb.put(receivedData[5]);
+	bb.put(receivedData[6]);
+	bb.put(receivedData[7]);
+	int x = bb.getShort(0);
+	int y = bb.getShort(2);
+	int id = bb.getInt(4);
+	//System.out.println("========================RECEIVED==============================");
+	//System.out.println("Server received | " + Integer.toString(x) + " " + Integer.toString(y) + " for ID: " + Integer.toString(id));
+	//System.out.println("From ---- IP: "+ receivePacket.getAddress().toString() + " ------ Port: " + Integer.toString(receivePacket.getPort()));
+	//System.out.println("===============================================================");
+	this.gamethread.updatePlayer(x, y, id);	
     }
 
     public void debugByteArray(byte[] bytearray) {
@@ -99,10 +118,15 @@ public class DatagramServerThread extends Thread {
     
     public void run() {
 	int timeToSleep = 1000/this.hz;	
-	byte[] receiveBuff = new byte[4];
+	byte[] receiveBuff = new byte[8];
 	while(true) {
-	    this.sendInfo();
-	    this.sleep(timeToSleep);
+	    if(this.listener) {
+		this.receiveInfo(receiveBuff);
+	    }
+	    else {
+		this.sendInfo();
+		sleep(timeToSleep);
+	    } 
 	}
     }
     
