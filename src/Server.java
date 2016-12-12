@@ -10,4 +10,5 @@ public interface Server extends Remote{
     ArrayList<PlayerInfo> connectToGame(String ip, int port, String alias, Color PlayerColor) throws RemoteException;
     void debugRMI() throws RemoteException;
     ArrayList<PlayerInfo> getPlayerList() throws RemoteException;
+    void setWinState() throws RemoteException;
 }
