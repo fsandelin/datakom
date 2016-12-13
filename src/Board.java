@@ -25,12 +25,6 @@ public class Board {
 
     private int borderThickness = 10;
 
-    private Color black = new Color(0, 0, 0);
-    private Color white = new Color(255, 255, 255);
-    private Color red = new Color(255, 0, 0);
-    private Color green = new Color(0, 255, 0);
-    private Color blue = new Color(0, 0, 255);
-
     private int maxVVelocity = 21;
     private int minVVelocity = -maxVVelocity;
     private int maxHVelocity = 10;
@@ -48,25 +42,9 @@ public class Board {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
         fixedObjects = new ArrayList<Obstruction>();
-        drawingSurface = new JPanel() {
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                for (Player p : players) {
-                    p.draw(g);
-                }
-                for (Obstruction o : fixedObjects) {
-                    o.draw(g);
-                }
-                //System.out.printf("\n");
-//                repaint();
-//                try {
-//                    Thread.sleep(16);
-//                } catch (Exception e) {
-//                    System.out.println(e);
-//                }
-            }
-        };
+        drawingSurface = new JPanel();
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
+        drawingSurface.setIgnoreRepaint(true);
         this.addWalls(xSize, ySize);
         this.addGoal(450, 350, 50);
 
@@ -77,11 +55,29 @@ public class Board {
         window.pack();
         window.add(drawingSurface);
         window.setVisible(true);
+        window.setIgnoreRepaint(true);
 
         //drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
-        drawingSurface.setBackground(white);
+        drawingSurface.setBackground(Color.white);
     }
 
+    public void render() {
+        Graphics g = this.drawingSurface.getGraphics();
+        this.drawBackground(g);
+        for (Player p : players) {
+            p.draw(g);
+        }
+        for (Obstruction o : fixedObjects) {
+            o.draw(g);
+        }
+        this.drawingSurface.paintComponents(g);
+        g.dispose();
+    }
+
+    public void drawBackground(Graphics g) {
+        g.setColor(Color.white);
+        g.fillRect(0, 0, this.boardRect.width, this.boardRect.height);
+    }
 
     public void addPlayer(Player p) {
         _mutex.lock();
@@ -97,8 +93,7 @@ public class Board {
     }
 
     public void update() {
-        this.drawingSurface.revalidate();
-        this.drawingSurface.repaint();
+        this.render();
     }
 
     public void initKeyboard(KeyboardController key) {
@@ -118,33 +113,52 @@ public class Board {
     public int[] getValidVelocity(int[] v) {
         Player p = players.get(0);
         Rectangle nextPos = new Rectangle(p.getPlayerX() + v[0], p.getPlayerY() + v[1] + aliasPadding, p.getPlayerSize(), p.getPlayerSize());
-        //System.out.println(nextPos);
+
+        int objects = this.players.size() + this.fixedObjects.size() - 1;
+        int i = 0;
+
+
+        Rectangle[] rects = new Rectangle[objects];
+        for (int k = 1; k < players.size(); k++) {
+            rects[i] = players.get(k).generateRectangle();
+            i++;
+        }
+        for (int k = 0; k < fixedObjects.size(); k++) {
+            rects[i] = fixedObjects.get(k).getRect();
+            i++;
+        }
+
+        int[] returnV = collisionDetect(rects, nextPos, v[0], v[1]);
+        return returnV;
+    }
+
+    private int[] collisionDetect(Rectangle[] rects, Rectangle nextPos, int xVel, int yVel) {
         Rectangle intersection;
-
-        int tentXVelocity = v[0];
-        int tentYVelocity = v[1];
-
-        if (v[0] > maxHVelocity) {
-            tentXVelocity = maxHVelocity;
+        if (xVel > maxHVelocity) {
+            xVel= maxHVelocity;
         }
-        if (v[0] < minHVelocity) {
-            tentXVelocity = minHVelocity;
+        if (xVel < minHVelocity) {
+            xVel = minHVelocity;
         }
+
+        int tentXVelocity = xVel;
+        int tentYVelocity = yVel;
 
         int[] returnV = new int[2];
-        returnV[0] = tentXVelocity;
-        returnV[1] = tentYVelocity;
-
-        for (Obstruction o : fixedObjects) {
-            if (nextPos.intersects(o.getRect())) {
-                intersection = nextPos.intersection(o.getRect());
+        returnV[0] = xVel;
+        returnV[1] = yVel;
+        System.out.println("==============================");
+        for(Rectangle r: rects) {
+            System.out.println("Collision detect X: " + r.getX() + " Y: " + r.getY());
+            if (nextPos.intersects(r)) {
+                intersection = nextPos.intersection(r);
                 if (intersection.getWidth() > intersection.getHeight()) {
-                    if (v[1] > 0) {
+                    if (yVel > 0) {
                         tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
                         if (tentYVelocity < returnV[1]) {
                             returnV[1] = tentYVelocity;
                         }
-                    } else if (v[1] < 0) {
+                    } else if (yVel < 0) {
                         tentYVelocity = tentYVelocity + ((int) intersection.getHeight());
                         if (tentYVelocity > returnV[1]) {
                             returnV[1] = tentYVelocity;
@@ -154,7 +168,7 @@ public class Board {
                     }
 
                 } else {
-                    if (v[0] >= 0) {
+                    if (xVel >= 0) {
                         tentXVelocity = tentXVelocity - ((int) intersection.getWidth());
                         if (tentXVelocity < returnV[0]) {
                             returnV[0] = tentXVelocity;
@@ -168,9 +182,10 @@ public class Board {
                 }
             }
         }
-        // System.out.printf("%d | %d |||| %d | %d\n", returnV[0], returnV[1], v[0], v[1]);
+        System.out.println("==============================");
         return returnV;
     }
+
 
     public void addWalls(int xSize, int ySize) {
         Obstruction floor = new Obstruction(0, (int) boardRect.getHeight() - 30, new Dimension((int) boardRect.getWidth(), 30));

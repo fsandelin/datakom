@@ -154,4 +154,9 @@ public class Player {
     public void setPlayerColor(Color c) {
         this.playerColor = c;
     }
+
+    public Rectangle generateRectangle() {
+        Rectangle rect = new Rectangle(this.xPos, this.yPos, this.playerSize, this.playerSize);
+        return rect;
+    }
 }

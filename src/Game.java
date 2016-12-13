@@ -29,7 +29,7 @@ public class Game {
         DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
         DatagramServerThread serverUDPreceiver = new DatagramServerThread(game, serverRMI, true);
         serverUDPsender.start();
-	serverUDPreceiver.start();
+        serverUDPreceiver.start();
         System.out.println("UDP up and running");
         game.start();
 
