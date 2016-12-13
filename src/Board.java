@@ -116,7 +116,7 @@ public class Board {
 
         int objects = this.players.size() + this.fixedObjects.size() - 1;
         int i = 0;
-        System.out.println(objects);
+
 
         Rectangle[] rects = new Rectangle[objects];
         for (int k = 1; k < players.size(); k++) {
@@ -147,8 +147,9 @@ public class Board {
         int[] returnV = new int[2];
         returnV[0] = xVel;
         returnV[1] = yVel;
-
+        System.out.println("==============================");
         for(Rectangle r: rects) {
+            System.out.println("Collision detect X: " + r.getX() + " Y: " + r.getY());
             if (nextPos.intersects(r)) {
                 intersection = nextPos.intersection(r);
                 if (intersection.getWidth() > intersection.getHeight()) {
@@ -181,6 +182,7 @@ public class Board {
                 }
             }
         }
+        System.out.println("==============================");
         return returnV;
     }
 
