@@ -135,7 +135,7 @@ public class Board {
     private int[] collisionDetect(Rectangle[] rects, Rectangle nextPos, int xVel, int yVel) {
         Rectangle intersection;
         if (xVel > maxHVelocity) {
-            xVel= maxHVelocity;
+            xVel = maxHVelocity;
         }
         if (xVel < minHVelocity) {
             xVel = minHVelocity;
@@ -147,9 +147,7 @@ public class Board {
         int[] returnV = new int[2];
         returnV[0] = xVel;
         returnV[1] = yVel;
-        //System.out.println("==============================");
-        for(Rectangle r: rects) {
-            //System.out.println("Collision detect X: " + r.getX() + " Y: " + r.getY());
+        for (Rectangle r : rects) {
             if (nextPos.intersects(r)) {
                 intersection = nextPos.intersection(r);
                 if (intersection.getWidth() > intersection.getHeight()) {
@@ -182,7 +180,6 @@ public class Board {
                 }
             }
         }
-        //System.out.println("==============================");
         return returnV;
     }
 
@@ -228,10 +225,9 @@ public class Board {
      * Uppdaterar spelaren med som har ID id med x och y coordinaterna.
      * Låser ArrayListan eftersom den inte är threadsafe.
      *
-     * @param x Nya x-koordinaten
-     * @param y Nya y-koordinaten
+     * @param x  Nya x-koordinaten
+     * @param y  Nya y-koordinaten
      * @param id Player Id av Player som skall uppdateras
-     *
      */
     public void updatePlayer(int x, int y, int id) {
         _mutex.lock();
@@ -246,13 +242,13 @@ public class Board {
     }
 
     //Uppdaterar listan som kommer som input med vad som finns i listan hos board.
+
     /**
      * Takes an arraylist of playerInfo and updates all x and y values to correspond to the values in a list of Player.
      * Each PlayerInfo has an ID and each PlayerInfo's x and y is only updates if the PlayerInfo id and Player id is equal.
      * Since ArrayLists aren't threadsade, the funtion locks the ArrayList of player
      *
      * @param list The ArrayList to update.
-     *
      * @todo Also lock the ArraList of PlayerInfo since it is not thread safe.
      */
     public void updatePlayerList(ArrayList<PlayerInfo> list) {
