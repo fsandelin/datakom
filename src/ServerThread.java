@@ -23,7 +23,7 @@ public class ServerThread{
 	DatagramPacket pack = new DatagramPacket(buf, buf.length,
 						 InetAddress.getByName(group), port);
 	// Do a send. Note that send takes a byte for the ttl and not an int.
-	s.send(pack,(byte)ttl);
+	//s.send(pack,(byte)ttl);
 	
 	// And when we have finished sending data close the socket
 	s.close();  

@@ -36,7 +36,7 @@ public class ServerNetworkThread extends Thread implements Server {
         System.out.println("ServerNetworkThread created with own IP: " + ownIp);
     }
 
-
+    
     public int[] getGameState() {
         int[] state = {this.map, this.hz};
         return state;
@@ -75,6 +75,9 @@ public class ServerNetworkThread extends Thread implements Server {
             return null;
         }
     }
+    public ArrayList<PlayerInfo> updateGame() {
+	return this.playerList;
+    }    
 
     private int getNextIdAndIncrement() {
         int value = this.nextId;
@@ -86,6 +89,12 @@ public class ServerNetworkThread extends Thread implements Server {
 	this.gamethread.setWin(true);
     }
 
+
+
+    /**
+     * Kör tråden. Helt vanlig RMI setup. Mera info stubs och registry
+     *  finns i javas dokumentation om RMI.
+     */
     public void run() {
         Player ownPlayer = this.gamethread.getPlayer();
         int ownX = ownPlayer.getPlayerX();
