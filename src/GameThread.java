@@ -93,6 +93,8 @@ public class GameThread extends Thread {
     }
 
 
+//    private Thread guiThread() = new Thread((Runnable)() ->{board.update();});
+
     public void run() {
         // Game loop
         while (!this.checkWinState()) {
@@ -102,6 +104,7 @@ public class GameThread extends Thread {
                 player.updatePosition();
                 win = board.win();
                 if(render) {
+//                    guiThread().start();
                     this.updateBoard();
                 }
                 clock = System.currentTimeMillis();
