@@ -147,9 +147,9 @@ public class Board {
         int[] returnV = new int[2];
         returnV[0] = xVel;
         returnV[1] = yVel;
-        System.out.println("==============================");
+        //System.out.println("==============================");
         for(Rectangle r: rects) {
-            System.out.println("Collision detect X: " + r.getX() + " Y: " + r.getY());
+            //System.out.println("Collision detect X: " + r.getX() + " Y: " + r.getY());
             if (nextPos.intersects(r)) {
                 intersection = nextPos.intersection(r);
                 if (intersection.getWidth() > intersection.getHeight()) {
@@ -182,7 +182,7 @@ public class Board {
                 }
             }
         }
-        System.out.println("==============================");
+        //System.out.println("==============================");
         return returnV;
     }
 

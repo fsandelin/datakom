@@ -149,7 +149,7 @@ public class DatagramClientThread extends Thread{
 	bb.put(receivedData[2]);
 	bb.put(receivedData[3]);
 	int playersInDatagram = bb.getInt(0);
-	System.out.println("=======================UDP RECEIVED==================");
+	//System.out.println("=======================UDP RECEIVED==================");
 	if (playersInDatagram!=players) {
 	    this.RMIthread.updateList();
 	    this.playerList = this.RMIthread.getPlayerList();
@@ -157,7 +157,7 @@ public class DatagramClientThread extends Thread{
 	    this.gamethread.addPlayerToClient(pInfo.getX(), pInfo.getY(), pInfo.getAlias(), pInfo.getId(), pInfo.getColor());
 	    return;
 	}
-	System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
+	//System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
 	for(int i = 0; i < players; i++) {
 	    bb.put(receivedData[0 + 4 + (i*8)]);
 	    bb.put(receivedData[1 + 4 + (i*8)]);
@@ -170,13 +170,13 @@ public class DatagramClientThread extends Thread{
 	    short x = bb.getShort(0 + 4 + (i*8));
 	    short y = bb.getShort(2 + 4 + (i*8));
 	    int id = bb.getInt(4 + 4 + (i*8));
-	    System.out.println("Player ID: " + Integer.toString(id) + " x: " + Short.toString(x) + " y: " + Short.toString(y));
+	    //System.out.println("Player ID: " + Integer.toString(id) + " x: " + Short.toString(x) + " y: " + Short.toString(y));
 	    if (id != this.RMIthread.getMyId()) {
 		int xInt = x;
 		int yInt = y;
 		this.gamethread.updatePlayer(xInt, yInt, id);
 	    }
-	    System.out.println("============================================");
+	    //System.out.println("============================================");
 
 	}	
     }
