@@ -224,6 +224,15 @@ public class Board {
 
     }
 
+    /**
+     * Uppdaterar spelaren med som har ID id med x och y coordinaterna.
+     * Låser ArrayListan eftersom den inte är threadsafe.
+     *
+     * @param x Nya x-koordinaten
+     * @param y Nya y-koordinaten
+     * @param id Player Id av Player som skall uppdateras
+     *
+     */
     public void updatePlayer(int x, int y, int id) {
         _mutex.lock();
         for (int i = 0; i < this.players.size(); i++) {
@@ -237,6 +246,15 @@ public class Board {
     }
 
     //Uppdaterar listan som kommer som input med vad som finns i listan hos board.
+    /**
+     * Takes an arraylist of playerInfo and updates all x and y values to correspond to the values in a list of Player.
+     * Each PlayerInfo has an ID and each PlayerInfo's x and y is only updates if the PlayerInfo id and Player id is equal.
+     * Since ArrayLists aren't threadsade, the funtion locks the ArrayList of player
+     *
+     * @param list The ArrayList to update.
+     *
+     * @todo Also lock the ArraList of PlayerInfo since it is not thread safe.
+     */
     public void updatePlayerList(ArrayList<PlayerInfo> list) {
         _mutex.lock();
         for (int i = 0; i < list.size(); i++) {

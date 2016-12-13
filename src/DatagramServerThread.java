@@ -27,7 +27,7 @@ public class DatagramServerThread extends Thread {
 	}catch(SocketException e) {
 	    System.out.println(e.toString());
 	}
-	this.hz = 16;
+	this.hz = 32;
 	this.gamethread = gamethread;
 	this.RMIthread = RMIthread;
 	this.playerList = this.RMIthread.getPlayerList();

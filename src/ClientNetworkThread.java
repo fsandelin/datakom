@@ -42,6 +42,19 @@ public class ClientNetworkThread extends Thread {
 
     }
 
+     public void setWinState() throws RemoteException{
+	this.gamethread.setWin(true);
+    }
+
+    /**
+     * Den här funktionen kör tråden. Den försöker connecta till en server med rmi. Från server kommer den få en lista över alla spelare
+     * på server var den själv befinner sig längst ner på listan. Den tar sedan de koordinaterna och sätter sin egen spelare där.
+     * Till sist så lägger den till alla andra spelare till sin gamethread.
+     * 
+     * @todo Den här tråden "terminatar" ganska snabbt med iden är att man i senare versioner ska kunna använda den för att köra andra saker än connect to game.
+     * @todo Refactora detta
+     */
+
     public void run() {
         try {
             System.out.println("LocateRegistry -> serverIP: " + serverIp + " serverPort:" + Integer.toString(serverPort));
@@ -63,18 +76,29 @@ public class ClientNetworkThread extends Thread {
                 String alias = this.playerList.get(i).getAlias();
                 int id = this.playerList.get(i).getId();
                 this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
-            }
-            stub.debugRMI();
-        } catch (Exception e) {
+            }	    
+
+	    while(!this.gamethread.checkWinState()){
+		try {
+		    Thread.sleep(1000);
+		}catch(InterruptedException e) {
+		    System.out.println(e.toString());
+		}	
+	    }
+	    stub.setWinState();
+	    
+	} catch (Exception e) {
             System.err.println("Client network got Exception: " + e.toString());
             e.printStackTrace();
         }
+
     }
 
     public ArrayList<PlayerInfo> getPlayerList() {
         return this.playerList;
     }
 
+    
     public int getMyId() {
         return this.myId;
     }

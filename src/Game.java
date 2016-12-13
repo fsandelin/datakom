@@ -41,29 +41,45 @@ public class Game {
      * @param args
      */
     public static void main(String[] args) {
-        int port;
-        String ip;
-        String alias;
-        Scanner reader = new Scanner(System.in);
-        System.out.println("Debug mode (0/1)?");
-        int dbug = reader.nextInt();
-        if (dbug == 1) {
-            System.out.println("Server (0/1)?");
-            int s = reader.nextInt();
-            if (s == 1) {
-                runAsServer("1");
-            } else {
-                runAsClient("2", "127.0.0.1", true);
-            }
-        } else {
-            System.out.println("Enter your alias:");
-            alias = reader.next();
-            System.out.println("Enter port to use (recommended 1099):");
-            ;
-            port = reader.nextInt();
-            System.out.println("0.Exit  |  1.Host  |  2.Client");
-            int response = reader.nextInt();
-            switch (response) {
+	if (args.length == 3) {
+	    boolean debug = Boolean.valueOf(args[2]);
+	    runAsClient(args[0], args[1], debug);
+	}
+	else if (args.length == 1) {
+	    runAsServer(args[0]);	    
+	}
+	else if (args.length != 1 && args.length != 3 && args.length > 0) {
+	    System.out.println("=========USAGE===========");
+	    System.out.println("Running as server: java Game <alias>");
+	    System.out.println("Running as client: java Game <alias> <IP to connect to> <debug mode>");
+	    System.out.println("Running in debug mode creates port at 1097 and 1096. Otherwise ports are created at 1099 and 1098, like the server does.");
+	    System.out.println("Running only java Game lets user input their choices.");
+	    System.exit(0);
+	}
+	else {
+	    int port;
+	    String ip;
+	    String alias;
+	    Scanner reader = new Scanner(System.in);
+	    System.out.println("Debug mode (0/1)?");
+	    int dbug = reader.nextInt();
+	    if (dbug == 1) {
+		System.out.println("Server (0/1)?");
+		int s = reader.nextInt();
+		if (s == 1) {
+		    runAsServer("1");
+		} else {
+		    runAsClient("2", "127.0.0.1", true);
+		}
+	    } else {
+		System.out.println("Enter your alias:");
+		alias = reader.next();
+		System.out.println("Enter port to use (recommended 1099):");
+		;
+		port = reader.nextInt();
+		System.out.println("0.Exit  |  1.Host  |  2.Client");
+		int response = reader.nextInt();
+		switch (response) {
                 case 1: {
                     runAsServer(alias); //VIKTIG
                     break;
@@ -84,8 +100,9 @@ public class Game {
                 default:
                     System.exit(0);
                     break;
-            }
-        }
+		}
+	    }
+	}
     }
 
     private static void sleep(int time) {

@@ -82,6 +82,10 @@ public class ServerNetworkThread extends Thread implements Server {
         return value;
     }
 
+    public void setWinState() throws RemoteException{
+	this.gamethread.setWin(true);
+    }
+
     public void run() {
         Player ownPlayer = this.gamethread.getPlayer();
         int ownX = ownPlayer.getPlayerX();
@@ -93,15 +97,20 @@ public class ServerNetworkThread extends Thread implements Server {
             Registry registry = LocateRegistry.getRegistry();
             registry.bind("Server", stub);
             System.err.println("Server RMI setup done");
-        } catch (Exception e) {
+	    while(!this.gamethread.checkWinState()){
+		try {
+		    Thread.sleep(1000);
+		}catch(InterruptedException e2) {
+		    System.out.println(e2.toString());
+		}	    
+	    }
+	    stub.setWinState();
+	}catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             System.out.println("IF YOU GOT ALREADY BOUND EXCEPTION!");
             System.out.println("Run rmiregistry & before hosting.");
             System.out.println("Use ps and kill if you already have rmiregistry running and want to kill it.");
-            System.exit(0);
-        }
-
+	    
+	}
     }
-
-
 }
