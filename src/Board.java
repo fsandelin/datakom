@@ -38,7 +38,7 @@ public class Board {
 
     private int boardLowerXBounds;
     private int pSize = 30;
-    private static final int aliasPadding = 20;
+    private static final int aliasPadding = 0;
 
     private Goal goal;
 
@@ -48,10 +48,26 @@ public class Board {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
         fixedObjects = new ArrayList<Obstruction>();
-        drawingSurface = new JPanel();
+        drawingSurface = new JPanel() {
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                for (Player p : players) {
+                    p.draw(g);
+                }
+                for (Obstruction o : fixedObjects) {
+                    o.draw(g);
+                }
+                System.out.printf("\n");
+//                repaint();
+//                try {
+//                    Thread.sleep(16);
+//                } catch (Exception e) {
+//                    System.out.println(e);
+//                }
+            }
+        };
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
         this.addWalls(xSize, ySize);
-
         this.addGoal(450, 350, 50);
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
@@ -70,8 +86,6 @@ public class Board {
     public void addPlayer(Player p) {
         _mutex.lock();
         players.add(p);
-        this.drawingSurface.add(p);
-        p.revalidate();
         System.out.println("Det finns nu " + Integer.toString(players.size()) + " i boards listan.");
         //System.out.println(players[0]);
         _mutex.unlock();
@@ -79,28 +93,12 @@ public class Board {
 
     public void addObstruction(Obstruction o) {
         this.fixedObjects.add(o);
-        this.drawingSurface.add(o);
         System.out.println("Added obstruction");
     }
 
     public void update() {
-        drawingSurface.setVisible(true);
-        goal.repaint();
-        //System.out.println("Size på ritnings listan: " + Integer.toString(players.size()));
-        _mutex.lock();
-        for (Player p : players) {
-            if (p != null) {
-                //System.out.println(p.toString());
-                p.setVisible(true);
-                p.repaint();
-            }
-        }
-        _mutex.unlock();
-        for (Obstruction o : fixedObjects) {
-            if (o != null) {
-                o.repaint();
-            }
-        }
+        this.drawingSurface.revalidate();
+        this.drawingSurface.repaint();
     }
 
     public void initKeyboard(KeyboardController key) {
@@ -119,7 +117,7 @@ public class Board {
 
     public int[] getValidVelocity(int[] v) {
         Player p = players.get(0);
-        Rectangle nextPos = new Rectangle(p.getX() + v[0], p.getY() + v[1] + aliasPadding, p.getPlayerSize(), p.getPlayerSize());
+        Rectangle nextPos = new Rectangle(p.getPlayerX() + v[0], p.getPlayerY() + v[1] + aliasPadding, p.getPlayerSize(), p.getPlayerSize());
         //System.out.println(nextPos);
         Rectangle intersection;
 

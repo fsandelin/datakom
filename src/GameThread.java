@@ -92,9 +92,9 @@ public class GameThread extends Thread {
                 player.checkJumping();
                 player.updatePosition();
                 win = board.win();
+                this.updateBoard();
                 clock = System.currentTimeMillis();
             }
-            this.updateBoard();
         }
 
     }

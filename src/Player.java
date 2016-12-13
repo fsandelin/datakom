@@ -9,7 +9,7 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
-public class Player extends JComponent {
+public class Player {
     private int playerSize;
     private String playerAlias;
     private int playerId;
@@ -24,17 +24,16 @@ public class Player extends JComponent {
     private Board board;
     private boolean jumping;
 
-    private static final int aliasPadding = 20;
+    private static final int aliasDisplacement = 20;
 
     public Player(String playerAlias, int playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
-        this.setPreferredSize(new Dimension(size, size + aliasPadding));
         //
         velocity = new int[2];
         this.board = b;
         this.playerSize = size;
         this.xPos = startXPos;
-        this.yPos = startYPos - aliasPadding;
+        this.yPos = startYPos;
         float red = (float) Math.random();
         float green = (float) Math.random();
         float blue = (float) Math.random();
@@ -93,15 +92,11 @@ public class Player extends JComponent {
         }
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        this.setLocation(this.xPos, this.yPos - aliasPadding);
-        //System.out.println("Player: " + playerAlias + " is at: xpos: " + xPos + ", yPos: " + yPos);
+    public void draw(Graphics g) {
+
         g.setColor(this.playerColor);
-        g.fillRect(0, aliasPadding, this.playerSize, this.playerSize);
-        g.setColor(Color.black);
-        g.drawString(this.playerAlias, 0, aliasPadding - 5);
+        g.fillRect(xPos, yPos, playerSize, playerSize);
+
     }
 
     public String getPlayerAlias() {
