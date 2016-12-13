@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Game {
     private static void runAsClient(String alias, String serverIp, boolean debug) {
-        GameThread game = new GameThread(800, 600, alias);
+        GameThread game = new GameThread(800, 600, alias, false);
         System.out.println("Starting Client RMI thread...");
         ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, alias, debug);
         clientRMI.start();
@@ -29,7 +29,7 @@ public class Game {
         DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
         DatagramServerThread serverUDPreceiver = new DatagramServerThread(game, serverRMI, true);
         serverUDPsender.start();
-	serverUDPreceiver.start();
+        serverUDPreceiver.start();
         System.out.println("UDP up and running");
         game.start();
 

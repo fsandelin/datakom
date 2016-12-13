@@ -18,6 +18,8 @@ public class GameThread extends Thread {
     private boolean win;
     private static final int playerSize = 30;
 
+    private boolean render;
+
     /**
      * Game setup
      *
@@ -27,6 +29,7 @@ public class GameThread extends Thread {
     public GameThread(int xSize, int ySize, String alias) {
         super("GameThread");
         this.board = new Board(xSize, ySize);
+        this.render = true;
         int padding = 5;
         this.win = false;
 
@@ -47,6 +50,11 @@ public class GameThread extends Thread {
         //
 
         clock = System.currentTimeMillis();
+    }
+
+    public GameThread(int xSize, int ySize, String alias, boolean render) {
+        this(xSize, ySize, alias);
+        this.render = render;
     }
 
     public Player getPlayer() {
@@ -92,7 +100,9 @@ public class GameThread extends Thread {
                 player.checkJumping();
                 player.updatePosition();
                 win = board.win();
-                this.updateBoard();
+                if(render) {
+                    this.updateBoard();
+                }
                 clock = System.currentTimeMillis();
             }
         }
