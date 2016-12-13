@@ -18,6 +18,7 @@ public class ClientNetworkThread extends Thread {
     private String alias;
     private ArrayList<PlayerInfo> playerList;
     private int myId;
+    private Server serverStub;
 
     public ClientNetworkThread(GameThread gamethread, String ip, String alias, boolean debug) {
         super("ClientNetworkThread");
@@ -27,7 +28,7 @@ public class ClientNetworkThread extends Thread {
         if (debug == true) {
             this.ownPort = 1097;
         } else {
-            this.ownPort = 1097;
+            this.ownPort = 1099; //var 1097 förr
         }
         this.alias = alias;
         this.map = 1;
@@ -52,7 +53,7 @@ public class ClientNetworkThread extends Thread {
      * Till sist så lägger den till alla andra spelare till sin gamethread.
      * 
      * @todo Den här tråden "terminatar" ganska snabbt med iden är att man i senare versioner ska kunna använda den för att köra andra saker än connect to game.
-     * @todo Refactora detta
+     * @todo Refactora den här funktionen
      */
 
     public void run() {
@@ -61,6 +62,7 @@ public class ClientNetworkThread extends Thread {
             Registry registry = LocateRegistry.getRegistry(serverIp, serverPort);
             System.out.println("Looking stub");
             Server stub = (Server) registry.lookup("Server");
+	    this.serverStub = stub;
             ArrayList<PlayerInfo> list = stub.connectToGame(ownIp, ownPort, alias, gamethread.getPlayer().getPlayerColor());
             this.playerList = list;
             this.debugRMI();
@@ -94,6 +96,14 @@ public class ClientNetworkThread extends Thread {
 
     }
 
+    public void updateList() {
+	try {
+	    this.playerList = serverStub.updateGame();
+	} catch (Exception e) {
+            System.err.println("Client got exception when updateList() was called." + e.toString());
+        }
+    }
+    
     public ArrayList<PlayerInfo> getPlayerList() {
         return this.playerList;
     }

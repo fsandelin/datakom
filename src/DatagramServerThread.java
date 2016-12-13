@@ -49,21 +49,34 @@ public class DatagramServerThread extends Thread {
 	short y = this.gamethread.getPlayerYShort();
 	System.out.println(Short.toString(x) + " | " + Short.toString(y));
     }
+
+    /**
+     * @brief Skickar ut info om alla spelares positioner till alla i this.playerList. I playerList finns det info om vilken address och port den ska skicka till.
+     *
+     * @detailed Funktionen callar först på updatePlayerList i gamethread och skickar med sin playerList. Denna sätter alla x och y till vad gametheaden har.
+     * Sen gör den en byte[] som innehåller allas x och y värden samt deras id. Värdena serialiseras i BIG endian
+     * Sen skickar den ut den listan till alla utom sig själv. (Servern står alltid högst upp i listan så index 0 hoppar den över)
+     */
     public void sendInfo() {
 	//System.out.println("updating");
 	this.gamethread.updatePlayerList(this.playerList);
 	int players = this.playerList.size();
 	//System.out.println(players);	
-	byte[] sendBuff = new byte[players*8];
+	byte[] sendBuff = new byte[4 + (players*8)];
+	int size = this.playerList.size();
+	sendBuff[0] = (byte) (size >> 24);
+	sendBuff[1] = (byte) (size >> 16);
+	sendBuff[2] = (byte) (size >> 8);
+	sendBuff[3] = (byte) (size);		
 	for(int i = 0; i < players; i++) {
-	    sendBuff[0 + (i*8)] = (byte) (this.playerList.get(i).getX() >> 8);
-	    sendBuff[1 + (i*8)] = (byte) (this.playerList.get(i).getX());
-	    sendBuff[2 + (i*8)] = (byte) (this.playerList.get(i).getY() >> 8);
-	    sendBuff[3 + (i*8)] = (byte) (this.playerList.get(i).getY());
-	    sendBuff[4 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 24);
-	    sendBuff[5 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 16);
-	    sendBuff[6 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 8);
-	    sendBuff[7 + (i*8)] = (byte) (this.playerList.get(i).getId());	    
+	    sendBuff[0 + 4 + (i*8)] = (byte) (this.playerList.get(i).getX() >> 8);
+	    sendBuff[1 + 4 + (i*8)] = (byte) (this.playerList.get(i).getX());
+	    sendBuff[2 + 4 + (i*8)] = (byte) (this.playerList.get(i).getY() >> 8);
+	    sendBuff[3 + 4 + (i*8)] = (byte) (this.playerList.get(i).getY());
+	    sendBuff[4 + 4 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 24);
+	    sendBuff[5 + 4 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 16);
+	    sendBuff[6 + 4 + (i*8)] = (byte) (this.playerList.get(i).getId() >> 8);
+	    sendBuff[7 + 4 + (i*8)] = (byte) (this.playerList.get(i).getId());	    
 	}
 	try {
 	    for(int i = 1; i < players; i++) { //börjar vid 1 för att inte skicka till sig själv
@@ -79,6 +92,14 @@ public class DatagramServerThread extends Thread {
 	}
     }
 
+    
+    /**
+     * @brief Receives a UDP packet into param receiveBuff and updates the players x and y value with the same ID as was in the packet.
+     *
+     * The funktion deserializes the received message in BIG endian since that is the standard for this application.
+     *
+     * @param receiveBuff The byte[] in which to read in the data from the socket.
+     */
     private void receiveInfo(byte[] receiveBuff) {
 	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
 	try {
