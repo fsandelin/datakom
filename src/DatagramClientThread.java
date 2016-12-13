@@ -151,10 +151,11 @@ public class DatagramClientThread extends Thread{
 	int playersInDatagram = bb.getInt(0);
 	System.out.println("=======================UDP RECEIVED==================");
 	if (playersInDatagram!=players) {
-	    //Ber RMI att uppdaterar sin lista eftersom den är fel.
 	    this.RMIthread.updateList();
-	    //Sätter sin lista till RMIs nya lista
 	    this.playerList = this.RMIthread.getPlayerList();
+	    PlayerInfo pInfo = this.playerList.get(this.playerList.size() - 1);
+	    this.gamethread.addPlayerToClient(pInfo.getX(), pInfo.getY(), pInfo.getAlias(), pInfo.getId(), pInfo.getColor());
+	    return;
 	}
 	System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
 	for(int i = 0; i < players; i++) {

@@ -8,7 +8,7 @@ public class Game {
         System.out.println("Starting Client RMI thread...");
         ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, alias, debug);
         clientRMI.start();
-        sleep(500);
+        sleep(2000);
         System.out.println("Starting client UDP thread...");
         DatagramClientThread clientUDPSender = new DatagramClientThread(game, clientRMI, serverIp, false, debug);
         DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, clientRMI, serverIp, true, debug);
@@ -24,7 +24,7 @@ public class Game {
         System.out.println("Starting Server RMI thread...");
         ServerNetworkThread serverRMI = new ServerNetworkThread(game, alias);
         serverRMI.start();
-        sleep(500);
+        sleep(2000);
         System.out.println("Starting Server UDP thread...");
         DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
         DatagramServerThread serverUDPreceiver = new DatagramServerThread(game, serverRMI, true);
