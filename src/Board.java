@@ -114,12 +114,13 @@ public class Board {
         Player p = players.get(0);
         Rectangle nextPos = new Rectangle(p.getPlayerX() + v[0], p.getPlayerY() + v[1] + aliasPadding, p.getPlayerSize(), p.getPlayerSize());
 
-        int objects = this.players.size() + this.fixedObjects.size();
-        int i;
+        int objects = this.players.size() + this.fixedObjects.size() - 1;
+        int i = 0;
+        System.out.println(objects);
 
         Rectangle[] rects = new Rectangle[objects];
         for (int k = 1; k < players.size(); k++) {
-            rects[i] = players.get(k).generateRect();
+            rects[i] = players.get(k).generateRectangle();
             i++;
         }
         for (int k = 0; k < fixedObjects.size(); k++) {
@@ -131,7 +132,7 @@ public class Board {
         return returnV;
     }
 
-    private int[] collisionDetectObstruction(Rectangle[] rects, Rectangle nextPos, int xVel, int yVel) {
+    private int[] collisionDetect(Rectangle[] rects, Rectangle nextPos, int xVel, int yVel) {
         Rectangle intersection;
         if (xVel > maxHVelocity) {
             xVel= maxHVelocity;
@@ -140,37 +141,42 @@ public class Board {
             xVel = minHVelocity;
         }
 
+        int tentXVelocity = xVel;
+        int tentYVelocity = yVel;
+
         int[] returnV = new int[2];
         returnV[0] = xVel;
         returnV[1] = yVel;
 
-        if (nextPos.intersects(o.getRect())) {
-            intersection = nextPos.intersection(o.getRect());
-            if (intersection.getWidth() > intersection.getHeight()) {
-                if (v[1] > 0) {
-                    tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
-                    if (tentYVelocity < returnV[1]) {
-                        returnV[1] = tentYVelocity;
+        for(Rectangle r: rects) {
+            if (nextPos.intersects(r)) {
+                intersection = nextPos.intersection(r);
+                if (intersection.getWidth() > intersection.getHeight()) {
+                    if (yVel > 0) {
+                        tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
+                        if (tentYVelocity < returnV[1]) {
+                            returnV[1] = tentYVelocity;
+                        }
+                    } else if (yVel < 0) {
+                        tentYVelocity = tentYVelocity + ((int) intersection.getHeight());
+                        if (tentYVelocity > returnV[1]) {
+                            returnV[1] = tentYVelocity;
+                        }
+                    } else {
+                        returnV[1] = 1;
                     }
-                } else if (v[1] < 0) {
-                    tentYVelocity = tentYVelocity + ((int) intersection.getHeight());
-                    if (tentYVelocity > returnV[1]) {
-                        returnV[1] = tentYVelocity;
-                    }
-                } else {
-                    returnV[1] = 1;
-                }
 
-            } else {
-                if (v[0] >= 0) {
-                    tentXVelocity = tentXVelocity - ((int) intersection.getWidth());
-                    if (tentXVelocity < returnV[0]) {
-                        returnV[0] = tentXVelocity;
-                    }
                 } else {
-                    tentXVelocity = tentXVelocity + ((int) intersection.getWidth());
-                    if (tentXVelocity > returnV[0]) {
-                        returnV[0] = tentXVelocity;
+                    if (xVel >= 0) {
+                        tentXVelocity = tentXVelocity - ((int) intersection.getWidth());
+                        if (tentXVelocity < returnV[0]) {
+                            returnV[0] = tentXVelocity;
+                        }
+                    } else {
+                        tentXVelocity = tentXVelocity + ((int) intersection.getWidth());
+                        if (tentXVelocity > returnV[0]) {
+                            returnV[0] = tentXVelocity;
+                        }
                     }
                 }
             }

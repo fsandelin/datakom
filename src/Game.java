@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Game {
     private static void runAsClient(String alias, String serverIp, boolean debug) {
-        GameThread game = new GameThread(800, 600, alias, false);
+        GameThread game = new GameThread(800, 600, alias);
         System.out.println("Starting Client RMI thread...");
         ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, alias, debug);
         clientRMI.start();
