@@ -9,7 +9,7 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 
-public class Player extends JComponent {
+public class Player {
     private int playerSize;
     private String playerAlias;
     private int playerId;
@@ -24,9 +24,10 @@ public class Player extends JComponent {
     private Board board;
     private boolean jumping;
 
-    public Player(String playerAlias, int playerId ,int startXPos, int startYPos, int size, Board b) {
+    private static final int aliasDisplacement = 20;
+
+    public Player(String playerAlias, int playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
-        this.setPreferredSize(new Dimension(size, size));
         //
         velocity = new int[2];
         this.board = b;
@@ -38,8 +39,8 @@ public class Player extends JComponent {
         float blue = (float) Math.random();
         this.playerColor = new Color(red, green, blue);
         this.playerAlias = playerAlias;
-	this.playerId = playerId;
-	System.out.println("Player created with id: " + Integer.toString(this.playerId));
+        this.playerId = playerId;
+        System.out.println("Player created with id: " + Integer.toString(this.playerId));
     }
 
     public void jump() {
@@ -91,13 +92,11 @@ public class Player extends JComponent {
         }
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-	super.paintComponent(g);	
-        this.setLocation(this.xPos, this.yPos);
-        //System.out.println("Player: " + playerAlias + " is at: xpos: " + xPos + ", yPos: " + yPos);
+    public void draw(Graphics g) {
+
         g.setColor(this.playerColor);
-        g.fillRect(0, 0, this.playerSize, this.playerSize);
+        g.fillRect(xPos, yPos, playerSize, playerSize);
+
     }
 
     public String getPlayerAlias() {
@@ -111,29 +110,35 @@ public class Player extends JComponent {
     public int getPlayerX() {
         return this.xPos;
     }
+
     public int getPlayerY() {
         return this.yPos;
     }
+
     public short getPlayerXShort() {
         return (short) this.xPos;
     }
+
     public short getPlayerYShort() {
         return (short) this.yPos;
     }
 
     public void setX(int x) {
-	this.xPos = x;
+        this.xPos = x;
     }
+
     public void setY(int y) {
-	this.yPos = y;
+        this.yPos = y;
     }
+
     public void setPlayerId(int id) {
-	this.playerId = id;
+        this.playerId = id;
     }
+
     public int getPlayerId() {
-	return this.playerId;
+        return this.playerId;
     }
-    
+
 
     public void updatePosition() {
         //System.out.printf("%d | %d\n", xPos, yPos);
@@ -148,5 +153,10 @@ public class Player extends JComponent {
 
     public void setPlayerColor(Color c) {
         this.playerColor = c;
+    }
+
+    public Rectangle generateRectangle() {
+        Rectangle rect = new Rectangle(this.xPos, this.yPos, this.playerSize, this.playerSize);
+        return rect;
     }
 }

@@ -4,7 +4,7 @@ import java.awt.*;
 /**
  * Created by falapen on 2016-11-29.
  */
-public class Obstruction extends JComponent{
+public class Obstruction {
 
     private Rectangle bounds;
     private Color fill;
@@ -12,20 +12,16 @@ public class Obstruction extends JComponent{
 
     public Obstruction(int x, int y, Dimension d) {
         this.bounds = new Rectangle( x, y, (int) d.getWidth(), (int) d.getHeight());
-        this.setPreferredSize(new Dimension((int) d.getWidth(), (int) d.getHeight()));
-        this.setLocation(x,y);
+        this.fill = Color.black;
+    }
+
+    public void draw(Graphics g) {
+        g.setColor(fill);
+        g.fillRect((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
     }
 
     public void setColor(Color c) {
         this.fill = c;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        setLocation((int) bounds.getX(), (int) bounds.getY());
-        g.setColor(fill);
-        g.fillRect(0,0, this.getWidth(), this.getHeight());
     }
 
     public Rectangle getRect() {
