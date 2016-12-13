@@ -23,7 +23,7 @@ public class DatagramClientThread extends Thread{
 	super("DataClientThread");	
 	try {
 	    this.serverIp = InetAddress.getByName(serverIp);
-	    if (debug = true) {
+	    if (debug == true) {
 		if (listener == true) {
 		    System.out.println("Creating socket on port 1097");
 		    try {
@@ -149,14 +149,14 @@ public class DatagramClientThread extends Thread{
 	bb.put(receivedData[2]);
 	bb.put(receivedData[3]);
 	int playersInDatagram = bb.getInt(0);
-	//System.out.println("=======================UDP RECEIVED==================");
+	System.out.println("=======================UDP RECEIVED==================");
 	if (playersInDatagram!=players) {
 	    //Ber RMI att uppdaterar sin lista eftersom den är fel.
 	    this.RMIthread.updateList();
 	    //Sätter sin lista till RMIs nya lista
 	    this.playerList = this.RMIthread.getPlayerList();
 	}
-	//System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
+	System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
 	for(int i = 0; i < players; i++) {
 	    bb.put(receivedData[0 + 4 + (i*8)]);
 	    bb.put(receivedData[1 + 4 + (i*8)]);
@@ -169,13 +169,13 @@ public class DatagramClientThread extends Thread{
 	    short x = bb.getShort(0 + 4 + (i*8));
 	    short y = bb.getShort(2 + 4 + (i*8));
 	    int id = bb.getInt(4 + 4 + (i*8));
-	    //System.out.println("Player ID: " + Integer.toString(id) + " x: " + Short.toString(x) + " y: " + Short.toString(y));
+	    System.out.println("Player ID: " + Integer.toString(id) + " x: " + Short.toString(x) + " y: " + Short.toString(y));
 	    if (id != this.RMIthread.getMyId()) {
 		int xInt = x;
 		int yInt = y;
 		this.gamethread.updatePlayer(xInt, yInt, id);
 	    }
-	    //System.out.println("============================================");
+	    System.out.println("============================================");
 
 	}	
     }
