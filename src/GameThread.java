@@ -92,9 +92,6 @@ public class GameThread extends Thread {
         //System.out.println("Player Moved");
     }
 
-
-//    private Thread guiThread() = new Thread((Runnable)() ->{board.update();});
-
     public void run() {
         // Game loop
         while (!this.checkWinState()) {

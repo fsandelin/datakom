@@ -55,14 +55,14 @@ public class Board {
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setPreferredSize(new Dimension(xSize + 100, ySize + 100));
-        window.setResizable(true);
+        window.setResizable(false);
         window.pack();
         window.add(drawingSurface);
         window.setVisible(true);
         window.setIgnoreRepaint(true);
 
         //drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
-        drawingSurface.setBackground(Color.white);
+//        drawingSurface.setBackground(Color.white);
     }
 
     public void render() {
@@ -231,7 +231,6 @@ public class Board {
             return velocityVector;
         } else {
             velocityVector[0] = x - intersection.width;
-//            System.out.println(velocityVector[0]);
             velocityVector[1] = y;
         }
 
@@ -239,7 +238,7 @@ public class Board {
     }
 
     private int[] Q3CollisionDetect(int x, int y, Rectangle intersection) {
-        System.out.println(intersection);
+//        System.out.println(intersection);
         int[] velocityVector = {x, y};
         int intX = intersection.width;
         int intY = intersection.height;
@@ -292,8 +291,6 @@ public class Board {
         this.addObstruction(floor);
         this.addObstruction(left);
         this.addObstruction(right);
-        //this.addObstruction(top);
-
     }
 
     public void addGoal(int xPos, int yPos, int size) {
