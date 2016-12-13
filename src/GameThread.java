@@ -107,6 +107,7 @@ public class GameThread extends Thread {
                 clock = System.currentTimeMillis();
             }
         }
+
 	System.out.println("Gamethreads win: "+this.win);
 	System.out.println("Someone won, WOHO GZ!, remove");
 	

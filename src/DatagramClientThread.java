@@ -177,7 +177,7 @@ public class DatagramClientThread extends Thread{
 		this.gamethread.updatePlayer(xInt, yInt, id);
 	    }
 	    //System.out.println("============================================");
-
+	    
 	}	
     }
 
@@ -185,10 +185,27 @@ public class DatagramClientThread extends Thread{
 	int timeToSleep = 1000/this.hz;
 	byte[] sendBuff = new byte[8];
 
+	int i = 0;
 	boolean winStateServer;
 	long currentDraw = System.currentTimeMillis() % 1000;	
 	long previousDraw = currentDraw;
 	while(true){
+	    currentDraw = System.currentTimeMillis() % 1000;
+	    if((currentDraw - previousDraw) > 30){
+		long temp = currentDraw-previousDraw;
+		System.out.println(temp);
+		try{
+		    System.out.println("DatagramCThread :"+i);
+		    i++;
+		    winStateServer = RMIthread.getServerWinState();
+		    if(winStateServer)
+			gamethread.setWin(true);
+		}catch (Exception e) {
+		    System.out.println(e.toString());
+		}
+		previousDraw = currentDraw;
+	    }
+	    
 	    if(this.listener) {
 		this.receiveInfo(this.playerList.size());
 	    }
@@ -196,17 +213,8 @@ public class DatagramClientThread extends Thread{
 		this.sendInfo(sendBuff);
 		sleep(timeToSleep);
 	    }	    
-	    currentDraw = System.currentTimeMillis() % 1000;
-	    if((currentDraw - previousDraw) > 3){
-		System.out.println("Should send server win cond");
-		try{
-		    winStateServer = RMIthread.getServerWinState();
-		}catch (Exception e) {
-		    System.out.println(e.toString());
-		}
-		previousDraw = currentDraw;
-		}
 	}
+	
     }
     
     public void debugByteArray(byte[] bytearray) {
