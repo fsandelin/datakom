@@ -85,11 +85,13 @@ public class ServerNetworkThread extends Thread implements Server {
         return value;
     }
 
-    public void setWinState() throws RemoteException{
+    public void setWinState() {//throws RemoteException{
 	this.gamethread.setWin(true);
     }
 
-
+    public boolean getWinState() {//throws RemoteException{
+	return (gamethread.checkWinState());
+    }
 
     /**
      * Kör tråden. Helt vanlig RMI setup. Mera info stubs och registry
@@ -106,14 +108,6 @@ public class ServerNetworkThread extends Thread implements Server {
             Registry registry = LocateRegistry.getRegistry();
             registry.bind("Server", stub);
             System.err.println("Server RMI setup done");
-	    while(!this.gamethread.checkWinState()){
-		try {
-		    Thread.sleep(1000);
-		}catch(InterruptedException e2) {
-		    System.out.println(e2.toString());
-		}	    
-	    }
-	    stub.setWinState();
 	}catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             System.out.println("IF YOU GOT ALREADY BOUND EXCEPTION!");

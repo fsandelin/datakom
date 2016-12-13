@@ -43,11 +43,7 @@ public class ClientNetworkThread extends Thread {
 
     }
 
-     public void setWinState() throws RemoteException{
-	this.gamethread.setWin(true);
-    }
-
-    /**
+    /**. 
      * Den här funktionen kör tråden. Den försöker connecta till en server med rmi. Från server kommer den få en lista över alla spelare
      * på server var den själv befinner sig längst ner på listan. Den tar sedan de koordinaterna och sätter sin egen spelare där.
      * Till sist så lägger den till alla andra spelare till sin gamethread.
@@ -79,15 +75,6 @@ public class ClientNetworkThread extends Thread {
                 int id = this.playerList.get(i).getId();
                 this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
             }	    
-
-	    while(!this.gamethread.checkWinState()){
-		try {
-		    Thread.sleep(1000);
-		}catch(InterruptedException e) {
-		    System.out.println(e.toString());
-		}	
-	    }
-	    stub.setWinState();
 	    
 	} catch (Exception e) {
             System.err.println("Client network got Exception: " + e.toString());
@@ -113,17 +100,38 @@ public class ClientNetworkThread extends Thread {
         return this.myId;
     }
 
+    
+    //Msg Server you've won. Make server reliably send to all 
+    public void setWinState() throws RemoteException{
+	try{
+	    this.gamethread.setWin(true);
+	    this.serverStub.setWinState();
+	} catch (Exception e) {
+            System.out.println(e.toString());
+        }	
+    }
+    
+    public boolean getServerWinState() throws RemoteException{
+	boolean serverWinState = false;
+	    try {
+		serverWinState = this.serverStub.getWinState();	    
+	}catch (RemoteException e) {
+            System.out.println(e.toString());
+	}	
+	return serverWinState;
+
+    }    
     private void debugRMI() {
-        ListIterator<PlayerInfo> iterator = this.playerList.listIterator();
-        int i = 0;
-        System.out.println("==============DEBUGGING LIST PRINT================");
-        while (iterator.hasNext()) {
-            PlayerInfo cur = iterator.next();
-            System.out.println("Player " + Integer.toString(i) + "\n" + cur.toString());
-            System.out.println("Id: " + Integer.toString(cur.getId()));
-            System.out.println("X: " + Integer.toString(cur.getX()) + "Y: " + Integer.toString(cur.getY()));
-            System.out.println("================================================");
-            i++;
-        }
+	ListIterator<PlayerInfo> iterator = this.playerList.listIterator();
+	int i = 0;
+	System.out.println("==============DEBUGGING LIST PRINT================");
+	while (iterator.hasNext()) {
+	    PlayerInfo cur = iterator.next();
+	    System.out.println("Player " + Integer.toString(i) + "\n" + cur.toString());
+	    System.out.println("Id: " + Integer.toString(cur.getId()));
+	    System.out.println("X: " + Integer.toString(cur.getX()) + "Y: " + Integer.toString(cur.getY()));
+	    System.out.println("================================================");
+	    i++;
+	}
     }
 }

@@ -91,8 +91,8 @@ public class GameThread extends Thread {
         }
         //System.out.println("Player Moved");
     }
-
-
+    
+    
     public void run() {
         // Game loop
         while (!this.checkWinState()) {
@@ -107,8 +107,9 @@ public class GameThread extends Thread {
                 clock = System.currentTimeMillis();
             }
         }
+	System.out.println("Gamethreads win: "+this.win);
 	System.out.println("Someone won, WOHO GZ!, remove");
-
+	
     }
 
     public int[] addPlayerToServer(String alias, Color playerColor, int id) {

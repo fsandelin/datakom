@@ -183,7 +183,11 @@ public class DatagramClientThread extends Thread{
 
     public void run(){
 	int timeToSleep = 1000/this.hz;
-	byte[] sendBuff = new byte[8];	
+	byte[] sendBuff = new byte[8];
+
+	boolean winStateServer;
+	long currentDraw = System.currentTimeMillis() % 1000;	
+	long previousDraw = currentDraw;
 	while(true){
 	    if(this.listener) {
 		this.receiveInfo(this.playerList.size());
@@ -191,7 +195,17 @@ public class DatagramClientThread extends Thread{
 	    else {
 		this.sendInfo(sendBuff);
 		sleep(timeToSleep);
-	    }
+	    }	    
+	    currentDraw = System.currentTimeMillis() % 1000;
+	    if((currentDraw - previousDraw) > 3){
+		System.out.println("Should send server win cond");
+		try{
+		    winStateServer = RMIthread.getServerWinState();
+		}catch (Exception e) {
+		    System.out.println(e.toString());
+		}
+		previousDraw = currentDraw;
+		}
 	}
     }
     
