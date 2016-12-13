@@ -74,8 +74,6 @@ public class Game {
 	    } else {
 		System.out.println("Enter your alias:");
 		alias = reader.next();
-		System.out.println("Enter port to use (recommended 1099):");
-		;
 		port = reader.nextInt();
 		System.out.println("0.Exit  |  1.Host  |  2.Client");
 		int response = reader.nextInt();

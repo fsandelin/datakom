@@ -57,7 +57,7 @@ public class Board {
                 for (Obstruction o : fixedObjects) {
                     o.draw(g);
                 }
-                System.out.printf("\n");
+                //System.out.printf("\n");
 //                repaint();
 //                try {
 //                    Thread.sleep(16);
