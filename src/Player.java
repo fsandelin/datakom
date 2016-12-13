@@ -156,7 +156,7 @@ public class Player {
     }
 
     public Rectangle generateRectangle() {
-        Rectangle rect = new Rectangle(this.playerSize, this.playerSize, this.xPos, this.yPos);
+        Rectangle rect = new Rectangle(this.xPos, this.yPos, this.playerSize, this.playerSize);
         return rect;
     }
 }
