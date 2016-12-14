@@ -24,8 +24,6 @@ public class Player {
     private Board board;
     private boolean jumping;
 
-    private static final int aliasDisplacement = 20;
-
     public Player(String playerAlias, int playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
         //
@@ -46,6 +44,7 @@ public class Player {
     public void jump() {
         if (this.velocity[1] == 0 && !this.jumping) {
             velocity[1] = -playerJumpStep;
+            System.out.println("JUMP FUNCTION COLLISION");
             this.velocity = board.getValidVelocity(velocity);
             this.jumping = true;
         } else if (this.velocity[1] == 0 && this.jumping) {
@@ -55,6 +54,7 @@ public class Player {
 
     public void checkJumping() {
         velocity[1] = velocity[1] + 2;
+        System.out.println("CHECKJUMP FUNCTION COLLISION");
         this.velocity = board.getValidVelocity(velocity);
     }
 
@@ -63,6 +63,7 @@ public class Player {
     }
 
     public void move(int direction) {
+        System.out.println("MOVE FUNCTION COLLISION");
         switch (direction) {
             case KeyEvent.VK_A:
             case KeyEvent.VK_LEFT:
@@ -96,7 +97,8 @@ public class Player {
 
         g.setColor(this.playerColor);
         g.fillRect(xPos, yPos, playerSize, playerSize);
-
+        g.setColor(Color.black);
+        g.drawString(this.playerAlias, this.xPos, this.yPos - 10);
     }
 
     public String getPlayerAlias() {

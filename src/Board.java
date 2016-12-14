@@ -38,30 +38,47 @@ public class Board {
 
     private final Lock _mutex = new ReentrantLock(true);
 
+    public enum Direction {
+        Q1, Q2, Q3, Q4
+    }
+
     public Board(int xSize, int ySize) {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
         fixedObjects = new ArrayList<Obstruction>();
-        drawingSurface = new JPanel();
+        drawingSurface = new JPanel(); /* {
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                render();
+                repaint();
+                try {
+                    Thread.sleep(20);
+                }
+                catch(Exception e) {
+                    System.out.println("akjs");
+                }
+            }
+        }; */
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
-        drawingSurface.setIgnoreRepaint(true);
+//        drawingSurface.setIgnoreRepaint(true);
         this.addWalls(xSize, ySize);
         this.addGoal(450, 350, 50);
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setPreferredSize(new Dimension(xSize + 100, ySize + 100));
-        window.setResizable(true);
+        window.setResizable(false);
         window.pack();
         window.add(drawingSurface);
         window.setVisible(true);
         window.setIgnoreRepaint(true);
 
         //drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
-        drawingSurface.setBackground(Color.white);
+//        drawingSurface.setBackground(Color.white);
     }
 
     public void render() {
+//        long time = System.currentTimeMillis();
         Graphics g = this.drawingSurface.getGraphics();
         this.drawBackground(g);
         for (Player p : players) {
@@ -71,7 +88,8 @@ public class Board {
             o.draw(g);
         }
         this.drawingSurface.paintComponents(g);
-        g.dispose();
+//        g.dispose();
+//        System.out.println("RenderTime: " + (System.currentTimeMillis() - time));
     }
 
     public void drawBackground(Graphics g) {
@@ -111,6 +129,7 @@ public class Board {
     }
 
     public int[] getValidVelocity(int[] v) {
+        long time = System.currentTimeMillis();
         Player p = players.get(0);
         Rectangle nextPos = new Rectangle(p.getPlayerX() + v[0], p.getPlayerY() + v[1] + aliasPadding, p.getPlayerSize(), p.getPlayerSize());
 
@@ -129,61 +148,149 @@ public class Board {
         }
 
         int[] returnV = collisionDetect(rects, nextPos, v[0], v[1]);
+        System.out.println("CollisionDetectionTime: " + (System.currentTimeMillis() - time));
         return returnV;
     }
 
     private int[] collisionDetect(Rectangle[] rects, Rectangle nextPos, int xVel, int yVel) {
+
         Rectangle intersection;
         if (xVel > maxHVelocity) {
-            xVel= maxHVelocity;
-        }
-        if (xVel < minHVelocity) {
+            xVel = maxHVelocity;
+        } else if (xVel < minHVelocity) {
             xVel = minHVelocity;
         }
 
-        int tentXVelocity = xVel;
-        int tentYVelocity = yVel;
+        Direction d = getDirection(xVel, yVel);
 
+        int[] tentV = new int[2];
         int[] returnV = new int[2];
         returnV[0] = xVel;
         returnV[1] = yVel;
-        //System.out.println("==============================");
-        for(Rectangle r: rects) {
-            //System.out.println("Collision detect X: " + r.getX() + " Y: " + r.getY());
+
+        for (Rectangle r : rects) {
             if (nextPos.intersects(r)) {
                 intersection = nextPos.intersection(r);
-                if (intersection.getWidth() > intersection.getHeight()) {
-                    if (yVel > 0) {
-                        tentYVelocity = tentYVelocity - ((int) intersection.getHeight());
-                        if (tentYVelocity < returnV[1]) {
-                            returnV[1] = tentYVelocity;
-                        }
-                    } else if (yVel < 0) {
-                        tentYVelocity = tentYVelocity + ((int) intersection.getHeight());
-                        if (tentYVelocity > returnV[1]) {
-                            returnV[1] = tentYVelocity;
-                        }
-                    } else {
-                        returnV[1] = 1;
-                    }
-
-                } else {
-                    if (xVel >= 0) {
-                        tentXVelocity = tentXVelocity - ((int) intersection.getWidth());
-                        if (tentXVelocity < returnV[0]) {
-                            returnV[0] = tentXVelocity;
-                        }
-                    } else {
-                        tentXVelocity = tentXVelocity + ((int) intersection.getWidth());
-                        if (tentXVelocity > returnV[0]) {
-                            returnV[0] = tentXVelocity;
-                        }
-                    }
+                switch (d) {
+                    case Q1:
+                        tentV = Q1CollisionDetect(xVel, yVel, intersection);
+                        break;
+                    case Q2:
+                        tentV = Q2CollisionDetect(xVel, yVel, intersection);
+                        break;
+                    case Q3:
+                        tentV = Q3CollisionDetect(xVel, yVel, intersection);
+                        break;
+                    case Q4:
+                        tentV = Q4CollisionDetect(xVel, yVel, intersection);
+                        break;
+                    default:
+                        break;
+                }
+                if (abs(tentV[0]) < abs(returnV[0])) {
+                    returnV[0] = tentV[0];
+                }
+                if (abs(tentV[1]) < abs(returnV[1])) {
+                    returnV[1] = tentV[1];
                 }
             }
         }
-        //System.out.println("==============================");
+        System.out.println("Return from collisiondetection - X: " + returnV[0] + " | Y: " + returnV[1]);
         return returnV;
+    }
+
+    public Direction getDirection(int x, int y) {
+        if (x >= 0) {
+            if (y >= 0) {
+                return Direction.Q3;
+            } else {
+                return Direction.Q2;
+            }
+        } else {
+            if (y >= 0) {
+                return Direction.Q4;
+            } else {
+                return Direction.Q1;
+            }
+        }
+    }
+
+    private int[] Q1CollisionDetect(int x, int y, Rectangle intersection) {
+        int[] velocityVector = {x, y};
+        int intX = intersection.width;
+        int intY = intersection.height;
+        float intersectionRatio = ((float) intY) / ((float) intX);
+        float newPosRatio = ((float) y) / ((float) x);
+
+        if (newPosRatio >= intersectionRatio) {
+            velocityVector[0] = x;
+            velocityVector[1] = y + intersection.height;
+            return velocityVector;
+        } else {
+            velocityVector[0] = x + intersection.width;
+            velocityVector[1] = y;
+        }
+
+        return velocityVector;
+    }
+
+    private int[] Q2CollisionDetect(int x, int y, Rectangle intersection) {
+        int[] velocityVector = {x, y};
+        int intX = intersection.width;
+        int intY = intersection.height;
+        float intersectionRatio = ((float) abs(intY)) / ((float) abs(intX));
+        float newPosRatio = ((float) abs(y)) / ((float) abs(x));
+
+        if (newPosRatio >= intersectionRatio) {
+            velocityVector[0] = x;
+            velocityVector[1] = y + intersection.height;
+            return velocityVector;
+        } else {
+            velocityVector[0] = x - intersection.width;
+            velocityVector[1] = y;
+        }
+
+        return velocityVector;
+    }
+
+    private int[] Q3CollisionDetect(int x, int y, Rectangle intersection) {
+//        System.out.println(intersection);
+        int[] velocityVector = {x, y};
+        int intX = intersection.width;
+        int intY = intersection.height;
+        float intersectionRatio = ((float) abs(intY)) / ((float) abs(intX));
+        float newPosRatio = ((float) abs(y)) / ((float) abs(x));
+        if (y == 0) {
+            newPosRatio = 0;
+        }
+
+        if (newPosRatio >= intersectionRatio) {
+            velocityVector[0] = x;
+            velocityVector[1] = y - intersection.height;
+        } else {
+            velocityVector[0] = x - intersection.width;
+            velocityVector[1] = y;
+        }
+        return velocityVector;
+    }
+
+    private int[] Q4CollisionDetect(int x, int y, Rectangle intersection) {
+        int[] velocityVector = {x, y};
+        int intX = intersection.width;
+        int intY = intersection.height;
+        float intersectionRatio = ((float) abs(intY)) / ((float) abs(intX));
+        float newPosRatio = ((float) abs(y)) / ((float) abs(x));
+
+        if (newPosRatio >= intersectionRatio) {
+            velocityVector[0] = x;
+            velocityVector[1] = y - intersection.height;
+//            return velocityVector;
+        } else {
+            velocityVector[0] = x + intersection.width;
+            velocityVector[1] = y;
+        }
+
+        return velocityVector;
     }
 
 
@@ -200,8 +307,6 @@ public class Board {
         this.addObstruction(floor);
         this.addObstruction(left);
         this.addObstruction(right);
-        //this.addObstruction(top);
-
     }
 
     public void addGoal(int xPos, int yPos, int size) {
@@ -228,10 +333,9 @@ public class Board {
      * Uppdaterar spelaren med som har ID id med x och y coordinaterna.
      * Låser ArrayListan eftersom den inte är threadsafe.
      *
-     * @param x Nya x-koordinaten
-     * @param y Nya y-koordinaten
+     * @param x  Nya x-koordinaten
+     * @param y  Nya y-koordinaten
      * @param id Player Id av Player som skall uppdateras
-     *
      */
     public void updatePlayer(int x, int y, int id) {
         _mutex.lock();
@@ -246,13 +350,13 @@ public class Board {
     }
 
     //Uppdaterar listan som kommer som input med vad som finns i listan hos board.
+
     /**
      * Takes an arraylist of playerInfo and updates all x and y values to correspond to the values in a list of Player.
      * Each PlayerInfo has an ID and each PlayerInfo's x and y is only updates if the PlayerInfo id and Player id is equal.
      * Since ArrayLists aren't threadsade, the funtion locks the ArrayList of player
      *
      * @param list The ArrayList to update.
-     *
      * @todo Also lock the ArraList of PlayerInfo since it is not thread safe.
      */
     public void updatePlayerList(ArrayList<PlayerInfo> list) {
