@@ -45,14 +45,20 @@ public class GameThread extends Thread {
         //Adding some obstructions to the game
         for (int i = 0; i < 1; i++) {
             Obstruction o = new Obstruction(30, 500, new Dimension(30, 30));
-            o.setColor(Color.white);
+            o.setColor(new Color(22, 142, 42));
+            board.addObstruction(o);
+	    o = new Obstruction(30, 570, new Dimension(30, 70));
+            o.setColor(new Color(79, 46, 10));
             board.addObstruction(o);
 
-	    o = new Obstruction(120, 450, new Dimension(30, 30));
-            o.setColor(Color.white);
+	    o = new Obstruction(210, 450, new Dimension(30, 30));
+            o.setColor(new Color(22, 142, 42));
+            board.addObstruction(o);
+	    o = new Obstruction(30, 500, new Dimension(30, 30));
+            o.setColor(new Color(79, 46, 10));
             board.addObstruction(o);
 
-	    o = new Obstruction(210, 400, new Dimension(30, 30));
+	    o = new Obstruction(120, 400, new Dimension(30, 30));
             o.setColor(Color.white);
             board.addObstruction(o);
 
