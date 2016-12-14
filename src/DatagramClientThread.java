@@ -15,9 +15,9 @@ public class DatagramClientThread extends Thread{
     private ClientNetworkThread RMIthread; //Own RMIthread
     private boolean listener;         //If it is a receiver or sender
     private ArrayList<PlayerInfo> playerList; //Referens to the list created by RMI thread
-    private int myId; //Same as the RMI thread got.
-    
-    
+    private int myId;                 //Same as the RMI thread got.    
+    private long previousDraw;            //Latest time stamp in run.
+    private double timeStep;             //Represent the time interval for checking winState
     
     public DatagramClientThread(GameThread gamethread, ClientNetworkThread RMIthread, String serverIp, boolean listener, boolean debug){
 	super("DataClientThread");	
@@ -75,6 +75,8 @@ public class DatagramClientThread extends Thread{
 	this.myId = RMIthread.getMyId();
 	this.playerList = this.RMIthread.getPlayerList();	
 	this.listener = listener;
+	this.timeStep = 3333;
+	this.previousDraw = System.currentTimeMillis();
     }
     
 
@@ -187,41 +189,41 @@ public class DatagramClientThread extends Thread{
 
 	int i = 0;
 	boolean winStateServer;
-	long currentDraw = System.currentTimeMillis() % 1000;	
-	long previousDraw = currentDraw;
-	while(true){
-	    currentDraw = System.currentTimeMillis() % 1000;
-	    if((currentDraw - previousDraw) > 30){
-		long temp = currentDraw-previousDraw;
-		System.out.println(temp);
-		try{
-		    System.out.println("DatagramCThread :"+i);
-		    i++;
-		    winStateServer = RMIthread.getServerWinState();
-		    
-		    if(winStateServer){
-			gamethread.setWin(true);
-		    }
-		    if(gamethread.checkWinState()){
-			
-			RMIthread.setWinState();
-		    }	
-		}catch (Exception e) {
-		    System.out.println(e.toString());
-		}
-		previousDraw = currentDraw;
-	    }
-	    
+		
+	while(true){	   	    
 	    if(this.listener) {
 		this.receiveInfo(this.playerList.size());
 	    }
 	    else {
 		this.sendInfo(sendBuff);
+
+		if((System.currentTimeMillis() - previousDraw) > timeStep){ //If every 3s
+
+		    //Do shit
+		    try{
+			System.out.println("DatagramCThread :"+i);
+			i++;
+			winStateServer = RMIthread.getServerWinState();
+		    
+			if(winStateServer){
+			    gamethread.setWin(true);
+			}
+			if(gamethread.checkWinState()){			
+			    RMIthread.setWinState();
+			}		    		   		    
+		    }catch (Exception e) {
+			System.out.println(e.toString());
+		    }
+		    this.previousDraw = System.currentTimeMillis();
+		}
+
+		
 		sleep(timeToSleep);
 	    }	    
 	}
-	
     }
+	
+
     
     public void debugByteArray(byte[] bytearray) {
 	String array = "";
