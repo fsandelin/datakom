@@ -44,8 +44,9 @@ public class Board {
         fixedObjects = new ArrayList<Obstruction>();
         drawingSurface = new JPanel();
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
-        drawingSurface.setIgnoreRepaint(true);
-        this.addWalls(xSize, ySize);
+	drawingSurface.setIgnoreRepaint(true);
+
+	this.addWalls(xSize, ySize);
         this.addGoal(30, 60, 20);
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
