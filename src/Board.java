@@ -78,11 +78,11 @@ public class Board {
         }
         this.drawingSurface.paintComponents(g);
 	this.drawingSurface.revalidate();
-	long delta = System.currentTimeMillis() - this.clock;
-	this.clock = System.currentTimeMillis();
-	System.out.println("FPS: " + Long.toString(1000/delta));
-	System.out.println(ii);
-	this.ii = this.ii + 1;
+	//long delta = System.currentTimeMillis() - this.clock;
+	//this.clock = System.currentTimeMillis();
+	//System.out.println("FPS: " + Long.toString(1000/delta));
+	//System.out.println(ii);
+	//this.ii = this.ii + 1;
         g.dispose();
 	
     }

@@ -23,7 +23,7 @@ public class Game {
         GameThread game = new GameThread(800, 600, alias);
         System.out.println("Starting Server RMI thread...");
         ServerNetworkThread serverRMI = new ServerNetworkThread(game, alias);
-        serverRMI.start();
+        //serverRMI.start();
         sleep(2000);
         System.out.println("Starting Server UDP thread...");
         DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
