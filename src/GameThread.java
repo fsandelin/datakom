@@ -104,9 +104,10 @@ public class GameThread extends Thread {
                 win = board.win();
                 if (render) {
 //                    guiThread().start();
-//                    this.updateBoard();
+                    this.updateBoard();
                 }
                 clock = System.currentTimeMillis();
+                System.out.println("==================================TICK=========================================");
 //                System.out.println("Entire game-loop: " + (System.nanoTime() - time));
             }
         }

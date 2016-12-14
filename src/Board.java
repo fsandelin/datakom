@@ -46,7 +46,7 @@ public class Board {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
         fixedObjects = new ArrayList<Obstruction>();
-        drawingSurface = new JPanel() {
+        drawingSurface = new JPanel(); /* {
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 render();
@@ -58,9 +58,9 @@ public class Board {
                     System.out.println("akjs");
                 }
             }
-        };
+        }; */
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
-        drawingSurface.setIgnoreRepaint(true);
+//        drawingSurface.setIgnoreRepaint(true);
         this.addWalls(xSize, ySize);
         this.addGoal(450, 350, 50);
 
@@ -88,7 +88,7 @@ public class Board {
             o.draw(g);
         }
         this.drawingSurface.paintComponents(g);
-        g.dispose();
+//        g.dispose();
 //        System.out.println("RenderTime: " + (System.currentTimeMillis() - time));
     }
 
@@ -148,7 +148,7 @@ public class Board {
         }
 
         int[] returnV = collisionDetect(rects, nextPos, v[0], v[1]);
-//        System.out.println("CollisionDetectionTime: " + (System.currentTimeMillis() - time));
+        System.out.println("CollisionDetectionTime: " + (System.currentTimeMillis() - time));
         return returnV;
     }
 
@@ -188,7 +188,6 @@ public class Board {
                         break;
                 }
                 if (abs(tentV[0]) < abs(returnV[0])) {
-
                     returnV[0] = tentV[0];
                 }
                 if (abs(tentV[1]) < abs(returnV[1])) {
@@ -196,6 +195,7 @@ public class Board {
                 }
             }
         }
+        System.out.println("Return from collisiondetection - X: " + returnV[0] + " | Y: " + returnV[1]);
         return returnV;
     }
 
