@@ -40,7 +40,7 @@ public class Player {
         this.playerColor = new Color(red, green, blue);
         this.playerAlias = playerAlias;
         this.playerId = playerId;
-        System.out.println("Player created with id: " + Integer.toString(this.playerId));
+        //System.out.println("Player created with id: " + Integer.toString(this.playerId));
     }
 
     /**

@@ -6,7 +6,9 @@ JC = javac
 BDIR = bin
 CLASSES = \
 	Server.java \
+	Client.java \
 	PlayerInfo.java \
+	ClientInfo.java \
 	PlayerPosInfo.java \
 	ServerNetworkThread.java \
 	ClientNetworkThread.java \

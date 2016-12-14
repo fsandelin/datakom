@@ -73,7 +73,7 @@ public class DatagramClientThread extends Thread{
 	this.serverPort = 1099;
 	this.playerX = 0;
 	this.playerY = 0;
-	this.hz = 25;
+	this.hz = 32;
 	this.gamethread = gamethread;
 	this.RMIthread = RMIthread;
 	this.myId = RMIthread.getMyId();
@@ -111,6 +111,11 @@ public class DatagramClientThread extends Thread{
      */
     public void sendInfo(byte[] sendBuff) {
 	this.checkDisconnect();
+	if(this.gamethread.checkWinState()) {
+	    this.RMIthread.sendWin();
+	    this.gamethread.setDrawWin(true);
+	    this.gamethread.setWin(false);
+	}
 	this.updatePlayerPos();
 	sendBuff[0] = (byte) (this.playerX >> 8);	    
 	sendBuff[1] = (byte) (this.playerX);

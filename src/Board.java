@@ -108,7 +108,7 @@ public class Board {
     public void addPlayer(Player p) {
         _mutex.lock();
         players.add(p);
-        System.out.println("Det finns nu " + Integer.toString(players.size()) + " i boards listan.");
+        //System.out.println("Det finns nu " + Integer.toString(players.size()) + " i boards listan.");
         //System.out.println(players[0]);
         _mutex.unlock();
     }

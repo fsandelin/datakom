@@ -18,12 +18,15 @@ public class ServerNetworkThread extends RemoteServer implements Server {
     private int ownPort;
     private String ownAlias;
     private int nextId;
+    private ArrayList<ClientInfo> clientList;
+    
 
     public ServerNetworkThread(GameThread gamethread, String ownAlias) {
         super();
         this.map = 1;
         this.hz = 16;
         this.playerList = new ArrayList<PlayerInfo>();
+	this.clientList = new ArrayList<ClientInfo>();
         this.gamethread = gamethread;
         this.ownPort = 1099;
         this.ownAlias = ownAlias;
@@ -40,9 +43,9 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         PlayerInfo player = new PlayerInfo(this.ownIp, this.ownPort, this.ownAlias, ownX, ownY, this.getNextIdAndIncrement(), ownPlayer.getPlayerColor());
         playerList.add(player);
         try {
-	    LocateRegistry.createRegistry(1099);
+	    LocateRegistry.createRegistry(this.ownPort);
             Server stub = (Server) UnicastRemoteObject.exportObject(this, 0);
-            Registry registry = LocateRegistry.getRegistry(1099);
+            Registry registry = LocateRegistry.getRegistry(this.ownPort);
             registry.bind("Server", stub);
             System.err.println("Server RMI setup done");
         } catch (Exception e) {
@@ -55,6 +58,47 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         }	
     }
 
+    public ArrayList<PlayerInfo> connectToGame(int port, String alias, Color playerColor) {
+        try {
+            this.playerList.get(0).setX(this.gamethread.getPlayerX());
+            this.playerList.get(0).setY(this.gamethread.getPlayerY());
+            int id = this.getNextIdAndIncrement();
+            int[] xy = this.gamethread.addPlayerToServer(alias, playerColor, id);
+	    String ip = this.getClientHost();
+            PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1], id, playerColor);
+            this.playerList.add(player);
+	    Registry registry = LocateRegistry.getRegistry(ip, port);
+	    Client stub = (Client) registry.lookup("Client");
+	    ClientInfo cInfo = new ClientInfo(id, stub);
+	    this.clientList.add(cInfo);
+            this.debugRMI();
+            return this.playerList;
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            return null;
+        }
+    }    
+        public void disconnectFromGame(int port) {
+	System.out.println("LETS GO ");
+	String ip = "";
+	try {
+	    ip = this.getClientHost();
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	System.out.println(ip);
+	System.out.println(port);	
+	for(int i = 0; i < this.playerList.size(); i++) {
+	    PlayerInfo pInfo = this.playerList.get(i);
+	    System.out.println(pInfo.getIp().toString().split("/").equals(ip));
+	    System.out.println(pInfo.getPort() == port);
+	    if (pInfo.getIp().toString().split("/")[1].equals(ip) && pInfo.getPort() == port) {
+		this.playerList.remove(i);
+		this.gamethread.removePlayerById(pInfo.getId());
+	    }
+	}
+	this.debugRMI();
+    }
     
     public int[] getGameState() {
         int[] state = {this.map, this.hz};
@@ -79,44 +123,6 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         return this.playerList;
     }
 
-    public void disconnectFromGame(int port) {
-	System.out.println("LETS GO ");
-	String ip = "";
-	try {
-	    ip = this.getClientHost();
-	}catch(Exception e) {
-	    System.out.println(e.toString());
-	}
-	System.out.println(ip);
-	System.out.println(port);	
-	for(int i = 0; i < this.playerList.size(); i++) {
-	    PlayerInfo pInfo = this.playerList.get(i);
-	    System.out.println(pInfo.getIp().toString().split("/").equals(ip));
-	    System.out.println(pInfo.getPort() == port);
-	    if (pInfo.getIp().toString().split("/")[1].equals(ip) && pInfo.getPort() == port) {
-		this.playerList.remove(i);
-		this.gamethread.removePlayerById(pInfo.getId());
-	    }
-	}
-	this.debugRMI();
-    }
-
-    public ArrayList<PlayerInfo> connectToGame(int port, String alias, Color playerColor) {
-        try {
-            this.playerList.get(0).setX(this.gamethread.getPlayerX());
-            this.playerList.get(0).setY(this.gamethread.getPlayerY());
-            int id = this.getNextIdAndIncrement();
-            int[] xy = this.gamethread.addPlayerToServer(alias, playerColor, id);
-	    String ip = this.getClientHost();
-            PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1], id, playerColor);
-            this.playerList.add(player);
-            this.debugRMI();
-            return this.playerList;
-        } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
-            return null;
-        }
-    }
     public ArrayList<PlayerInfo> updateGame() {
 	return this.playerList;
     }    
@@ -127,7 +133,14 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         return value;
     }
 
-    public void setWinState() throws RemoteException{
+    public void sendWin() {
 	this.gamethread.setWin(true);
+	for(ClientInfo c : clientList) {
+	    try {
+		c.getStub().setWin(true);
+	    }catch(Exception e) {
+		System.out.println("Error när server skulle sätta win till clients: " + e.toString());
+	    }
+	}
     }
 }

@@ -16,6 +16,10 @@ public class GameThread extends Thread {
     private int timestep = 33;
 
     private boolean win;
+    private boolean drawWin;
+    private long winTime;
+    private boolean winTimeSet;
+    
     private boolean disconnect;
     private static final int playerSize = 30;
 
@@ -33,6 +37,7 @@ public class GameThread extends Thread {
         this.render = true;
         int padding = 5;
         this.win = false;
+	this.winTimeSet = false;
 
         //Initialize keyboardcontrols
 	
@@ -147,6 +152,9 @@ public class GameThread extends Thread {
 	if (currentKeys.contains(KeyEvent.VK_Q)) {
 	    this.disconnect();
 	}
+	if (currentKeys.contains(KeyEvent.VK_P)) {
+	    this.setWin(true);
+	}	
         if (currentKeys.contains(KeyEvent.VK_SPACE) || currentKeys.contains(KeyEvent.VK_UP)) {
             player.jump();
         }
@@ -156,27 +164,39 @@ public class GameThread extends Thread {
 
     public void run() {
         // Game loop
-        while (!this.checkWinState()) {
+        while (true) {
             if ((System.currentTimeMillis() - clock) >= timestep) {
                 clock = System.currentTimeMillis();
                 manageKeys();
                 player.checkJumping();
                 player.updatePosition();
-                win = board.win();
+		if(!this.win) {
+		    win = board.win();
+		}
 		if (render) {
 		    this.updateBoard();		    
+		}
+		if(this.drawWin) { //kan refactoreras
+		    if (!winTimeSet) {
+			this.winTime = System.currentTimeMillis();
+			this.winTimeSet = true;			
+		    }
+		    System.out.println("WIN");//TODO DRAW WIN HERE
+		    if ((System.currentTimeMillis() - this.winTime) > 4000) {
+			this.winTimeSet = false;
+			this.drawWin = false;
+		    }
 		}
             }
 
         }
-	//System.out.println("Someone won, WOHO GZ!, remove");
 
     }
 
     public int[] addPlayerToServer(String alias, Color playerColor, int id) {
-        System.out.println("---------------Got add player to server with id-----------------");
-        System.out.println(id);
-        System.out.println("------------------------------------------------------------");
+        //System.out.println("---------------Got add player to server with id-----------------");
+        //System.out.println(id);
+        //System.out.println("------------------------------------------------------------");
         int[] validPosition = board.getValidPlayerPosition();
         int x = validPosition[0];
         int y = validPosition[1];
@@ -187,11 +207,11 @@ public class GameThread extends Thread {
     }
 
     public void addPlayerToClient(int x, int y, String alias, int id, Color playerColor) {
-        System.out.println("---------------Got add player to client on-----------------");
-        System.out.println(x);
-        System.out.println(y);
-        System.out.println(id);
-        System.out.println("------------------------------------------------------------");
+        //System.out.println("---------------Got add player to client on-----------------");
+        //System.out.println(x);
+        //System.out.println(y);
+        //System.out.println(id);
+        //System.out.println("------------------------------------------------------------");
         Player p = new Player(alias, id, x, y, playerSize, board);
         p.setPlayerColor(playerColor);
         board.addPlayer(p);
@@ -224,6 +244,10 @@ public class GameThread extends Thread {
     
     public void setWin(boolean winState) {
 	this.win = winState;
+    }
+
+    public void setDrawWin(boolean bool) {
+	this.drawWin = bool;
     }
     
 

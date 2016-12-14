@@ -1,3 +1,4 @@
+
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -28,7 +29,7 @@ public class DatagramServerThread extends Thread {
 	    System.out.println(e.toString());
 	    System.exit(0);
 	}
-	this.hz = 25;
+	this.hz = 32;
 	this.gamethread = gamethread;
 	this.RMIthread = RMIthread;
 	this.playerList = this.RMIthread.getPlayerList();
@@ -60,6 +61,12 @@ public class DatagramServerThread extends Thread {
      */
     public void sendInfo() {
 	//System.out.println("updating");
+	if(this.gamethread.checkWinState()) {
+	    System.out.println("GOT INTO WIN");
+	    this.RMIthread.sendWin();
+	    this.gamethread.setDrawWin(true);
+	    this.gamethread.setWin(false);
+	}
 	this.gamethread.updatePlayerList(this.playerList);
 	int players = this.playerList.size();
 	//System.out.println(players);	
