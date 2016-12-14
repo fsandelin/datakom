@@ -93,6 +93,15 @@ public class ClientNetworkThread extends Thread {
         return this.playerList;
     }
 
+    public void disconnect() {
+	try {
+	    this.serverStub.disconnectFromGame(this.ownPort);
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	System.exit(0);
+    }
+
     public int getMyId() {
         return this.myId;
     }

@@ -126,7 +126,9 @@ public class DatagramServerThread extends Thread {
 	//System.out.println("Server received | " + Integer.toString(x) + " " + Integer.toString(y) + " for ID: " + Integer.toString(id));
 	//System.out.println("From ---- IP: "+ receivePacket.getAddress().toString() + " ------ Port: " + Integer.toString(receivePacket.getPort()));
 	//System.out.println("===============================================================");
-	this.gamethread.updatePlayer(x, y, id);	
+	if (id != 0) {
+	    this.gamethread.updatePlayer(x, y, id);
+	}
     }
 
     public void debugByteArray(byte[] bytearray) {

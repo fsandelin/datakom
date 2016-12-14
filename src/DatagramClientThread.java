@@ -95,7 +95,11 @@ public class DatagramClientThread extends Thread{
 	return this.playerY;	
     }
 
-
+    private void checkDisconnect() {
+	if (this.gamethread.getDisconnect()) {
+	    this.RMIthread.disconnect();
+	}
+    }
 
     
     /**
@@ -106,6 +110,7 @@ public class DatagramClientThread extends Thread{
      * @param sendBuff The buffer in which to send info from
      */
     public void sendInfo(byte[] sendBuff) {
+	this.checkDisconnect();
 	this.updatePlayerPos();
 	sendBuff[0] = (byte) (this.playerX >> 8);	    
 	sendBuff[1] = (byte) (this.playerX);
@@ -154,12 +159,17 @@ public class DatagramClientThread extends Thread{
 	bb.put(receivedData[3]);
 	int playersInDatagram = bb.getInt(0);
 	//System.out.println("=======================UDP RECEIVED==================");
-	if (playersInDatagram!=players) {
+	if (playersInDatagram>players) {
 	    this.RMIthread.updateList();
 	    this.playerList = this.RMIthread.getPlayerList();
 	    PlayerInfo pInfo = this.playerList.get(this.playerList.size() - 1);
 	    this.gamethread.addPlayerToClient(pInfo.getX(), pInfo.getY(), pInfo.getAlias(), pInfo.getId(), pInfo.getColor());
 	    return;
+	}
+	if (playersInDatagram<players) {
+	    this.RMIthread.updateList();
+	    this.playerList = this.RMIthread.getPlayerList();
+	    this.gamethread.removePlayerByList(this.playerList);
 	}
 	//System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
 	for(int i = 0; i < players; i++) {

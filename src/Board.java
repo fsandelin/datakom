@@ -217,7 +217,7 @@ public class Board {
     private int[] Q1CollisionDetect(int x, int y, Rectangle intersection) {
         int[] velocityVector = {x, y};
         int intX = intersection.width;
-        int intY = intersection.height;
+	int intY = intersection.height;
         float intersectionRatio = ((float) intY) / ((float) intX);
         float newPosRatio = ((float) y) / ((float) x);
 
@@ -375,6 +375,45 @@ public class Board {
             }
         }
         _mutex.unlock();
+    }
+
+    /**
+     * @brief Removes the player whos id is not in list
+     *
+     *
+     * @param list The list to check
+     */
+    public void removePlayerByList(ArrayList<PlayerInfo> list) {
+	_mutex.lock();
+	for (int i = 0; i < list.size(); i++) {
+	    boolean inList = false;
+	    PlayerInfo pInfo = list.get(i);
+	    for (int j = 0; j < this.players.size(); j++) {
+		Player p = this.players.get(j);
+		if (p.getPlayerId() == pInfo.getId()) {
+		    inList = true;
+		}
+	    }
+	    if (!inList) {
+		this.players.remove(i);
+	    }
+	}
+	_mutex.unlock();
+    }
+
+    /**
+     * @brief Removes the player with id of param id.
+     *
+     * @param id The id to remove
+     */
+    public void removePlayerById(int id) {
+	_mutex.lock();
+	for(int i = 0; i < this.players.size(); i++) {
+	    if (this.players.get(i).getPlayerId() == id) {
+		this.players.remove(i);
+	    }
+	}
+	_mutex.unlock();
     }
 
 }

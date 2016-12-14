@@ -15,8 +15,7 @@ public class Game {
         clientUDPReceiver.start();
         clientUDPSender.start();
         System.out.println("UDP up and running");
-        game.start();
-
+	game.start();
     }
 
     private static void runAsServer(String alias) {

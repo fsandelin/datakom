@@ -20,6 +20,7 @@ CLASSES = \
 	Obstruction.java \
 	Goal.java \
 	Game.java \
+	WantToDisconnectException.java \
 #----------------------
 #-------Modules--------
 #----------------------

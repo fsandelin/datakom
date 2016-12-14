@@ -79,6 +79,28 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         return this.playerList;
     }
 
+    public void disconnectFromGame(int port) {
+	System.out.println("LETS GO ");
+	String ip = "";
+	try {
+	    ip = this.getClientHost();
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	System.out.println(ip);
+	System.out.println(port);	
+	for(int i = 0; i < this.playerList.size(); i++) {
+	    PlayerInfo pInfo = this.playerList.get(i);
+	    System.out.println(pInfo.getIp().toString().split("/").equals(ip));
+	    System.out.println(pInfo.getPort() == port);
+	    if (pInfo.getIp().toString().split("/")[1].equals(ip) && pInfo.getPort() == port) {
+		this.playerList.remove(i);
+		this.gamethread.removePlayerById(pInfo.getId());
+	    }
+	}
+	this.debugRMI();
+    }
+
     public ArrayList<PlayerInfo> connectToGame(int port, String alias, Color playerColor) {
         try {
             this.playerList.get(0).setX(this.gamethread.getPlayerX());

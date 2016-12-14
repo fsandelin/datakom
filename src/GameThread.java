@@ -16,6 +16,7 @@ public class GameThread extends Thread {
     private int timestep = 33;
 
     private boolean win;
+    private boolean disconnect;
     private static final int playerSize = 30;
 
     private boolean render;
@@ -55,9 +56,15 @@ public class GameThread extends Thread {
     public GameThread(int xSize, int ySize, String alias, boolean render) {
         this(xSize, ySize, alias);
         this.render = render;
-    }    
+    }
 
+    public boolean getDisconnect() {
+	return this.disconnect;
+    }
 
+    private void disconnect() {
+	this.disconnect = true;
+    }
 
     public Player getPlayer() {
         return this.player;
@@ -86,7 +93,9 @@ public class GameThread extends Thread {
         } else {
             player.move(0);
         }
-
+	if (currentKeys.contains(KeyEvent.VK_Q)) {
+	    this.disconnect();
+	}
         if (currentKeys.contains(KeyEvent.VK_SPACE) || currentKeys.contains(KeyEvent.VK_UP)) {
             player.jump();
         }
@@ -135,8 +144,16 @@ public class GameThread extends Thread {
         Player p = new Player(alias, id, x, y, playerSize, board);
         p.setPlayerColor(playerColor);
         board.addPlayer(p);
-
     }
+
+    public void removePlayerByList(ArrayList<PlayerInfo> list) {
+	this.board.removePlayerByList(list);
+    }
+
+    public void removePlayerById(int id) {
+	this.board.removePlayerById(id);
+    }
+
 
     public void updateBoard() {
         this.board.update();
