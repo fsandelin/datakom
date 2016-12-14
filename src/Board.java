@@ -202,7 +202,7 @@ public class Board {
      */
     public void addWalls(int xSize, int ySize) {
 	boardLowerXBounds = (int) ySize - 30;
-        Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) ySize);
+        Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) ySize));
         left.setColor(new Color(66, 185, 244));
         Obstruction top = new Obstruction(33, 0, new Dimension(((int) xSize - 75), 30));
         top.setColor(new Color(66, 185, 244));
