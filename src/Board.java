@@ -66,8 +66,8 @@ public class Board {
     }
 
     public void render() {
+//        long time = System.currentTimeMillis();
         Graphics g = this.drawingSurface.getGraphics();
-//        drawingSurface.setBackground(Color.white);
         this.drawBackground(g);
         for (Player p : players) {
             p.draw(g);
@@ -77,6 +77,7 @@ public class Board {
         }
         this.drawingSurface.paintComponents(g);
         g.dispose();
+//        System.out.println("RenderTime: " + (System.currentTimeMillis() - time));
     }
 
     public void drawBackground(Graphics g) {
@@ -116,6 +117,7 @@ public class Board {
     }
 
     public int[] getValidVelocity(int[] v) {
+        long time = System.currentTimeMillis();
         Player p = players.get(0);
         Rectangle nextPos = new Rectangle(p.getPlayerX() + v[0], p.getPlayerY() + v[1] + aliasPadding, p.getPlayerSize(), p.getPlayerSize());
 
@@ -134,10 +136,12 @@ public class Board {
         }
 
         int[] returnV = collisionDetect(rects, nextPos, v[0], v[1]);
+//        System.out.println("CollisionDetectionTime: " + (System.currentTimeMillis() - time));
         return returnV;
     }
 
     private int[] collisionDetect(Rectangle[] rects, Rectangle nextPos, int xVel, int yVel) {
+
         Rectangle intersection;
         if (xVel > maxHVelocity) {
             xVel = maxHVelocity;

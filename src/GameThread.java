@@ -34,7 +34,7 @@ public class GameThread extends Thread {
         this.win = false;
 
         //Initialize keyboardcontrols
-	
+
         keyboardController = new KeyboardController();
         board.initKeyboard(keyboardController);
 
@@ -94,20 +94,23 @@ public class GameThread extends Thread {
 
     public void run() {
         // Game loop
+        long time;
         while (!this.checkWinState()) {
             if ((System.currentTimeMillis() - clock) >= timestep) {
+//                time = System.nanoTime();
                 manageKeys();
                 player.checkJumping();
                 player.updatePosition();
                 win = board.win();
-                if(render) {
+                if (render) {
 //                    guiThread().start();
                     this.updateBoard();
                 }
                 clock = System.currentTimeMillis();
+//                System.out.println("Entire game-loop: " + (System.nanoTime() - time));
             }
         }
-	System.out.println("Someone won, WOHO GZ!, remove");
+        System.out.println("Someone won, WOHO GZ!, remove");
 
     }
 
@@ -151,11 +154,11 @@ public class GameThread extends Thread {
     public void setPlayerY(int y) {
         this.player.setY(y);
     }
-    
+
     public void setWin(boolean winState) {
-	this.win = winState;
+        this.win = winState;
     }
-    
+
 
     public int getPlayerX() {
         return this.player.getPlayerX();
@@ -182,5 +185,5 @@ public class GameThread extends Thread {
     public void updatePlayer(int x, int y, int id) {
         this.board.updatePlayer(x, y, id);
     }
-    
+
 }
