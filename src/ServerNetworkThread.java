@@ -79,7 +79,6 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         }
     }    
         public void disconnectFromGame(int port) {
-	System.out.println("LETS GO ");
 	String ip = "";
 	try {
 	    ip = this.getClientHost();
@@ -90,13 +89,19 @@ public class ServerNetworkThread extends RemoteServer implements Server {
 	System.out.println(port);	
 	for(int i = 0; i < this.playerList.size(); i++) {
 	    PlayerInfo pInfo = this.playerList.get(i);
-	    System.out.println(pInfo.getIp().toString().split("/").equals(ip));
-	    System.out.println(pInfo.getPort() == port);
 	    if (pInfo.getIp().toString().split("/")[1].equals(ip) && pInfo.getPort() == port) {
 		this.playerList.remove(i);
-		this.gamethread.removePlayerById(pInfo.getId());
+		int id = pInfo.getId();
+		this.gamethread.removePlayerById(id);
+		for(int j = 0; j < this.clientList.size(); j++) {
+		    if (this.clientList.get(j).getId() == id) {
+			this.clientList.remove(j);
+			System.out.println("Removed index: " + Integer.toString(j));
+		    }
+		}		
 	    }
 	}
+
 	this.debugRMI();
     }
     
