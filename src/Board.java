@@ -47,7 +47,7 @@ public class Board {
 	drawingSurface.setIgnoreRepaint(true);
 
 	this.addWalls(xSize, ySize);
-        this.addGoal(30, 60, 20);
+        this.addGoal(40, 30, 20);
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

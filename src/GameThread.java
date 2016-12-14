@@ -56,7 +56,7 @@ public class GameThread extends Thread {
             o.setColor(Color.white);
             board.addObstruction(o);
 
-	    o = new Obstruction(420, 405, new Dimension(60, 40));
+	    o = new Obstruction(410, 405, new Dimension(70, 40));
             o.setColor(Color.white);
             board.addObstruction(o);
 
@@ -64,11 +64,19 @@ public class GameThread extends Thread {
             o.setColor(Color.white);
             board.addObstruction(o);
 
-	    o = new Obstruction(420, 240, new Dimension(120, 40));
+	    o = new Obstruction(420, 220, new Dimension(120, 40));
             o.setColor(Color.white);
             board.addObstruction(o);
 
-	    o = new Obstruction(250, 300, new Dimension(160, 50));
+	    o = new Obstruction(300, 260, new Dimension(50, 30));
+            o.setColor(Color.white);
+            board.addObstruction(o);
+
+	    o = new Obstruction(120, 160, new Dimension(30, 30));
+            o.setColor(Color.white);
+            board.addObstruction(o);
+
+	    o = new Obstruction(30, 80, new Dimension(60, 30));
             o.setColor(Color.white);
             board.addObstruction(o);
         }
