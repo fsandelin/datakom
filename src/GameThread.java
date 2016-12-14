@@ -100,22 +100,28 @@ public class GameThread extends Thread {
                 manageKeys();
                 player.checkJumping();
                 player.updatePosition();
-                win = board.win();
-                if(render) {
+		if(!win){
+		    win = board.win();
+		}
+		
+		if(render) {
                     this.updateBoard();
                 }
                 clock = System.currentTimeMillis();
             }
         }
-
+	
 	System.out.println("Gamethreads win: "+this.win);
-	System.out.println("Someone won, WOHO GZ!, remove");
-
-	int i = 0;
-	while(i < 1000){
-	    i++;
+	
+	//Sleep 5s then exit
+	try {
+	    Thread.sleep(5000);
+	}catch(InterruptedException e) {
+	    System.out.println(e.toString());
 	}
+	System.exit(0);
     }
+
 
     public int[] addPlayerToServer(String alias, Color playerColor, int id) {
         System.out.println("---------------Got add player to server with id-----------------");

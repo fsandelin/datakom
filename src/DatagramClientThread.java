@@ -75,7 +75,7 @@ public class DatagramClientThread extends Thread{
 	this.myId = RMIthread.getMyId();
 	this.playerList = this.RMIthread.getPlayerList();	
 	this.listener = listener;
-	this.timeStep = 3333;
+	this.timeStep = 1000;
 	this.previousDraw = System.currentTimeMillis();
     }
     
@@ -201,10 +201,7 @@ public class DatagramClientThread extends Thread{
 
 		    //Do shit
 		    try{
-			System.out.println("DatagramCThread :"+i);
-			i++;
-			winStateServer = RMIthread.getServerWinState();
-		    
+			winStateServer = RMIthread.getServerWinState();		    
 			if(winStateServer){
 			    gamethread.setWin(true);
 			}
