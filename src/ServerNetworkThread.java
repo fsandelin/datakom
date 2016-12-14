@@ -79,14 +79,13 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         return this.playerList;
     }
 
-    public ArrayList<PlayerInfo> connectToGame(String ip, int port, String alias, Color playerColor) {
+    public ArrayList<PlayerInfo> connectToGame(int port, String alias, Color playerColor) {
         try {
             this.playerList.get(0).setX(this.gamethread.getPlayerX());
             this.playerList.get(0).setY(this.gamethread.getPlayerY());
             int id = this.getNextIdAndIncrement();
             int[] xy = this.gamethread.addPlayerToServer(alias, playerColor, id);
-	    String newip = this.getClientHost();
-	    System.out.println(newip);
+	    String ip = this.getClientHost();
             PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1], id, playerColor);
             this.playerList.add(player);
             this.debugRMI();

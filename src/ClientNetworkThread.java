@@ -34,11 +34,6 @@ public class ClientNetworkThread extends Thread {
         this.map = 1;
         this.hz = 32;
         this.gamethread = gamethread;
-        try {
-            this.ownIp = InetAddress.getLocalHost().getHostAddress().toString();
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
         System.out.println("ClientNetworkThread created with own IP: " + ownIp);
 
     }
@@ -63,7 +58,7 @@ public class ClientNetworkThread extends Thread {
             System.out.println("Looking stub");
             Server stub = (Server) registry.lookup("Server");
 	    this.serverStub = stub;
-            ArrayList<PlayerInfo> list = stub.connectToGame(ownIp, ownPort, alias, gamethread.getPlayer().getPlayerColor());
+            ArrayList<PlayerInfo> list = stub.connectToGame(ownPort, alias, gamethread.getPlayer().getPlayerColor());
             this.playerList = list;
             this.debugRMI();
             int x = this.playerList.get(playerList.size() - 1).getX();
