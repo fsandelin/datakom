@@ -44,44 +44,56 @@ public class GameThread extends Thread {
 
         //Adding some obstructions to the game
         for (int i = 0; i < 1; i++) {
-            Obstruction o = new Obstruction(30, 500, new Dimension(30, 30));
+	    // Träd 1
+            Obstruction o = new Obstruction(120, 500, new Dimension(30, 30));
             o.setColor(new Color(22, 142, 42));
             board.addObstruction(o);
-	    o = new Obstruction(30, 570, new Dimension(30, 70));
+	    o = new Obstruction(120, 530, new Dimension(30, 40));
             o.setColor(new Color(79, 46, 10));
             board.addObstruction(o);
 
-	    o = new Obstruction(210, 450, new Dimension(30, 30));
+	    // Träd 2
+	    o = new Obstruction(30, 450, new Dimension(30, 30));
             o.setColor(new Color(22, 142, 42));
             board.addObstruction(o);
-	    o = new Obstruction(30, 500, new Dimension(30, 30));
+	    o = new Obstruction(30, 480, new Dimension(30, 90));
             o.setColor(new Color(79, 46, 10));
             board.addObstruction(o);
 
-	    o = new Obstruction(120, 400, new Dimension(30, 30));
+	    // Moln 1
+	    o = new Obstruction(210, 400, new Dimension(30, 30));
             o.setColor(Color.white);
             board.addObstruction(o);
 
+	    // Moln 2
 	    o = new Obstruction(410, 405, new Dimension(70, 40));
             o.setColor(Color.white);
             board.addObstruction(o);
 
+	    // Moln 3
 	    o = new Obstruction(650, 320, new Dimension(30, 30));
             o.setColor(Color.white);
             board.addObstruction(o);
 
+	    // Moln 4
 	    o = new Obstruction(420, 220, new Dimension(120, 40));
             o.setColor(Color.white);
             board.addObstruction(o);
 
+	    // Moln 5
 	    o = new Obstruction(300, 260, new Dimension(50, 30));
             o.setColor(Color.white);
             board.addObstruction(o);
+	    //o = new Obstruction(300, 230, new Dimension(30, 30));
+            //o.setColor(Color.white);
+            //board.addObstruction(o);
 
+	    // Moln 6
 	    o = new Obstruction(120, 160, new Dimension(30, 30));
             o.setColor(Color.white);
             board.addObstruction(o);
 
+	    // Moln 7
 	    o = new Obstruction(30, 80, new Dimension(60, 30));
             o.setColor(Color.white);
             board.addObstruction(o);
