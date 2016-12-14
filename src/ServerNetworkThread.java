@@ -130,6 +130,4 @@ public class ServerNetworkThread extends RemoteServer implements Server {
     public void setWinState() throws RemoteException{
 	this.gamethread.setWin(true);
     }
-
-
 }

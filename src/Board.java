@@ -51,9 +51,10 @@ public class Board {
         fixedObjects = new ArrayList<Obstruction>();
         drawingSurface = new JPanel();
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
-        drawingSurface.setIgnoreRepaint(true);
-        this.addWalls(xSize, ySize);
-        this.addGoal(450, 350, 50);
+	drawingSurface.setIgnoreRepaint(true);
+
+	this.addWalls(xSize, ySize);
+        this.addGoal(40, 30, 20);
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,6 +81,7 @@ public class Board {
         for (Obstruction o : fixedObjects) {
             o.draw(g);
         }
+	//goal.draw(g);
         this.drawingSurface.paintComponents(g);
 	this.drawingSurface.revalidate();
 	//long delta = System.currentTimeMillis() - this.clock;
@@ -92,10 +94,17 @@ public class Board {
     }
 
     public void drawBackground(Graphics g) {
-        g.setColor(Color.white);
+        g.setColor(new Color(66, 185, 244));
         g.fillRect(0, 0, this.boardRect.width, this.boardRect.height);
     }
 
+    /**
+     * Lägg till spelaren i player-ArrayListan. Lås så att inte någon tråd
+     * försök läsa från ArrayListan medan en annan tråd försöker lägga till
+     * en spelare.
+     *
+     * @param p Spelaren vi vill lägga till.
+     */
     public void addPlayer(Player p) {
         _mutex.lock();
         players.add(p);
@@ -292,20 +301,28 @@ public class Board {
         return velocityVector;
     }
 
+    /**
+     * Skapa väggar, tak och golv. Lägg till dem i obstructions-listan.
+     *
+     * @param xSize Storleken på brädet i x-led.
+     * @param ySize Storleken på brädet i y-led.
+     */
+
     public void addWalls(int xSize, int ySize) {
-        Obstruction floor = new Obstruction(0, (int) boardRect.getHeight() - 30, new Dimension((int) boardRect.getWidth(), 30));
-        floor.setColor(Color.black);
-        boardLowerXBounds = (int) boardRect.getHeight() - 30;
-        Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) boardRect.getHeight()));
-        left.setColor(Color.black);
-        Obstruction top = new Obstruction(33, 0, new Dimension(((int) boardRect.getWidth() - 75), 30));
-        top.setColor(Color.black);
-        Obstruction right = new Obstruction((int) boardRect.getWidth() - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
-        right.setColor(Color.black);
-        this.addObstruction(floor);
-        this.addObstruction(left);
+	boardLowerXBounds = (int) ySize - 30;
+        Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) ySize));
+        left.setColor(new Color(66, 185, 244));
+        Obstruction top = new Obstruction(33, 0, new Dimension(((int) xSize - 75), 30));
+        top.setColor(new Color(66, 185, 244));
+        Obstruction right = new Obstruction((int) xSize - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
+        right.setColor(new Color(66, 185, 244));
+	Obstruction floor = new Obstruction(0, (int) ySize - 30, new Dimension((int) xSize, 30));
+        floor.setColor(new Color(22, 142, 42));
+
+	this.addObstruction(left);
         this.addObstruction(right);
         //this.addObstruction(top);
+	this.addObstruction(floor);
 
     }
 
