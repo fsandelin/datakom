@@ -46,7 +46,19 @@ public class Board {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
         fixedObjects = new ArrayList<Obstruction>();
-        drawingSurface = new JPanel();
+        drawingSurface = new JPanel() {
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                render();
+                repaint();
+                try {
+                    Thread.sleep(20);
+                }
+                catch(Exception e) {
+                    System.out.println("akjs");
+                }
+            }
+        };
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
         drawingSurface.setIgnoreRepaint(true);
         this.addWalls(xSize, ySize);
