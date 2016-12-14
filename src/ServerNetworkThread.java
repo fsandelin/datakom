@@ -102,8 +102,9 @@ public class ServerNetworkThread extends Thread implements Server {
         PlayerInfo player = new PlayerInfo(this.ownIp, this.ownPort, this.ownAlias, ownX, ownY, this.getNextIdAndIncrement(), ownPlayer.getPlayerColor());
         playerList.add(player);
         try {
+	    LocateRegistry.createRegistry(1099);
             Server stub = (Server) UnicastRemoteObject.exportObject(this, 0);
-            Registry registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.getRegistry(1099);
             registry.bind("Server", stub);
             System.err.println("Server RMI setup done");
 	    while(!this.gamethread.checkWinState()){

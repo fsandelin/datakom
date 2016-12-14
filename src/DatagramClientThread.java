@@ -31,6 +31,7 @@ public class DatagramClientThread extends Thread{
 		    }catch(Exception e) {
 			System.out.println(e.toString());
 			System.out.println("Closing application due to exception");
+			System.exit(0);
 		    }
 		}
 		else {
@@ -40,6 +41,7 @@ public class DatagramClientThread extends Thread{
 		    }catch(Exception e) {
 			System.out.println(e.toString());
 			System.out.println("Closing application due to exception");
+			System.exit(0);			
 		    }
 		}
 	    }
@@ -51,6 +53,7 @@ public class DatagramClientThread extends Thread{
 		    }catch(Exception e) {
 			System.out.println(e.toString());
 			System.out.println("Closing application due to exception");
+			System.exit(0);			
 		    }
 		}
 		else {
@@ -60,6 +63,7 @@ public class DatagramClientThread extends Thread{
 		    }catch(Exception e) {
 			System.out.println(e.toString());
 			System.out.println("Closing application due to exception");
+			System.exit(0);			
 		    }
 		}
 	    }
@@ -69,7 +73,7 @@ public class DatagramClientThread extends Thread{
 	this.serverPort = 1099;
 	this.playerX = 0;
 	this.playerY = 0;
-	this.hz = 32;
+	this.hz = 25;
 	this.gamethread = gamethread;
 	this.RMIthread = RMIthread;
 	this.myId = RMIthread.getMyId();

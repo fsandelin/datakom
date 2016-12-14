@@ -102,11 +102,13 @@ public class GameThread extends Thread {
 
         clock = System.currentTimeMillis();
     }
-
+    
     public GameThread(int xSize, int ySize, String alias, boolean render) {
         this(xSize, ySize, alias);
         this.render = render;
-    }
+    }    
+
+
 
     public Player getPlayer() {
         return this.player;
@@ -147,17 +149,18 @@ public class GameThread extends Thread {
         // Game loop
         while (!this.checkWinState()) {
             if ((System.currentTimeMillis() - clock) >= timestep) {
+                clock = System.currentTimeMillis();
                 manageKeys();
                 player.checkJumping();
                 player.updatePosition();
                 win = board.win();
-                if(render) {
-                    this.updateBoard();
-                }
-                clock = System.currentTimeMillis();
+		if (render) {
+		    this.updateBoard();		    
+		}
             }
+
         }
-	System.out.println("Someone won, WOHO GZ!, remove");
+	//System.out.println("Someone won, WOHO GZ!, remove");
 
     }
 

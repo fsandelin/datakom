@@ -22,7 +22,7 @@ public class Board {
     private JFrame window;
     private JPanel drawingSurface;
     private Graphics testGraphics;
-
+    
     private int borderThickness = 10;
 
     private int maxVVelocity = 21;
@@ -34,6 +34,9 @@ public class Board {
     private int pSize = 30;
     private static final int aliasPadding = 0;
 
+    private long clock;
+    private int ii;
+    
     private Goal goal;
 
     private final Lock _mutex = new ReentrantLock(true);
@@ -58,6 +61,9 @@ public class Board {
         window.setVisible(true);
         window.setIgnoreRepaint(true);
 
+	this.clock = System.currentTimeMillis();
+	this.ii = 0;
+
         //drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
         drawingSurface.setBackground(Color.white);
     }
@@ -72,7 +78,14 @@ public class Board {
             o.draw(g);
         }
         this.drawingSurface.paintComponents(g);
+	this.drawingSurface.revalidate();
+	long delta = System.currentTimeMillis() - this.clock;
+	this.clock = System.currentTimeMillis();
+	System.out.println("FPS: " + Long.toString(1000/delta));
+	System.out.println(ii);
+	this.ii = this.ii + 1;
         g.dispose();
+	
     }
 
     public void drawBackground(Graphics g) {
