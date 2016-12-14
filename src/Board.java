@@ -46,7 +46,7 @@ public class Board {
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
         drawingSurface.setIgnoreRepaint(true);
         this.addWalls(xSize, ySize);
-        this.addGoal(450, 350, 50);
+        this.addGoal(30, 60, 20);
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -75,7 +75,7 @@ public class Board {
     }
 
     public void drawBackground(Graphics g) {
-        g.setColor(Color.white);
+        g.setColor(new Color(66, 185, 244));
         g.fillRect(0, 0, this.boardRect.width, this.boardRect.height);
     }
 
@@ -188,19 +188,20 @@ public class Board {
 
 
     public void addWalls(int xSize, int ySize) {
-        Obstruction floor = new Obstruction(0, (int) boardRect.getHeight() - 30, new Dimension((int) boardRect.getWidth(), 30));
-        floor.setColor(Color.black);
-        boardLowerXBounds = (int) boardRect.getHeight() - 30;
+	boardLowerXBounds = (int) boardRect.getHeight() - 30;
         Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) boardRect.getHeight()));
-        left.setColor(Color.black);
+        left.setColor(new Color(66, 185, 244));
         Obstruction top = new Obstruction(33, 0, new Dimension(((int) boardRect.getWidth() - 75), 30));
-        top.setColor(Color.black);
+        top.setColor(new Color(66, 185, 244));
         Obstruction right = new Obstruction((int) boardRect.getWidth() - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
-        right.setColor(Color.black);
-        this.addObstruction(floor);
-        this.addObstruction(left);
+        right.setColor(new Color(66, 185, 244));
+	Obstruction floor = new Obstruction(0, (int) boardRect.getHeight() - 30, new Dimension((int) boardRect.getWidth(), 30));
+        floor.setColor(new Color(22, 142, 42));
+
+	this.addObstruction(left);
         this.addObstruction(right);
         //this.addObstruction(top);
+	this.addObstruction(floor);
 
     }
 
