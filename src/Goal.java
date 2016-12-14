@@ -23,11 +23,17 @@ public class Goal extends JComponent {
         this.setPreferredSize(new Dimension(size, size));
     }
 
-    public void draw(Graphics g) {
+    
+    public void paintComponent(Graphics g) {
+        this.setLocation(xPos, yPos);
         g.setColor(Color.green);
-        g.fillRect(xPos, yPos, size, size);
+        g.fillRect(0, 0, size, size);
+	}
 
-    }
+    /*public void draw(Graphics g) {
+	g.setColor(Color.green);
+	g.fillRect(xPos, yPos, size, size);
+    }*/
 
     public boolean win(Player p) {
         Rectangle playerRect = new Rectangle(p.getPlayerX(), p.getPlayerY(), p.getPlayerSize(), p.getPlayerSize());
