@@ -24,7 +24,7 @@ public class Player {
     private Board board;
     private boolean jumping;
 
-    private static final int aliasDisplacement = 20;
+    private static final int aliasDisplacement = 10;
 
     public Player(String playerAlias, int playerId, int startXPos, int startYPos, int size, Board b) {
         //sets Graphics paramteres
@@ -108,7 +108,8 @@ public class Player {
 
         g.setColor(this.playerColor);
         g.fillRect(xPos, yPos, playerSize, playerSize);
-
+        g.setColor(Color.black);
+        g.drawString(playerAlias, xPos, yPos - aliasDisplacement);
     }
 
     public String getPlayerAlias() {

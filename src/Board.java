@@ -22,7 +22,7 @@ public class Board {
     private JFrame window;
     private JPanel drawingSurface;
     private Graphics testGraphics;
-    
+
     private int borderThickness = 10;
 
     private int maxVVelocity = 21;
@@ -36,7 +36,7 @@ public class Board {
 
     private long clock;
     private int ii;
-    
+
     private Goal goal;
 
     private final Lock _mutex = new ReentrantLock(true);
@@ -51,9 +51,9 @@ public class Board {
         fixedObjects = new ArrayList<Obstruction>();
         drawingSurface = new JPanel();
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
-	drawingSurface.setIgnoreRepaint(true);
+        drawingSurface.setIgnoreRepaint(true);
 
-	this.addWalls(xSize, ySize);
+        this.addWalls(xSize, ySize);
         this.addGoal(40, 30, 20);
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
@@ -65,8 +65,8 @@ public class Board {
         window.setVisible(true);
         window.setIgnoreRepaint(true);
 
-	this.clock = System.currentTimeMillis();
-	this.ii = 0;
+        this.clock = System.currentTimeMillis();
+        this.ii = 0;
 
         //drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
         drawingSurface.setBackground(Color.white);
@@ -81,15 +81,16 @@ public class Board {
         for (Obstruction o : fixedObjects) {
             o.draw(g);
         }
+        goal.draw(g);
         this.drawingSurface.paintComponents(g);
-	this.drawingSurface.revalidate();
-	long delta = System.currentTimeMillis() - this.clock;
-	this.clock = System.currentTimeMillis();
-	System.out.println("FPS: " + Long.toString(1000/delta));
-	System.out.println(ii);
-	this.ii = this.ii + 1;
+        this.drawingSurface.revalidate();
+        long delta = System.currentTimeMillis() - this.clock;
+        this.clock = System.currentTimeMillis();
+        System.out.println("FPS: " + Long.toString(1000 / delta));
+        System.out.println(ii);
+        this.ii = this.ii + 1;
         g.dispose();
-	
+
     }
 
     public void drawBackground(Graphics g) {
@@ -308,26 +309,25 @@ public class Board {
      */
 
     public void addWalls(int xSize, int ySize) {
-	boardLowerXBounds = (int) ySize - 30;
+        boardLowerXBounds = (int) ySize - 30;
         Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) ySize));
         left.setColor(new Color(66, 185, 244));
         Obstruction top = new Obstruction(33, 0, new Dimension(((int) xSize - 75), 30));
         top.setColor(new Color(66, 185, 244));
         Obstruction right = new Obstruction((int) xSize - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
         right.setColor(new Color(66, 185, 244));
-	Obstruction floor = new Obstruction(0, (int) ySize - 30, new Dimension((int) xSize, 30));
+        Obstruction floor = new Obstruction(0, (int) ySize - 30, new Dimension((int) xSize, 30));
         floor.setColor(new Color(22, 142, 42));
 
-	this.addObstruction(left);
+        this.addObstruction(left);
         this.addObstruction(right);
         //this.addObstruction(top);
-	this.addObstruction(floor);
+        this.addObstruction(floor);
 
     }
 
     public void addGoal(int xPos, int yPos, int size) {
         this.goal = new Goal(xPos, yPos, size);
-        this.drawingSurface.add(goal);
         System.out.println("Added a goal");
     }
 
@@ -349,10 +349,9 @@ public class Board {
      * Uppdaterar spelaren med som har ID id med x och y coordinaterna.
      * Låser ArrayListan eftersom den inte är threadsafe.
      *
-     * @param x Nya x-koordinaten
-     * @param y Nya y-koordinaten
+     * @param x  Nya x-koordinaten
+     * @param y  Nya y-koordinaten
      * @param id Player Id av Player som skall uppdateras
-     *
      */
     public void updatePlayer(int x, int y, int id) {
         _mutex.lock();
@@ -367,13 +366,13 @@ public class Board {
     }
 
     //Uppdaterar listan som kommer som input med vad som finns i listan hos board.
+
     /**
      * Takes an arraylist of playerInfo and updates all x and y values to correspond to the values in a list of Player.
      * Each PlayerInfo has an ID and each PlayerInfo's x and y is only updates if the PlayerInfo id and Player id is equal.
      * Since ArrayLists aren't threadsade, the funtion locks the ArrayList of player
      *
      * @param list The ArrayList to update.
-     *
      * @todo Also lock the ArraList of PlayerInfo since it is not thread safe.
      */
     public void updatePlayerList(ArrayList<PlayerInfo> list) {
