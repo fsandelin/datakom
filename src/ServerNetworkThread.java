@@ -111,14 +111,6 @@ public class ServerNetworkThread extends Thread implements Server {
             System.out.println("IF YOU GOT ALREADY BOUND EXCEPTION!");
             System.out.println("Run rmiregistry & before hosting.");
             System.out.println("Use ps and kill if you already have rmiregistry running and want to kill it.");
-
-	    while(!this.gamethread.checkWinState()){
-		try {
-		    Thread.sleep(1000);
-		}catch(InterruptedException e2) {
-		    System.out.println(e2.toString());
-		}
-	    }
 	    
             System.exit(0);
         }

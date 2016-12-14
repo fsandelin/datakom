@@ -79,14 +79,6 @@ public class ClientNetworkThread extends Thread {
                 int id = this.playerList.get(i).getId();
                 this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
             }
-
-	    while(!this.gamethread.checkWinState()){
-		try {
-		    Thread.sleep(1000);
-		}catch(InterruptedException e) {
-		    System.out.println(e.toString());
-		}	
-	    }
 	    
         } catch (Exception e) {
             System.err.println("Client network got Exception: " + e.toString());
