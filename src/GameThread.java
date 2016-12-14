@@ -110,7 +110,11 @@ public class GameThread extends Thread {
 
 	System.out.println("Gamethreads win: "+this.win);
 	System.out.println("Someone won, WOHO GZ!, remove");
-	
+
+	int i = 0;
+	while(i < 1000){
+	    i++;
+	}
     }
 
     public int[] addPlayerToServer(String alias, Color playerColor, int id) {

@@ -198,8 +198,14 @@ public class DatagramClientThread extends Thread{
 		    System.out.println("DatagramCThread :"+i);
 		    i++;
 		    winStateServer = RMIthread.getServerWinState();
-		    if(winStateServer)
+		    
+		    if(winStateServer){
 			gamethread.setWin(true);
+		    }
+		    if(gamethread.checkWinState()){
+			
+			RMIthread.setWinState();
+		    }	
 		}catch (Exception e) {
 		    System.out.println(e.toString());
 		}
