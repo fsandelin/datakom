@@ -80,6 +80,13 @@ public class Board {
         g.fillRect(0, 0, this.boardRect.width, this.boardRect.height);
     }
 
+    /**
+     * Lägg till spelaren i player-ArrayListan. Lås så att inte någon tråd
+     * försök läsa från ArrayListan medan en annan tråd försöker lägga till
+     * en spelare.
+     *
+     * @param p Spelaren vi vill lägga till.
+     */
     public void addPlayer(Player p) {
         _mutex.lock();
         players.add(p);
@@ -187,16 +194,21 @@ public class Board {
         return returnV;
     }
 
-
+    /**
+     * Skapa väggar, tak och golv. Lägg till dem i obstructions-listan.
+     *
+     * @param xSize Storleken på brädet i x-led.
+     * @param ySize Storleken på brädet i y-led.
+     */
     public void addWalls(int xSize, int ySize) {
-	boardLowerXBounds = (int) boardRect.getHeight() - 30;
-        Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) boardRect.getHeight()));
+	boardLowerXBounds = (int) ySize - 30;
+        Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) ySize);
         left.setColor(new Color(66, 185, 244));
-        Obstruction top = new Obstruction(33, 0, new Dimension(((int) boardRect.getWidth() - 75), 30));
+        Obstruction top = new Obstruction(33, 0, new Dimension(((int) xSize - 75), 30));
         top.setColor(new Color(66, 185, 244));
-        Obstruction right = new Obstruction((int) boardRect.getWidth() - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
+        Obstruction right = new Obstruction((int) xSize - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
         right.setColor(new Color(66, 185, 244));
-	Obstruction floor = new Obstruction(0, (int) boardRect.getHeight() - 30, new Dimension((int) boardRect.getWidth(), 30));
+	Obstruction floor = new Obstruction(0, (int) ySize - 30, new Dimension((int) xSize, 30));
         floor.setColor(new Color(22, 142, 42));
 
 	this.addObstruction(left);
