@@ -95,10 +95,10 @@ public class DatagramServerThread extends Thread {
 	    for(int i = 1; i < players; i++) { //börjar vid 1 för att inte skicka till sig själv
 		DatagramPacket sendPacket = new DatagramPacket(sendBuff, sendBuff.length, playerList.get(i).getIp(), playerList.get(i).getPort());
 		this.socket.send(sendPacket);
-		//System.out.println("===============UDP SENT=================");
-		//System.out.println("IP: " + playerList.get(i).getIp());
-		//System.out.println("Port: " + playerList.get(i).getPort());
-		//this.debugByteArray(sendBuff);
+		System.out.println("===============UDP SENT=================");
+		System.out.println("IP: " + playerList.get(i).getIp());
+		System.out.println("Port: " + playerList.get(i).getPort());
+		this.debugByteArray(sendBuff);
 	    }
 	}catch(Exception e){
 	    System.out.println(e.toString());
@@ -153,6 +153,9 @@ public class DatagramServerThread extends Thread {
     }
 
     public void setRun(boolean bool) {
+	if(!bool) {
+	    this.socket.close();
+	}
 	this.run = bool;
     }
     
@@ -168,7 +171,6 @@ public class DatagramServerThread extends Thread {
 		sleep(timeToSleep);
 	    } 
 	}
-	this.socket.close();
     }
     
     public void sleep(int time){

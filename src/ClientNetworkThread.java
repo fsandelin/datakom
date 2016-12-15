@@ -47,6 +47,7 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 	}
 	catch(Exception e) {
 	    System.out.println(e.toString());
+	    System.exit(0);
 	}
     }
 

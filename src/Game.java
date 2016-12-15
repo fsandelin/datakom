@@ -41,6 +41,13 @@ public class Game {
 	playerlist.remove(0);
 	clientUDPsender.setRun(false);
 	clientUDPreceiver.setRun(false);
+	try {
+	    clientUDPsender.join();
+	    clientUDPreceiver.join();
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	System.out.println("UDP closed");
 	clientRMI.shutDown();	
 	startNewServer(playerlist, game, alias);
     }
@@ -63,7 +70,13 @@ public class Game {
 	}
 	serverUDPsender.setRun(false);
 	serverUDPreceiver.setRun(false);
-	serverRMI.shutDown();	
+	try {
+	    serverUDPsender.join();
+	    serverUDPreceiver.join();
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}	
+	serverRMI.shutDown();
 	serverRMI.askSomeoneToTakeOver();
 	System.out.println("Server disc");
 	System.exit(0);

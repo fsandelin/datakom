@@ -169,8 +169,12 @@ public class DatagramClientThread extends Thread{
 	bb.put(receivedData[2]);
 	bb.put(receivedData[3]);
 	int playersInDatagram = bb.getInt(0);
+	if(playersInDatagram==0) {
+	    return;
+	}
 	//System.out.println("=======================UDP RECEIVED==================");
 	if (playersInDatagram>players) {
+	    System.out.println("mer i datagram");
 	    this.RMIthread.updateList();
 	    this.playerList = this.RMIthread.getPlayerList();
 	    PlayerInfo pInfo = this.playerList.get(this.playerList.size() - 1);
@@ -178,6 +182,7 @@ public class DatagramClientThread extends Thread{
 	    return;
 	}
 	if (playersInDatagram<players) {
+	    System.out.println("mindre i datagram");
 	    this.RMIthread.updateList();
 	    this.playerList = this.RMIthread.getPlayerList();
 	    this.gamethread.removePlayerByList(this.playerList);
@@ -218,11 +223,12 @@ public class DatagramClientThread extends Thread{
 		sleep(timeToSleep);
 	    }
 	}
-	this.socket.close();
-	
     }
 
     public void setRun(boolean bool) {
+	if (!bool) {
+	    this.socket.close();
+	}
 	this.run = bool;
     }
     
