@@ -84,11 +84,6 @@ public class Board {
 	//goal.draw(g);
         this.drawingSurface.paintComponents(g);
 	this.drawingSurface.revalidate();
-	long delta = System.currentTimeMillis() - this.clock;
-	this.clock = System.currentTimeMillis();
-	System.out.println("FPS: " + Long.toString(1000/delta));
-	System.out.println(ii);
-	this.ii = this.ii + 1;
         g.dispose();
 	
     }
@@ -317,7 +312,7 @@ public class Board {
         Obstruction right = new Obstruction((int) xSize - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
         right.setColor(new Color(66, 185, 244));
 	Obstruction floor = new Obstruction(0, (int) ySize - 30, new Dimension((int) xSize, 30));
-        floor.setColor(new Color(22, 142, 42));
+        floor.setColor(new Color(11, 193, 99));
 
 	this.addObstruction(left);
         this.addObstruction(right);

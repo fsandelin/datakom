@@ -20,6 +20,7 @@ CLASSES = \
 	Obstruction.java \
 	Goal.java \
 	Game.java \
+	Level.java \
 #----------------------
 #-------Modules--------
 #----------------------
