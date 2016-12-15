@@ -71,8 +71,8 @@ public class ServerNetworkThread extends RemoteServer implements Server {
 	    System.out.println("Assigning ID: " + Integer.toString(id));
             PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1], id, playerColor);
             this.playerList.add(player);
-	    System.out.println("Gettting reg @ " + ip + " & port: " + Integer.toString(port));
-	    Registry registry = LocateRegistry.getRegistry(ip, port);
+	    System.out.println("Gettting reg @ " + ip + " & port: " + Integer.toString(port - 5));
+	    Registry registry = LocateRegistry.getRegistry(ip, (port - 5));
 	    System.out.println("Got reg");
 	    Client stub = (Client) registry.lookup("Client");
 	    System.out.println("Got look");

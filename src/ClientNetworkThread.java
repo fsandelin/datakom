@@ -31,10 +31,10 @@ public class ClientNetworkThread extends RemoteServer implements Client{
             this.ownPort = 1099; //var 1097 förr
         }
 	try {
-	    LocateRegistry.createRegistry(this.ownPort);
+	    LocateRegistry.createRegistry(this.ownPort - 5);
             Client stub = (Client) UnicastRemoteObject.exportObject(this, 0);
-	    System.out.println("Creating reg @ port: " + Integer.toString(ownPort));
-            Registry registry = LocateRegistry.getRegistry(this.ownPort);
+	    System.out.println("Creating reg @ port: " + Integer.toString(ownPort - 5));
+            Registry registry = LocateRegistry.getRegistry(this.ownPort - 5);
             registry.bind("Client", stub);
             System.err.println("Client RMI setup done");
 	}catch(Exception e) {
