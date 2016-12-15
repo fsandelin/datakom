@@ -60,6 +60,7 @@ public class Board {
 		    }
 		    goal.draw(g);
 		    repaint();
+		    sleep(15);
 		}
 		
 	    };
@@ -410,6 +411,15 @@ public class Board {
             }
         }
         _mutex.unlock();
+    }
+
+    public void sleep(int i) {
+	try {
+	    Thread.sleep(i);
+	}
+	catch(Exception e) {
+	    System.out.println(e);
+	}
     }
 
 }
