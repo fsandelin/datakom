@@ -25,19 +25,11 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 
     public ClientNetworkThread(GameThread gamethread, String ip, String alias, boolean debug) {
         super();
-	this.changeToServer = false;
-        this.serverIp = ip;
-        this.playerList = new ArrayList<PlayerInfo>();
-        this.serverPort = 1099;
         if (debug == true) {
             this.ownPort = 1097;
         } else {
             this.ownPort = 1099; //var 1097 förr
         }
-        this.alias = alias;
-        this.map = 1;
-        this.hz = 32;
-        this.gamethread = gamethread;
 	try {
 	    LocateRegistry.createRegistry(this.ownPort);
             Client stub = (Client) UnicastRemoteObject.exportObject(this, 0);
@@ -45,11 +37,20 @@ public class ClientNetworkThread extends RemoteServer implements Client{
             Registry registry = LocateRegistry.getRegistry(this.ownPort);
             registry.bind("Client", stub);
             System.err.println("Client RMI setup done");
-	}
-	catch(Exception e) {
+	}catch(Exception e) {
 	    System.out.println(e.toString());
 	    System.exit(0);
-	}
+	}	
+	this.changeToServer = false;
+        this.serverIp = ip;
+        this.playerList = new ArrayList<PlayerInfo>();
+        this.serverPort = 1099;
+        this.alias = alias;
+        this.map = 1;
+        this.hz = 32;
+        this.gamethread = gamethread;
+
+
     }
 
     public void setWin(boolean bool){
@@ -77,9 +78,11 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 	try {
 	    System.out.println("Connectar till " + this.serverIp);
 	    Registry registry = LocateRegistry.getRegistry(serverIp, serverPort);
+	    System.out.println("Got reg");
 	    Server stub = (Server) registry.lookup("Server");
 	    this.serverStub = stub;
 	    this.playerList = this.serverStub.connectToGame(this.ownPort, this.alias, this.gamethread.getPlayer().getPlayerColor());
+	    System.out.println("GOT THE FAKING LIST");
 	}catch(Exception e) {
 	    System.out.println(e.toString());
 	}
