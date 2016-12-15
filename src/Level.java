@@ -23,7 +23,12 @@ public class Level {
 	board.addObstruction(o);
 
 	// Buske
-	o = new Obstruction(120, 530, new Dimension(40, 40));
+	o = new Obstruction(120, 545, new Dimension(25, 25));
+	o.setColor(new Color(22, 142, 42));
+	board.addObstruction(o);
+	
+	// Buske 2
+	o = new Obstruction(690, 545, new Dimension(25, 25));
 	o.setColor(new Color(22, 142, 42));
 	board.addObstruction(o);
 
