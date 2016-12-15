@@ -428,8 +428,8 @@ public class Board {
      * @brief Removes the player with id of param id.
      */
 
-    public void paintWinScreen() {
-        this.win = true;
+    public void paintWinScreen(boolean b) {
+        this.win = b;
     }
 
     public void removePlayerById(int id) {

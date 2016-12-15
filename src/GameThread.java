@@ -125,7 +125,7 @@ public class GameThread extends Thread {
                     this.updateBoard();
                 }
                 if (this.drawWin) { //kan refactoreras
-                    board.paintWinScreen();
+                    board.paintWinScreen(true);
                     if (!winTimeSet) {
                         this.winTime = System.currentTimeMillis();
                         this.winTimeSet = true;
@@ -134,6 +134,7 @@ public class GameThread extends Thread {
                     if ((System.currentTimeMillis() - this.winTime) > 4000) {
                         this.winTimeSet = false;
                         this.drawWin = false;
+                        board.paintWinScreen(false);
                     }
                 }
             }
