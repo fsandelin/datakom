@@ -6,7 +6,9 @@ JC = javac
 BDIR = bin
 CLASSES = \
 	Server.java \
+	Client.java \
 	PlayerInfo.java \
+	ClientInfo.java \
 	PlayerPosInfo.java \
 	ServerNetworkThread.java \
 	ClientNetworkThread.java \
@@ -20,6 +22,9 @@ CLASSES = \
 	Obstruction.java \
 	Goal.java \
 	Game.java \
+	WantToDisconnectException.java \
+	Level.java \
+	ShitThread.java \
 #----------------------
 #-------Modules--------
 #----------------------

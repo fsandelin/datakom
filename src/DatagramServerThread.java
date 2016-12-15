@@ -12,6 +12,7 @@ public class DatagramServerThread extends Thread {
     private GameThread gamethread;
     private ServerNetworkThread RMIthread;
     private boolean listener;
+    private boolean run;
     
     public DatagramServerThread(GameThread gamethread, ServerNetworkThread RMIthread, boolean listener){
 	super("DatagramServerThread");
@@ -26,6 +27,7 @@ public class DatagramServerThread extends Thread {
 	    }
 	}catch(SocketException e) {
 	    System.out.println(e.toString());
+	    System.exit(0);
 	}
 	this.hz = 32;
 	this.gamethread = gamethread;
@@ -33,6 +35,7 @@ public class DatagramServerThread extends Thread {
 	this.playerList = this.RMIthread.getPlayerList();
 	this.playerX = 0;
 	this.playerY = 0;
+	this.run = true;
 	this.listener = listener;
     }
 
@@ -42,6 +45,10 @@ public class DatagramServerThread extends Thread {
 
     public void removePlayer(int index) {
 	this.playerList.remove(index);
+    }
+
+    public void setListFromRMI() {
+	this.playerList = this.RMIthread.getPlayerList();
     }
 
     private void updatePlayerList(){
@@ -59,6 +66,11 @@ public class DatagramServerThread extends Thread {
      */
     public void sendInfo() {
 	//System.out.println("updating");
+	if(this.gamethread.checkWinState()) {
+	    this.RMIthread.sendWin();
+	    this.gamethread.setDrawWin(true);
+	    this.gamethread.setWin(false);
+	}
 	this.gamethread.updatePlayerList(this.playerList);
 	int players = this.playerList.size();
 	//System.out.println(players);	
@@ -125,7 +137,9 @@ public class DatagramServerThread extends Thread {
 	//System.out.println("Server received | " + Integer.toString(x) + " " + Integer.toString(y) + " for ID: " + Integer.toString(id));
 	//System.out.println("From ---- IP: "+ receivePacket.getAddress().toString() + " ------ Port: " + Integer.toString(receivePacket.getPort()));
 	//System.out.println("===============================================================");
-	this.gamethread.updatePlayer(x, y, id);	
+	if (id != 0) {
+	    this.gamethread.updatePlayer(x, y, id);
+	}
     }
 
     public void debugByteArray(byte[] bytearray) {
@@ -135,12 +149,19 @@ public class DatagramServerThread extends Thread {
 	    array = array + str + " "; 
 	}
 	System.out.println(array);
-    }    
+    }
+
+    public void setRun(boolean bool) {
+	if(!bool) {
+	    this.socket.close();
+	}
+	this.run = bool;
+    }
     
     public void run() {
 	int timeToSleep = 1000/this.hz;	
 	byte[] receiveBuff = new byte[8];
-	while(true) {
+	while(this.run) {
 	    if(this.listener) {
 		this.receiveInfo(receiveBuff);
 	    }

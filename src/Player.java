@@ -40,9 +40,17 @@ public class Player {
         this.playerColor = new Color(red, green, blue);
         this.playerAlias = playerAlias;
         this.playerId = playerId;
-        System.out.println("Player created with id: " + Integer.toString(this.playerId));
+        //System.out.println("Player created with id: " + Integer.toString(this.playerId));
     }
 
+    /**
+     * Om den vertikala hastigheten är 0 och vi inte hoppar just nu,
+     * då kan vi hoppa, dvs sätta den vertikala hastigheten till
+     * -playerJumpStep och kolla ifall vi får hoppa så långt.
+     * Om vi försöker hoppa när vi redan hoppat så sätter vi jumping till
+     * false. Detta löser edge caset när vi är i den hösta punkten
+     * i vårt hopp och hastigheten är 0.
+     */
     public void jump() {
         if (this.velocity[1] == 0 && !this.jumping) {
             velocity[1] = -playerJumpStep;
@@ -53,6 +61,10 @@ public class Player {
         }
     }
 
+    /**
+     * Försök att öka den vertikala hastigheten (neråt) med 2.
+     * Detta gör så att spelaren faller när den hoppar eller går av en kant.
+     */
     public void checkJumping() {
         velocity[1] = velocity[1] + 2;
         this.velocity = board.getValidVelocity(velocity);
@@ -93,10 +105,10 @@ public class Player {
     }
 
     public void draw(Graphics g) {
-
         g.setColor(this.playerColor);
         g.fillRect(xPos, yPos, playerSize, playerSize);
-
+        g.setColor(Color.black);
+        g.drawString(playerAlias, xPos, yPos - 10);
     }
 
     public String getPlayerAlias() {

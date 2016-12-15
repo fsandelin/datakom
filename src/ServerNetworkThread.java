@@ -9,7 +9,7 @@ import java.util.*;
 import java.awt.*;
 import java.net.*;
 
-public class ServerNetworkThread extends Thread implements Server {
+public class ServerNetworkThread extends RemoteServer implements Server {
     private int map;
     private int hz;
     private ArrayList<PlayerInfo> playerList;
@@ -18,12 +18,17 @@ public class ServerNetworkThread extends Thread implements Server {
     private int ownPort;
     private String ownAlias;
     private int nextId;
+    private ArrayList<ClientInfo> clientList;
+    private DatagramServerThread UDPsender;
+    private DatagramServerThread UDPreceiver;        
+    
 
     public ServerNetworkThread(GameThread gamethread, String ownAlias) {
-        super("ServerNetworkThread");
+        super();
         this.map = 1;
         this.hz = 16;
         this.playerList = new ArrayList<PlayerInfo>();
+	this.clientList = new ArrayList<ClientInfo>();
         this.gamethread = gamethread;
         this.ownPort = 1099;
         this.ownAlias = ownAlias;
@@ -34,8 +39,93 @@ public class ServerNetworkThread extends Thread implements Server {
             System.out.println(e.toString());
         }
         System.out.println("ServerNetworkThread created with own IP: " + ownIp);
+        Player ownPlayer = this.gamethread.getPlayer();
+        int ownX = ownPlayer.getPlayerX();
+        int ownY = ownPlayer.getPlayerY();
+        PlayerInfo player = new PlayerInfo(this.ownIp, this.ownPort, this.ownAlias, ownX, ownY, this.getNextIdAndIncrement(), ownPlayer.getPlayerColor());
+        playerList.add(player);
+        try {
+	    LocateRegistry.createRegistry(this.ownPort);
+            Server stub = (Server) UnicastRemoteObject.exportObject(this, 0);
+            Registry registry = LocateRegistry.getRegistry(this.ownPort);
+            registry.bind("Server", stub);
+            System.err.println("Server RMI setup done");
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            System.out.println("IF YOU GOT ALREADY BOUND EXCEPTION!");
+            System.out.println("Run rmiregistry & before hosting.");
+            System.out.println("Use ps and kill if you already have rmiregistry running and want to kill it.");
+	    
+            System.exit(0);
+        }	
+    }
+    
+    public ArrayList<PlayerInfo> connectToGame(int port, String alias, Color playerColor) {
+        try {
+            this.playerList.get(0).setX(this.gamethread.getPlayerX());
+            this.playerList.get(0).setY(this.gamethread.getPlayerY());
+            int id = this.getNextIdAndIncrement();
+            int[] xy = this.gamethread.addPlayerToServer(alias, playerColor, id);
+	    String ip = this.getClientHost();
+	    System.out.println(ip + " connected.");
+	    System.out.println("Assigning ID: " + Integer.toString(id));
+            PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1], id, playerColor);
+            this.playerList.add(player);
+            this.debugRMI();
+	    ShitThread shit = new ShitThread(ip, port, id, this);
+	    shit.start();
+	    System.out.println("Returning");	    
+            return this.playerList;
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            return null;
+        }
     }
 
+    public ArrayList<ClientInfo> getClientList() {
+	return this.clientList;
+    }
+
+
+    public void getMyStub(int port, int id) {
+
+
+    }
+
+    public void shutDown() {
+	try {
+	    UnicastRemoteObject.unexportObject(this, true);
+	    System.out.println("Shut down server RMI");
+	}catch(Exception e) {
+	    System.out.println("Exception in shutDown: " + e.toString());
+	}
+    }    
+    public void disconnectFromGame(int port) {
+	String ip = "";
+	try {
+	    ip = this.getClientHost();
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	System.out.println(ip);
+	System.out.println(port);	
+	for(int i = 0; i < this.playerList.size(); i++) {
+	    PlayerInfo pInfo = this.playerList.get(i);
+	    if (pInfo.getIp().toString().split("/")[1].equals(ip) && pInfo.getPort() == port) {
+		this.playerList.remove(i);
+		int id = pInfo.getId();
+		this.gamethread.removePlayerById(id);
+		for(int j = 0; j < this.clientList.size(); j++) {
+		    if (this.clientList.get(j).getId() == id) {
+			this.clientList.remove(j);
+			System.out.println("Removed index: " + Integer.toString(j));
+		    }
+		}		
+	    }
+	}
+
+	this.debugRMI();
+    }
     
     public int[] getGameState() {
         int[] state = {this.map, this.hz};
@@ -60,21 +150,11 @@ public class ServerNetworkThread extends Thread implements Server {
         return this.playerList;
     }
 
-    public ArrayList<PlayerInfo> connectToGame(String ip, int port, String alias, Color playerColor) {
-        try {
-            this.playerList.get(0).setX(this.gamethread.getPlayerX());
-            this.playerList.get(0).setY(this.gamethread.getPlayerY());
-            int id = this.getNextIdAndIncrement();
-            int[] xy = this.gamethread.addPlayerToServer(alias, playerColor, id);
-            PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1], id, playerColor);
-            this.playerList.add(player);
-            this.debugRMI();
-            return this.playerList;
-        } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
-            return null;
-        }
+    public void setPlayerList(ArrayList<PlayerInfo> list) {
+	this.playerList = list;
+	this.debugRMI();
     }
+
     public ArrayList<PlayerInfo> updateGame() {
 	return this.playerList;
     }    
@@ -84,42 +164,36 @@ public class ServerNetworkThread extends Thread implements Server {
         this.nextId = this.nextId + 1;
         return value;
     }
-
-    public void setWinState() throws RemoteException{
-	this.gamethread.setWin(true);
+    public void setSender(DatagramServerThread thread) {
+	this.UDPsender = thread;
     }
 
+    public void setReceiver(DatagramServerThread thread) {
+	this.UDPreceiver = thread;
+    }
 
-
-    /**
-     * Kör tråden. Helt vanlig RMI setup. Mera info stubs och registry
-     *  finns i javas dokumentation om RMI.
-     */
-    public void run() {
-        Player ownPlayer = this.gamethread.getPlayer();
-        int ownX = ownPlayer.getPlayerX();
-        int ownY = ownPlayer.getPlayerY();
-        PlayerInfo player = new PlayerInfo(this.ownIp, this.ownPort, this.ownAlias, ownX, ownY, this.getNextIdAndIncrement(), ownPlayer.getPlayerColor());
-        playerList.add(player);
-        try {
-            Server stub = (Server) UnicastRemoteObject.exportObject(this, 0);
-            Registry registry = LocateRegistry.getRegistry();
-            registry.bind("Server", stub);
-            System.err.println("Server RMI setup done");
-	    while(!this.gamethread.checkWinState()){
-		try {
-		    Thread.sleep(1000);
-		}catch(InterruptedException e2) {
-		    System.out.println(e2.toString());
-		}	    
+    public void sendWin() {
+	this.gamethread.setWin(true);
+	for(ClientInfo c : clientList) {
+	    try {
+		c.getStub().setWin(true);
+	    }catch(Exception e) {
+		System.out.println("Error när server skulle sätta win till clients: " + e.toString());
 	    }
-	    stub.setWinState();
-	}catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
-            System.out.println("IF YOU GOT ALREADY BOUND EXCEPTION!");
-            System.out.println("Run rmiregistry & before hosting.");
-            System.out.println("Use ps and kill if you already have rmiregistry running and want to kill it.");
-	    
+	}
+    }
+
+    public void askAllInListToChange() {
+	//TODO
+    }
+
+    public void askSomeoneToTakeOver() {
+	if(this.clientList.size() > 0) {
+	    try {
+		this.clientList.get(0).getStub().changeToServer();
+	    }catch(Exception e) {
+		System.out.println(e.toString());
+	    }
 	}
     }
 }

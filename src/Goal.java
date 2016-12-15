@@ -7,7 +7,7 @@ import java.awt.Rectangle.*;
  */
 
 
-public class Goal extends JComponent {
+public class Goal{
 
     Rectangle goal;
     int xPos;
@@ -20,14 +20,19 @@ public class Goal extends JComponent {
         this.size = size;
 
         this.goal = new Rectangle(xPos, yPos, size, size);
-        this.setPreferredSize(new Dimension(size, size));
+        //this.setPreferredSize(new Dimension(size, size));
     }
 
-    public void paintComponent(Graphics g) {
+
+    /*public void paintComponent(Graphics g) {
         this.setLocation(xPos, yPos);
         g.setColor(Color.green);
         g.fillRect(0, 0, size, size);
+    }*/
 
+    public void draw(Graphics g) {
+    g.setColor(Color.green);
+	g.fillRect(xPos, yPos, size, size);
     }
 
     public boolean win(Player p) {

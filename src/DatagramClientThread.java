@@ -16,6 +16,7 @@ public class DatagramClientThread extends Thread{
     private boolean listener;         //If it is a receiver or sender
     private ArrayList<PlayerInfo> playerList; //Referens to the list created by RMI thread
     private int myId; //Same as the RMI thread got.
+    private boolean run;
     
     
     
@@ -31,6 +32,7 @@ public class DatagramClientThread extends Thread{
 		    }catch(Exception e) {
 			System.out.println(e.toString());
 			System.out.println("Closing application due to exception");
+			System.exit(0);
 		    }
 		}
 		else {
@@ -40,6 +42,7 @@ public class DatagramClientThread extends Thread{
 		    }catch(Exception e) {
 			System.out.println(e.toString());
 			System.out.println("Closing application due to exception");
+			System.exit(0);			
 		    }
 		}
 	    }
@@ -51,6 +54,7 @@ public class DatagramClientThread extends Thread{
 		    }catch(Exception e) {
 			System.out.println(e.toString());
 			System.out.println("Closing application due to exception");
+			System.exit(0);			
 		    }
 		}
 		else {
@@ -60,6 +64,7 @@ public class DatagramClientThread extends Thread{
 		    }catch(Exception e) {
 			System.out.println(e.toString());
 			System.out.println("Closing application due to exception");
+			System.exit(0);			
 		    }
 		}
 	    }
@@ -75,6 +80,7 @@ public class DatagramClientThread extends Thread{
 	this.myId = RMIthread.getMyId();
 	this.playerList = this.RMIthread.getPlayerList();	
 	this.listener = listener;
+	this.run = true;
     }
     
 
@@ -91,7 +97,19 @@ public class DatagramClientThread extends Thread{
 	return this.playerY;	
     }
 
+    private void checkDisconnect() {
+	if (this.gamethread.getDisconnect()) {
+	    this.RMIthread.disconnect();
+	}
+    }
 
+    private void checkWinState() {
+	if(this.gamethread.checkWinState()) {
+	    this.RMIthread.sendWin();
+	    this.gamethread.setDrawWin(true);
+	    this.gamethread.setWin(false);
+	}	
+    }
 
     
     /**
@@ -102,6 +120,8 @@ public class DatagramClientThread extends Thread{
      * @param sendBuff The buffer in which to send info from
      */
     public void sendInfo(byte[] sendBuff) {
+	this.checkDisconnect();
+	this.checkWinState();
 	this.updatePlayerPos();
 	sendBuff[0] = (byte) (this.playerX >> 8);	    
 	sendBuff[1] = (byte) (this.playerX);
@@ -149,13 +169,23 @@ public class DatagramClientThread extends Thread{
 	bb.put(receivedData[2]);
 	bb.put(receivedData[3]);
 	int playersInDatagram = bb.getInt(0);
+	if(playersInDatagram==0) {
+	    return;
+	}
 	//System.out.println("=======================UDP RECEIVED==================");
-	if (playersInDatagram!=players) {
+	if (playersInDatagram>players) {
+	    System.out.println("mer i datagram");
 	    this.RMIthread.updateList();
 	    this.playerList = this.RMIthread.getPlayerList();
 	    PlayerInfo pInfo = this.playerList.get(this.playerList.size() - 1);
 	    this.gamethread.addPlayerToClient(pInfo.getX(), pInfo.getY(), pInfo.getAlias(), pInfo.getId(), pInfo.getColor());
 	    return;
+	}
+	if (playersInDatagram<players) {
+	    System.out.println("mindre i datagram");
+	    this.RMIthread.updateList();
+	    this.playerList = this.RMIthread.getPlayerList();
+	    this.gamethread.removePlayerByList(this.playerList);
 	}
 	//System.out.println("Players in datagram: " + Integer.toString(playersInDatagram));
 	for(int i = 0; i < players; i++) {
@@ -184,7 +214,7 @@ public class DatagramClientThread extends Thread{
     public void run(){
 	int timeToSleep = 1000/this.hz;
 	byte[] sendBuff = new byte[8];	
-	while(true){
+	while(this.run){
 	    if(this.listener) {
 		this.receiveInfo(this.playerList.size());
 	    }
@@ -193,6 +223,13 @@ public class DatagramClientThread extends Thread{
 		sleep(timeToSleep);
 	    }
 	}
+    }
+
+    public void setRun(boolean bool) {
+	if (!bool) {
+	    this.socket.close();
+	}
+	this.run = bool;
     }
     
     public void debugByteArray(byte[] bytearray) {

@@ -3,35 +3,83 @@ import java.util.*;
 
 
 public class Game {
+
+    private static void startNewServer(ArrayList<PlayerInfo> playerlist, GameThread game, String alias) {
+	ServerNetworkThread serverRMI = new ServerNetworkThread(game, alias);
+        DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
+        DatagramServerThread serverUDPreceiver = new DatagramServerThread(game, serverRMI, true);
+	serverRMI.setPlayerList(playerlist);
+	serverUDPsender.setListFromRMI();
+	serverUDPreceiver.setListFromRMI();
+	game.setPlayersAccordingToList(playerlist); //TODO
+	serverRMI.askAllInListToChange(); //TODO
+	//serverRMI.setNextId();
+	//TODO MAKE SURE MY ID OCH NEXT ID FÖLJER MED
+	//serverUDPsender.start();
+	//serverUDPreceiver.start();
+	//System.out.println("UDP up and running");
+    }
     private static void runAsClient(String alias, String serverIp, boolean debug) {
         GameThread game = new GameThread(800, 600, alias);
         System.out.println("Starting Client RMI thread...");
         ClientNetworkThread clientRMI = new ClientNetworkThread(game, serverIp, alias, debug);
-        clientRMI.start();
-        sleep(2000);
+	clientRMI.connectToGame();
         System.out.println("Starting client UDP thread...");
-        DatagramClientThread clientUDPSender = new DatagramClientThread(game, clientRMI, serverIp, false, debug);
-        DatagramClientThread clientUDPReceiver = new DatagramClientThread(game, clientRMI, serverIp, true, debug);
-        clientUDPReceiver.start();
-        clientUDPSender.start();
+        DatagramClientThread clientUDPsender = new DatagramClientThread(game, clientRMI, serverIp, false, debug);
+        DatagramClientThread clientUDPreceiver = new DatagramClientThread(game, clientRMI, serverIp, true, debug);
+	//clientRMI.setSender(clientUDPsender);
+	//clientRMI.setReceiver(clientUDPreceiver);    
+        clientUDPreceiver.start();
+        clientUDPsender.start();
         System.out.println("UDP up and running");
-        game.start();
-
+	game.start();
+	while(!clientRMI.getChangeToServer()) {
+	    sleep(1000);
+	}
+	System.out.println("Changing to server");
+	ArrayList<PlayerInfo> playerlist = clientRMI.getPlayerList();
+	playerlist.remove(0);
+	clientUDPsender.setRun(false);
+	clientUDPreceiver.setRun(false);
+	try {
+	    clientUDPsender.join();
+	    clientUDPreceiver.join();
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	System.out.println("UDP closed");
+	clientRMI.shutDown();	
+	startNewServer(playerlist, game, alias);
     }
 
     private static void runAsServer(String alias) {
         GameThread game = new GameThread(800, 600, alias);
         System.out.println("Starting Server RMI thread...");
         ServerNetworkThread serverRMI = new ServerNetworkThread(game, alias);
-        serverRMI.start();
-        sleep(2000);
         System.out.println("Starting Server UDP thread...");
         DatagramServerThread serverUDPsender = new DatagramServerThread(game, serverRMI, false);
         DatagramServerThread serverUDPreceiver = new DatagramServerThread(game, serverRMI, true);
+	//serverRMI.setSender(serverUDPsender);
+	//serverRMI.setReceiver(serverUDPreceiver);
         serverUDPsender.start();
         serverUDPreceiver.start();
         System.out.println("UDP up and running");
         game.start();
+	while(!game.getDisconnect()) {
+	    sleep(1000);
+	}
+	serverUDPsender.setRun(false);
+	serverUDPreceiver.setRun(false);
+	try {
+	    serverUDPsender.join();
+	    serverUDPreceiver.join();
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}	
+	serverRMI.shutDown();
+	serverRMI.askSomeoneToTakeOver();
+	System.out.println("Server disc");
+	System.exit(0);
 
     }
 
