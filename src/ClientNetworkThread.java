@@ -41,6 +41,7 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 	try {
 	    LocateRegistry.createRegistry(this.ownPort);
             Client stub = (Client) UnicastRemoteObject.exportObject(this, 0);
+	    System.out.println("Creating reg @ port: " + Integer.toString(ownPort));
             Registry registry = LocateRegistry.getRegistry(this.ownPort);
             registry.bind("Client", stub);
             System.err.println("Client RMI setup done");
