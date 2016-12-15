@@ -135,6 +135,7 @@ public class Board {
     public void initKeyboard(KeyboardController key) {
         this.drawingSurface.setRequestFocusEnabled(true);
         this.drawingSurface.setFocusable(true);
+	this.drawingSurface.requestFocusInWindow(); //caution
         this.drawingSurface.addKeyListener(key);
     }
 
