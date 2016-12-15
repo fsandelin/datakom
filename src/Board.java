@@ -82,7 +82,7 @@ public class Board {
             o.draw(g);
         }
 	goal.draw(g);
-        //this.drawingSurface.paintComponents(g);
+        this.drawingSurface.paintComponents(g);
 	this.drawingSurface.revalidate();
 
 	long delta = System.currentTimeMillis() - this.clock;
