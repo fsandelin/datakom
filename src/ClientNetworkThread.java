@@ -97,7 +97,6 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 		int id = this.playerList.get(i).getId();
 		this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
 	    }
-	    stub.getMyStub(this.ownPort, this.myId);	    
 	}
 
 	catch(Exception e) {

@@ -71,8 +71,10 @@ public class ServerNetworkThread extends RemoteServer implements Server {
 	    System.out.println("Assigning ID: " + Integer.toString(id));
             PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1], id, playerColor);
             this.playerList.add(player);
-	    System.out.println("Returning");
             this.debugRMI();
+	    ShitThread shit = new ShitThread(ip, port, id, this);
+	    shit.start();
+	    System.out.println("Returning");	    
             return this.playerList;
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
@@ -80,19 +82,13 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         }
     }
 
+    public ArrayList<ClientInfo> getClientList() {
+	return this.clientList;
+    }
+
+
     public void getMyStub(int port, int id) {
-	try {
-	    String ip = this.getClientHost();
-	    System.out.println("Gettting reg @ " + ip + " & port: " + Integer.toString(port));	
-	    Registry registry = LocateRegistry.getRegistry(ip, port);
-	    System.out.println("Got reg");
-	    Client stub = (Client) registry.lookup("Client");
-	    System.out.println("Got look");
-	    ClientInfo cInfo = new ClientInfo(id, stub);
-	    this.clientList.add(cInfo);		    
-	}catch(Exception e) {
-	    System.out.println("E");
-	}
+
 
     }
 

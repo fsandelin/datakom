@@ -24,6 +24,7 @@ CLASSES = \
 	Game.java \
 	WantToDisconnectException.java \
 	Level.java \
+	ShitThread.java \
 #----------------------
 #-------Modules--------
 #----------------------
