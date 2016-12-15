@@ -59,7 +59,7 @@ public class ServerNetworkThread extends RemoteServer implements Server {
             System.exit(0);
         }	
     }
-
+    
     public ArrayList<PlayerInfo> connectToGame(int port, String alias, Color playerColor) {
         try {
             this.playerList.get(0).setX(this.gamethread.getPlayerX());
@@ -71,13 +71,6 @@ public class ServerNetworkThread extends RemoteServer implements Server {
 	    System.out.println("Assigning ID: " + Integer.toString(id));
             PlayerInfo player = new PlayerInfo(ip, port, alias, xy[0], xy[1], id, playerColor);
             this.playerList.add(player);
-	    System.out.println("Gettting reg @ " + ip + " & port: " + Integer.toString(port - 5));
-	    Registry registry = LocateRegistry.getRegistry(ip, (port - 5));
-	    System.out.println("Got reg");
-	    Client stub = (Client) registry.lookup("Client");
-	    System.out.println("Got look");
-	    ClientInfo cInfo = new ClientInfo(id, stub);
-	    this.clientList.add(cInfo);
 	    System.out.println("Returning");
             this.debugRMI();
             return this.playerList;
@@ -85,6 +78,22 @@ public class ServerNetworkThread extends RemoteServer implements Server {
             System.err.println("Server exception: " + e.toString());
             return null;
         }
+    }
+
+    public void getMyStub(int port, int id) {
+	try {
+	    String ip = this.getClientHost();
+	    System.out.println("Gettting reg @ " + ip + " & port: " + Integer.toString(port));	
+	    Registry registry = LocateRegistry.getRegistry(ip, port);
+	    System.out.println("Got reg");
+	    Client stub = (Client) registry.lookup("Client");
+	    System.out.println("Got look");
+	    ClientInfo cInfo = new ClientInfo(id, stub);
+	    this.clientList.add(cInfo);		    
+	}catch(Exception e) {
+	    System.out.println("E");
+	}
+
     }
 
     public void shutDown() {

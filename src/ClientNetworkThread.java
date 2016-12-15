@@ -31,10 +31,10 @@ public class ClientNetworkThread extends RemoteServer implements Client{
             this.ownPort = 1099; //var 1097 förr
         }
 	try {
-	    LocateRegistry.createRegistry(this.ownPort - 5);
+	    LocateRegistry.createRegistry(this.ownPort);
             Client stub = (Client) UnicastRemoteObject.exportObject(this, 0);
-	    System.out.println("Creating reg @ port: " + Integer.toString(ownPort - 5));
-            Registry registry = LocateRegistry.getRegistry(this.ownPort - 5);
+	    System.out.println("Creating reg @ port: " + Integer.toString(ownPort));
+            Registry registry = LocateRegistry.getRegistry(this.ownPort);
             registry.bind("Client", stub);
             System.err.println("Client RMI setup done");
 	}catch(Exception e) {
@@ -83,22 +83,25 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 	    this.serverStub = stub;
 	    this.playerList = this.serverStub.connectToGame(this.ownPort, this.alias, this.gamethread.getPlayer().getPlayerColor());
 	    System.out.println("GOT THE FAKING LIST");
-	}catch(Exception e) {
-	    System.out.println(e.toString());
+	    this.debugRMI();
+	    int x = this.playerList.get(playerList.size() - 1).getX();
+	    int y = this.playerList.get(playerList.size() - 1).getY();
+	    this.myId = this.playerList.get(playerList.size() - 1).getId();
+	    this.gamethread.setPlayerId(this.myId);
+	    this.gamethread.setPlayerX(x);
+	    this.gamethread.setPlayerY(y);
+	    for (int i = 0; i < this.playerList.size() - 1; i++) {
+		int xValue = this.playerList.get(i).getX();
+		int yValue = this.playerList.get(i).getY();
+		String alias = this.playerList.get(i).getAlias();
+		int id = this.playerList.get(i).getId();
+		this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
+	    }
+	    stub.getMyStub(this.ownPort, this.myId);	    
 	}
-	this.debugRMI();
-	int x = this.playerList.get(playerList.size() - 1).getX();
-	int y = this.playerList.get(playerList.size() - 1).getY();
-	this.myId = this.playerList.get(playerList.size() - 1).getId();
-	this.gamethread.setPlayerId(this.myId);
-	this.gamethread.setPlayerX(x);
-	this.gamethread.setPlayerY(y);
-	for (int i = 0; i < this.playerList.size() - 1; i++) {
-	    int xValue = this.playerList.get(i).getX();
-	    int yValue = this.playerList.get(i).getY();
-	    String alias = this.playerList.get(i).getAlias();
-	    int id = this.playerList.get(i).getId();
-	    this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
+
+	catch(Exception e) {
+	    System.out.println(e.toString());
 	}	
     }
 

@@ -13,4 +13,5 @@ public interface Server extends Remote{
     ArrayList<PlayerInfo> getPlayerList() throws RemoteException;
     void disconnectFromGame(int port) throws RemoteException;
     void sendWin() throws RemoteException;
+    void getMyStub(int port, int id) throws RemoteException;
 }
