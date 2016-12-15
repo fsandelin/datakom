@@ -19,9 +19,13 @@ public class ClientNetworkThread extends RemoteServer implements Client{
     private ArrayList<PlayerInfo> playerList;
     private int myId;
     private Server serverStub;
+    private DatagramClientThread UDPsender;
+    private DatagramClientThread UDPreceiver;
+    private boolean changeToServer;
 
     public ClientNetworkThread(GameThread gamethread, String ip, String alias, boolean debug) {
         super();
+	this.changeToServer = false;
         this.serverIp = ip;
         this.playerList = new ArrayList<PlayerInfo>();
         this.serverPort = 1099;
@@ -57,6 +61,14 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 	    System.out.println("Exception when client sendWin to server " + e.toString());
 	}
     }
+    
+    public void shutDown() {
+	try {
+	    UnicastRemoteObject.unexportObject(this, true);
+	}catch(Exception e) {
+	    System.out.println("Exception in shutDown: " + e.toString());
+	}
+    }    
 
 
     public void connectToGame() {
@@ -83,6 +95,8 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 	    this.gamethread.addPlayerToClient(xValue, yValue, alias, id, this.playerList.get(i).getColor());
 	}	
     }
+
+
     
     public void updateList() {
 	try {
@@ -107,6 +121,22 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 
     public int getMyId() {
         return this.myId;
+    }
+    
+    public void setSender(DatagramClientThread thread) {
+	this.UDPsender = thread;
+    }
+
+    public void setReceiver(DatagramClientThread thread) {
+	this.UDPreceiver = thread;
+    }
+
+    public void changeToServer() {
+	this.changeToServer = true;
+    }
+
+    public boolean getChangeToServer() {
+	return this.changeToServer;
     }
 
     private void debugRMI() {

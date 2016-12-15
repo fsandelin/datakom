@@ -16,6 +16,7 @@ public class DatagramClientThread extends Thread{
     private boolean listener;         //If it is a receiver or sender
     private ArrayList<PlayerInfo> playerList; //Referens to the list created by RMI thread
     private int myId; //Same as the RMI thread got.
+    private boolean run;
     
     
     
@@ -79,6 +80,7 @@ public class DatagramClientThread extends Thread{
 	this.myId = RMIthread.getMyId();
 	this.playerList = this.RMIthread.getPlayerList();	
 	this.listener = listener;
+	this.run = true;
     }
     
 
@@ -101,6 +103,14 @@ public class DatagramClientThread extends Thread{
 	}
     }
 
+    private void checkWinState() {
+	if(this.gamethread.checkWinState()) {
+	    this.RMIthread.sendWin();
+	    this.gamethread.setDrawWin(true);
+	    this.gamethread.setWin(false);
+	}	
+    }
+
     
     /**
      * @brief "Populates" the buffer with info on it's own x and y values and it's id. Sends it to this.serverIp at this.serverPort
@@ -111,11 +121,7 @@ public class DatagramClientThread extends Thread{
      */
     public void sendInfo(byte[] sendBuff) {
 	this.checkDisconnect();
-	if(this.gamethread.checkWinState()) {
-	    this.RMIthread.sendWin();
-	    this.gamethread.setDrawWin(true);
-	    this.gamethread.setWin(false);
-	}
+	this.checkWinState();
 	this.updatePlayerPos();
 	sendBuff[0] = (byte) (this.playerX >> 8);	    
 	sendBuff[1] = (byte) (this.playerX);
@@ -203,7 +209,7 @@ public class DatagramClientThread extends Thread{
     public void run(){
 	int timeToSleep = 1000/this.hz;
 	byte[] sendBuff = new byte[8];	
-	while(true){
+	while(this.run){
 	    if(this.listener) {
 		this.receiveInfo(this.playerList.size());
 	    }
@@ -212,6 +218,12 @@ public class DatagramClientThread extends Thread{
 		sleep(timeToSleep);
 	    }
 	}
+	this.socket.close();
+	
+    }
+
+    public void setRun(boolean bool) {
+	this.run = bool;
     }
     
     public void debugByteArray(byte[] bytearray) {

@@ -1,4 +1,8 @@
-public class ClientInfo {
+import java.awt.*;
+import java.net.*;
+import java.io.*;
+
+public class ClientInfo implements Serializable{
     private int id;
     private Client clientStub;
 

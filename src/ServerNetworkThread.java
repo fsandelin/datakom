@@ -19,6 +19,8 @@ public class ServerNetworkThread extends RemoteServer implements Server {
     private String ownAlias;
     private int nextId;
     private ArrayList<ClientInfo> clientList;
+    private DatagramServerThread UDPsender;
+    private DatagramServerThread UDPreceiver;        
     
 
     public ServerNetworkThread(GameThread gamethread, String ownAlias) {
@@ -77,8 +79,17 @@ public class ServerNetworkThread extends RemoteServer implements Server {
             System.err.println("Server exception: " + e.toString());
             return null;
         }
+    }
+
+    public void shutDown() {
+	try {
+	    UnicastRemoteObject.unexportObject(this, true);
+	    System.out.println("Shut down server RMI");
+	}catch(Exception e) {
+	    System.out.println("Exception in shutDown: " + e.toString());
+	}
     }    
-        public void disconnectFromGame(int port) {
+    public void disconnectFromGame(int port) {
 	String ip = "";
 	try {
 	    ip = this.getClientHost();
@@ -128,6 +139,11 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         return this.playerList;
     }
 
+    public void setPlayerList(ArrayList<PlayerInfo> list) {
+	this.playerList = list;
+	this.debugRMI();
+    }
+
     public ArrayList<PlayerInfo> updateGame() {
 	return this.playerList;
     }    
@@ -137,6 +153,13 @@ public class ServerNetworkThread extends RemoteServer implements Server {
         this.nextId = this.nextId + 1;
         return value;
     }
+    public void setSender(DatagramServerThread thread) {
+	this.UDPsender = thread;
+    }
+
+    public void setReceiver(DatagramServerThread thread) {
+	this.UDPreceiver = thread;
+    }
 
     public void sendWin() {
 	this.gamethread.setWin(true);
@@ -145,6 +168,20 @@ public class ServerNetworkThread extends RemoteServer implements Server {
 		c.getStub().setWin(true);
 	    }catch(Exception e) {
 		System.out.println("Error när server skulle sätta win till clients: " + e.toString());
+	    }
+	}
+    }
+
+    public void askAllInListToChange() {
+	//TODO
+    }
+
+    public void askSomeoneToTakeOver() {
+	if(this.clientList.size() > 0) {
+	    try {
+		this.clientList.get(0).getStub().changeToServer();
+	    }catch(Exception e) {
+		System.out.println(e.toString());
 	    }
 	}
     }

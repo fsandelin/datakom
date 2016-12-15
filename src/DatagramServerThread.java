@@ -13,6 +13,7 @@ public class DatagramServerThread extends Thread {
     private GameThread gamethread;
     private ServerNetworkThread RMIthread;
     private boolean listener;
+    private boolean run;
     
     public DatagramServerThread(GameThread gamethread, ServerNetworkThread RMIthread, boolean listener){
 	super("DatagramServerThread");
@@ -35,6 +36,7 @@ public class DatagramServerThread extends Thread {
 	this.playerList = this.RMIthread.getPlayerList();
 	this.playerX = 0;
 	this.playerY = 0;
+	this.run = true;
 	this.listener = listener;
     }
 
@@ -44,6 +46,10 @@ public class DatagramServerThread extends Thread {
 
     public void removePlayer(int index) {
 	this.playerList.remove(index);
+    }
+
+    public void setListFromRMI() {
+	this.playerList = this.RMIthread.getPlayerList();
     }
 
     private void updatePlayerList(){
@@ -62,7 +68,6 @@ public class DatagramServerThread extends Thread {
     public void sendInfo() {
 	//System.out.println("updating");
 	if(this.gamethread.checkWinState()) {
-	    System.out.println("GOT INTO WIN");
 	    this.RMIthread.sendWin();
 	    this.gamethread.setDrawWin(true);
 	    this.gamethread.setWin(false);
@@ -145,12 +150,16 @@ public class DatagramServerThread extends Thread {
 	    array = array + str + " "; 
 	}
 	System.out.println(array);
-    }    
+    }
+
+    public void setRun(boolean bool) {
+	this.run = bool;
+    }
     
     public void run() {
 	int timeToSleep = 1000/this.hz;	
 	byte[] receiveBuff = new byte[8];
-	while(true) {
+	while(this.run) {
 	    if(this.listener) {
 		this.receiveInfo(receiveBuff);
 	    }
@@ -159,6 +168,7 @@ public class DatagramServerThread extends Thread {
 		sleep(timeToSleep);
 	    } 
 	}
+	this.socket.close();
     }
     
     public void sleep(int time){

@@ -267,6 +267,10 @@ public class GameThread extends Thread {
         return this.player.getPlayerYShort();
     }
 
+    public void setPlayersAccordingToList(ArrayList<PlayerInfo> list) {
+	//TODO
+    }
+
     //Denna här för att dett inte skall "läcka". 
     public void updatePlayerList(ArrayList<PlayerInfo> list) {
         this.board.updatePlayerList(list);
