@@ -38,12 +38,8 @@ public class GameThread extends Thread {
         this.render = true;
         int padding = 5;
         this.win = false;
-<<<<<<< HEAD
 	this.winTimeSet = false;
 
-=======
-	
->>>>>>> 1912b74c400c5ab82cbd17d641fc464f207fa8fd
         //Initialize keyboardcontrols
 	
         keyboardController = new KeyboardController();
