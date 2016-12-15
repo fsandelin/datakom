@@ -39,6 +39,7 @@ public class Board {
     private boolean win;
 
     private Goal goal;
+    private Dummy dummy;
 
     private final Lock _mutex = new ReentrantLock(true);
 
@@ -56,6 +57,7 @@ public class Board {
 
         this.addWalls(xSize, ySize);
         this.addGoal(40, 30, 20);
+	this.addDummy(0, 0, 1);
         this.win = false;
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
@@ -89,9 +91,9 @@ public class Board {
             g.setFont(newFont);
             g.drawString("YOU WIN!", 300, 400);
         }
-        //goal.draw(g);
+        goal.draw(g);
         this.drawingSurface.paintComponents(g);
-        this.drawingSurface.revalidate();
+	this.drawingSurface.revalidate();
         //long delta = System.currentTimeMillis() - this.clock;
         //this.clock = System.currentTimeMillis();
         //System.out.println("FPS: " + Long.toString(1000/delta));
@@ -336,9 +338,13 @@ public class Board {
 
     public void addGoal(int xPos, int yPos, int size) {
         this.goal = new Goal(xPos, yPos, size);
-        this.drawingSurface.add(goal);
         System.out.println("Added a goal");
     }
+    public void addDummy(int xPos, int yPos, int size) {
+        this.dummy = new Dummy(xPos, yPos, size);
+        this.drawingSurface.add(this.dummy);
+        System.out.println("Added a dummy");
+    }    
 
     public boolean win() {
         Player p = players.get(0);
