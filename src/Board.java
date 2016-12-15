@@ -22,7 +22,7 @@ public class Board {
     private JFrame window;
     private JPanel drawingSurface;
     private Graphics testGraphics;
-    
+
     private int borderThickness = 10;
 
     private int maxVVelocity = 21;
@@ -36,7 +36,8 @@ public class Board {
 
     private long clock;
     private int ii;
-    
+    private boolean win;
+
     private Goal goal;
 
     private final Lock _mutex = new ReentrantLock(true);
@@ -51,10 +52,11 @@ public class Board {
         fixedObjects = new ArrayList<Obstruction>();
         drawingSurface = new JPanel();
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
-	drawingSurface.setIgnoreRepaint(true);
+        drawingSurface.setIgnoreRepaint(true);
 
-	this.addWalls(xSize, ySize);
+        this.addWalls(xSize, ySize);
         this.addGoal(40, 30, 20);
+        this.win = false;
 
         window = new JFrame("Best-Mother-Fucking-Game-Ever (TM)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,8 +67,8 @@ public class Board {
         window.setVisible(true);
         window.setIgnoreRepaint(true);
 
-	this.clock = System.currentTimeMillis();
-	this.ii = 0;
+        this.clock = System.currentTimeMillis();
+        this.ii = 0;
 
         //drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
         drawingSurface.setBackground(Color.white);
@@ -81,16 +83,22 @@ public class Board {
         for (Obstruction o : fixedObjects) {
             o.draw(g);
         }
-	//goal.draw(g);
+        if(win) {
+            Font currentFont = g.getFont();
+            Font newFont = currentFont.deriveFont(currentFont.getSize() * 5F);
+            g.setFont(newFont);
+            g.drawString("YOU WIN!", 300, 400);
+        }
+        //goal.draw(g);
         this.drawingSurface.paintComponents(g);
-	this.drawingSurface.revalidate();
-	//long delta = System.currentTimeMillis() - this.clock;
-	//this.clock = System.currentTimeMillis();
-	//System.out.println("FPS: " + Long.toString(1000/delta));
-	//System.out.println(ii);
-	//this.ii = this.ii + 1;
+        this.drawingSurface.revalidate();
+        //long delta = System.currentTimeMillis() - this.clock;
+        //this.clock = System.currentTimeMillis();
+        //System.out.println("FPS: " + Long.toString(1000/delta));
+        //System.out.println(ii);
+        //this.ii = this.ii + 1;
         g.dispose();
-	
+
     }
 
     public void drawBackground(Graphics g) {
@@ -226,7 +234,7 @@ public class Board {
     private int[] Q1CollisionDetect(int x, int y, Rectangle intersection) {
         int[] velocityVector = {x, y};
         int intX = intersection.width;
-	int intY = intersection.height;
+        int intY = intersection.height;
         float intersectionRatio = ((float) intY) / ((float) intX);
         float newPosRatio = ((float) y) / ((float) x);
 
@@ -309,20 +317,20 @@ public class Board {
      */
 
     public void addWalls(int xSize, int ySize) {
-	boardLowerXBounds = (int) ySize - 30;
+        boardLowerXBounds = (int) ySize - 30;
         Obstruction left = new Obstruction(0, 0, new Dimension(30, (int) ySize));
         left.setColor(new Color(66, 185, 244));
         Obstruction top = new Obstruction(33, 0, new Dimension(((int) xSize - 75), 30));
         top.setColor(new Color(66, 185, 244));
         Obstruction right = new Obstruction((int) xSize - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
         right.setColor(new Color(66, 185, 244));
-	Obstruction floor = new Obstruction(0, (int) ySize - 30, new Dimension((int) xSize, 30));
+        Obstruction floor = new Obstruction(0, (int) ySize - 30, new Dimension((int) xSize, 30));
         floor.setColor(new Color(11, 193, 99));
 
-	this.addObstruction(left);
+        this.addObstruction(left);
         this.addObstruction(right);
         //this.addObstruction(top);
-	this.addObstruction(floor);
+        this.addObstruction(floor);
 
     }
 
@@ -350,10 +358,9 @@ public class Board {
      * Uppdaterar spelaren med som har ID id med x och y coordinaterna.
      * Låser ArrayListan eftersom den inte är threadsafe.
      *
-     * @param x Nya x-koordinaten
-     * @param y Nya y-koordinaten
+     * @param x  Nya x-koordinaten
+     * @param y  Nya y-koordinaten
      * @param id Player Id av Player som skall uppdateras
-     *
      */
     public void updatePlayer(int x, int y, int id) {
         _mutex.lock();
@@ -368,13 +375,13 @@ public class Board {
     }
 
     //Uppdaterar listan som kommer som input med vad som finns i listan hos board.
+
     /**
      * Takes an arraylist of playerInfo and updates all x and y values to correspond to the values in a list of Player.
      * Each PlayerInfo has an ID and each PlayerInfo's x and y is only updates if the PlayerInfo id and Player id is equal.
      * Since ArrayLists aren't threadsade, the funtion locks the ArrayList of player
      *
      * @param list The ArrayList to update.
-     *
      * @todo Also lock the ArraList of PlayerInfo since it is not thread safe.
      */
     public void updatePlayerList(ArrayList<PlayerInfo> list) {
@@ -395,42 +402,44 @@ public class Board {
     }
 
     /**
-     * @brief Removes the player whos id is not in list
-     *
-     *
      * @param list The list to check
+     * @brief Removes the player whos id is not in list
      */
     public void removePlayerByList(ArrayList<PlayerInfo> list) {
-	_mutex.lock();
-	for (int i = 0; i < list.size(); i++) {
-	    boolean inList = false;
-	    PlayerInfo pInfo = list.get(i);
-	    for (int j = 0; j < this.players.size(); j++) {
-		Player p = this.players.get(j);
-		if (p.getPlayerId() == pInfo.getId()) {
-		    inList = true;
-		}
-	    }
-	    if (!inList) {
-		this.players.remove(i);
-	    }
-	}
-	_mutex.unlock();
+        _mutex.lock();
+        for (int i = 0; i < list.size(); i++) {
+            boolean inList = false;
+            PlayerInfo pInfo = list.get(i);
+            for (int j = 0; j < this.players.size(); j++) {
+                Player p = this.players.get(j);
+                if (p.getPlayerId() == pInfo.getId()) {
+                    inList = true;
+                }
+            }
+            if (!inList) {
+                this.players.remove(i);
+            }
+        }
+        _mutex.unlock();
     }
 
     /**
-     * @brief Removes the player with id of param id.
-     *
      * @param id The id to remove
+     * @brief Removes the player with id of param id.
      */
+
+    public void paintWinScreen() {
+        this.win = true;
+    }
+
     public void removePlayerById(int id) {
-	_mutex.lock();
-	for(int i = 0; i < this.players.size(); i++) {
-	    if (this.players.get(i).getPlayerId() == id) {
-		this.players.remove(i);
-	    }
-	}
-	_mutex.unlock();
+        _mutex.lock();
+        for (int i = 0; i < this.players.size(); i++) {
+            if (this.players.get(i).getPlayerId() == id) {
+                this.players.remove(i);
+            }
+        }
+        _mutex.unlock();
     }
 
 }

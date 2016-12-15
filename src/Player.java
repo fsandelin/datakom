@@ -107,8 +107,8 @@ public class Player {
     public void draw(Graphics g) {
         g.setColor(this.playerColor);
         g.fillRect(xPos, yPos, playerSize, playerSize);
-	g.setColor(Color.black);
-	g.drawString(playerAlias, xPos, yPos - 10);
+        g.setColor(Color.black);
+        g.drawString(playerAlias, xPos, yPos - 10);
     }
 
     public String getPlayerAlias() {

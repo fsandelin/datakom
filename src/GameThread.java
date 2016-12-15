@@ -20,7 +20,7 @@ public class GameThread extends Thread {
     private boolean drawWin;
     private long winTime;
     private boolean winTimeSet;
-    
+
     private boolean disconnect;
     private static final int playerSize = 30;
 
@@ -38,10 +38,10 @@ public class GameThread extends Thread {
         this.render = true;
         int padding = 5;
         this.win = false;
-	this.winTimeSet = false;
+        this.winTimeSet = false;
 
         //Initialize keyboardcontrols
-	
+
         keyboardController = new KeyboardController();
         board.initKeyboard(keyboardController);
 
@@ -50,24 +50,24 @@ public class GameThread extends Thread {
         //
 
         // Create a level
-	level = new Level(board);
-        
+        level = new Level(board);
+
         //
 
         clock = System.currentTimeMillis();
     }
-    
+
     public GameThread(int xSize, int ySize, String alias, boolean render) {
         this(xSize, ySize, alias);
         this.render = render;
     }
 
     public boolean getDisconnect() {
-	return this.disconnect;
+        return this.disconnect;
     }
 
     private void disconnect() {
-	this.disconnect = true;
+        this.disconnect = true;
     }
 
     public Player getPlayer() {
@@ -97,12 +97,12 @@ public class GameThread extends Thread {
         } else {
             player.move(0);
         }
-	if (currentKeys.contains(KeyEvent.VK_Q)) {
-	    this.disconnect();
-	}
-	if (currentKeys.contains(KeyEvent.VK_P)) {
-	    this.setWin(true);
-	}	
+        if (currentKeys.contains(KeyEvent.VK_Q)) {
+            this.disconnect();
+        }
+        if (currentKeys.contains(KeyEvent.VK_P)) {
+            this.setWin(true);
+        }
         if (currentKeys.contains(KeyEvent.VK_SPACE) || currentKeys.contains(KeyEvent.VK_UP)) {
             player.jump();
         }
@@ -118,23 +118,24 @@ public class GameThread extends Thread {
                 manageKeys();
                 player.checkJumping();
                 player.updatePosition();
-		if(!this.win) {
-		    win = board.win();
-		}
-		if (render) {
-		    this.updateBoard();		    
-		}
-		if(this.drawWin) { //kan refactoreras
-		    if (!winTimeSet) {
-			this.winTime = System.currentTimeMillis();
-			this.winTimeSet = true;			
-		    }
-		    System.out.println("WIN");//TODO DRAW WIN HERE
-		    if ((System.currentTimeMillis() - this.winTime) > 4000) {
-			this.winTimeSet = false;
-			this.drawWin = false;
-		    }
-		}
+                if (!this.win) {
+                    win = board.win();
+                }
+                if (render) {
+                    this.updateBoard();
+                }
+                if (this.drawWin) { //kan refactoreras
+                    board.paintWinScreen();
+                    if (!winTimeSet) {
+                        this.winTime = System.currentTimeMillis();
+                        this.winTimeSet = true;
+                    }
+                    System.out.println("WIN");//TODO DRAW WIN HERE
+                    if ((System.currentTimeMillis() - this.winTime) > 4000) {
+                        this.winTimeSet = false;
+                        this.drawWin = false;
+                    }
+                }
             }
 
         }
@@ -166,11 +167,11 @@ public class GameThread extends Thread {
     }
 
     public void removePlayerByList(ArrayList<PlayerInfo> list) {
-	this.board.removePlayerByList(list);
+        this.board.removePlayerByList(list);
     }
 
     public void removePlayerById(int id) {
-	this.board.removePlayerById(id);
+        this.board.removePlayerById(id);
     }
 
 
@@ -189,15 +190,15 @@ public class GameThread extends Thread {
     public void setPlayerY(int y) {
         this.player.setY(y);
     }
-    
+
     public void setWin(boolean winState) {
-	this.win = winState;
+        this.win = winState;
     }
 
     public void setDrawWin(boolean bool) {
-	this.drawWin = bool;
+        this.drawWin = bool;
     }
-    
+
 
     public int getPlayerX() {
         return this.player.getPlayerX();
@@ -216,7 +217,7 @@ public class GameThread extends Thread {
     }
 
     public void setPlayersAccordingToList(ArrayList<PlayerInfo> list) {
-	//TODO
+        //TODO
     }
 
     //Denna här för att dett inte skall "läcka". 
@@ -228,5 +229,5 @@ public class GameThread extends Thread {
     public void updatePlayer(int x, int y, int id) {
         this.board.updatePlayer(x, y, id);
     }
-    
+
 }
