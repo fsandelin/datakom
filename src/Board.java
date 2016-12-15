@@ -81,9 +81,16 @@ public class Board {
         for (Obstruction o : fixedObjects) {
             o.draw(g);
         }
-	//goal.draw(g);
-        this.drawingSurface.paintComponents(g);
+	goal.draw(g);
+        //this.drawingSurface.paintComponents(g);
 	this.drawingSurface.revalidate();
+
+	long delta = System.currentTimeMillis() - this.clock;
+	this.clock = System.currentTimeMillis();
+	System.out.println("FPS: " + Long.toString(1000 / delta));
+	System.out.println(ii);
+	this.ii = this.ii + 1;
+	
         g.dispose();
 	
     }
@@ -323,7 +330,7 @@ public class Board {
 
     public void addGoal(int xPos, int yPos, int size) {
         this.goal = new Goal(xPos, yPos, size);
-        this.drawingSurface.add(goal);
+        // this.drawingSurface.add(goal);
         System.out.println("Added a goal");
     }
 
