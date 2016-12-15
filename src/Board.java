@@ -317,7 +317,7 @@ public class Board {
         Obstruction right = new Obstruction((int) xSize - 30, 0, new Dimension(30, ((int) boardRect.getHeight())));
         right.setColor(new Color(66, 185, 244));
 	Obstruction floor = new Obstruction(0, (int) ySize - 30, new Dimension((int) xSize, 30));
-        floor.setColor(new Color(22, 142, 42));
+        floor.setColor(new Color(11, 193, 99));
 
 	this.addObstruction(left);
         this.addObstruction(right);

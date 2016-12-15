@@ -23,6 +23,7 @@ CLASSES = \
 	Goal.java \
 	Game.java \
 	WantToDisconnectException.java \
+	Level.java \
 #----------------------
 #-------Modules--------
 #----------------------
