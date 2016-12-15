@@ -74,9 +74,10 @@ public class ClientNetworkThread extends RemoteServer implements Client{
 
     public void connectToGame() {
 	try {
+	    System.out.println("Connectar till " + this.serverIp);
 	    Registry registry = LocateRegistry.getRegistry(serverIp, serverPort);
 	    Server stub = (Server) registry.lookup("Server");
-	    this.serverStub = stub;	    
+	    this.serverStub = stub;
 	    this.playerList = this.serverStub.connectToGame(this.ownPort, this.alias, this.gamethread.getPlayer().getPlayerColor());
 	}catch(Exception e) {
 	    System.out.println(e.toString());
