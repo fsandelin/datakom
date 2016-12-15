@@ -49,7 +49,21 @@ public class Board {
         boardRect = new Rectangle(new Dimension(xSize, ySize));
         players = new ArrayList<Player>();
         fixedObjects = new ArrayList<Obstruction>();
-        drawingSurface = new JPanel();
+        drawingSurface = new JPanel() {
+		public void paintComponent(Graphics g){
+		    super.paintComponent(g);
+		    for(Player p: players) {
+			p.draw(g);
+		    }
+		    for(Obstruction o: fixedObjects) {
+			o.draw(g);
+		    }
+		    goal.draw(g);
+		    repaint();
+		}
+		
+	    };
+	drawingSurface.setBackground(new Color(66, 185, 244));
         drawingSurface.setPreferredSize(new Dimension(xSize, ySize));
 	drawingSurface.setIgnoreRepaint(true);
 
@@ -64,15 +78,16 @@ public class Board {
         window.add(drawingSurface);
         window.setVisible(true);
         window.setIgnoreRepaint(true);
-
+	
 	this.clock = System.currentTimeMillis();
 	this.ii = 0;
 
         //drawingSurface.setBorder(BorderFactory.createLineBorder(black, borderThickness));
-        drawingSurface.setBackground(Color.white);
+        //drawingsurface.setBackground(Color.white);
     }
 
     public void render() {
+	/*
         Graphics g = this.drawingSurface.getGraphics();
         this.drawBackground(g);
         for (Player p : players) {
@@ -83,15 +98,16 @@ public class Board {
         }
 	goal.draw(g);
         this.drawingSurface.paintComponents(g);
-	this.drawingSurface.revalidate();
-
+	*/
+	//this.drawingSurface.revalidate();
+/*
 	long delta = System.currentTimeMillis() - this.clock;
 	this.clock = System.currentTimeMillis();
 	System.out.println("FPS: " + Long.toString(1000 / delta));
 	System.out.println(ii);
 	this.ii = this.ii + 1;
-	
-        g.dispose();
+*/	
+        //g.dispose();
 	
     }
 
