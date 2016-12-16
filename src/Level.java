@@ -38,39 +38,49 @@ public class Level {
 	board.addObstruction(o);
 
 	// Moln 1
-	o = new Obstruction(210, 400, new Dimension(40, 30));
+	o = new Obstruction(210, 400, new Dimension(30, 30));
 	o.setColor(Color.white);
 	board.addObstruction(o);
 
 	// Moln 2
-	o = new Obstruction(410, 405, new Dimension(70, 40));
+	o = new Obstruction(380, 405, new Dimension(38, 30));
 	o.setColor(Color.white);
 	board.addObstruction(o);
 
 	// Moln 3
-	o = new Obstruction(650, 320, new Dimension(30, 30));
+	o = new Obstruction(595, 395, new Dimension(30, 30));
 	o.setColor(Color.white);
 	board.addObstruction(o);
 
 	// Moln 4
-	o = new Obstruction(420, 220, new Dimension(120, 40));
+	o = new Obstruction(710, 320, new Dimension(20, 20));
 	o.setColor(Color.white);
 	board.addObstruction(o);
 
-	// Moln 5
-	o = new Obstruction(300, 255, new Dimension(50, 30));
+	/* Moln 5
+	o = new Obstruction(750, 290, new Dimension(20, 20));
 	o.setColor(Color.white);
-	board.addObstruction(o);
-	//o = new Obstruction(300, 230, new Dimension(30, 30));
-	//o.setColor(Color.white);
-	//board.addObstruction(o);
+	board.addObstruction(o);*/
 
 	// Moln 6
-	o = new Obstruction(120, 160, new Dimension(30, 30));
+	o = new Obstruction(450, 240, new Dimension(140, 40));
 	o.setColor(Color.white);
 	board.addObstruction(o);
 
 	// Moln 7
+	o = new Obstruction(300, 240, new Dimension(60, 30));
+	o.setColor(Color.white);
+	board.addObstruction(o);
+	//o = new Obstruction(300, 210, new Dimension(30, 30));
+	//o.setColor(Color.white);
+	//board.addObstruction(o);
+
+	// Moln 8
+	o = new Obstruction(120, 130, new Dimension(60, 30));
+	o.setColor(Color.white);
+	board.addObstruction(o);
+
+	// Moln 9
 	o = new Obstruction(30, 80, new Dimension(60, 30));
 	o.setColor(Color.white);
 	board.addObstruction(o);
