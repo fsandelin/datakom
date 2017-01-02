@@ -109,9 +109,8 @@ public class Game {
 	    String ip;
 	    String alias;
 	    Scanner reader = new Scanner(System.in);
-	    //System.out.println("Debug mode (0/1)?");
-	    //int dbug = reader.nextInt();
-	    int dbug = 0;
+	    System.out.println("Debug mode (0/1)?");
+	    int dbug = reader.nextInt();
 	    if (dbug == 1) {
 		System.out.println("Server (0/1)?");
 		int s = reader.nextInt();

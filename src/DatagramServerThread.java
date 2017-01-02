@@ -13,7 +13,19 @@ public class DatagramServerThread extends Thread {
     private ServerNetworkThread RMIthread;
     private boolean listener;
     private boolean run;
+
     
+    //-------------------------------------------------------------
+    //-----------------------PUBLIC--------------------------------
+    //-------------------------------------------------------------        
+
+    /**
+     * @brief Creates a DatagramServerThread object.
+     *
+     * @param gamethread The gamethread to use.
+     * @param RMIthread The RMIthread to use.
+     * @param listener Boolean to determine if the thread created sould send or receive UDP packets.
+     */
     public DatagramServerThread(GameThread gamethread, ServerNetworkThread RMIthread, boolean listener){
 	super("DatagramServerThread");
 	try {
@@ -39,24 +51,108 @@ public class DatagramServerThread extends Thread {
 	this.listener = listener;
     }
 
+    /**
+     * Adds the playerInfo param info to the private variable playerList.
+     *
+     * @param info The playerInfo to add.
+     */
     public void addPlayer(PlayerInfo info){
         this.playerList.add(info);
     }
 
+    /**
+     * Removes the playerInfo at param index from the private variable playerList.
+     *
+     * @param index The index of the playerInfo to remove
+     */
     public void removePlayer(int index) {
 	this.playerList.remove(index);
     }
 
+    /**
+     * Sets the threads private varialbe playerList to the playerList in the threads private variable gamethread.
+     *
+     */
     public void setListFromRMI() {
 	this.playerList = this.RMIthread.getPlayerList();
-    }
+    }    
 
-    private void updatePlayerList(){
-	short x = this.gamethread.getPlayerXShort();
-	short y = this.gamethread.getPlayerYShort();
-	System.out.println(Short.toString(x) + " | " + Short.toString(y));
+    /**
+     * @brief Sets variable run to param bool.
+     * Used to terminate the thread by jumping out of its run method if param bool is set to false.
+     * Method also closes the sockets in use before changing the variable run.
+     *
+     * @param bool The boolean value to set the threads private variable run to.
+     */
+    public void setRun(boolean bool) {
+	if(!bool) {
+	    this.socket.close();
+	}
+	this.run = bool;
     }
+    
+    /**
+     * @brief The method that runs the threa
+     *
+     * The thread will be ceated as either a listener or not. If it is a listener it should run its private method receiveInfo.
+     * If it is not a listener it should run its private method sendInfo and then go to sleep for a certain amount of time.
+     */
+    public void run() {
+	int timeToSleep = 1000/this.hz;	
+	byte[] receiveBuff = new byte[8];
+	while(this.run) {
+	    if(this.listener) {
+		this.receiveInfo(receiveBuff);
+	    }
+	    else {
+		this.sendInfo();
+		this.sleep(timeToSleep);
+	    } 
+	}
+    }
+    
 
+    //-------------------------------------------------------------
+    //-----------------------PRIVATE-------------------------------
+    //-------------------------------------------------------------    
+    
+    /**
+     * @brief Receives a UDP packet into param receiveBuff and updates the players x and y value with the same ID as was in the packet.
+     *
+     * The funktion deserializes the received message in BIG endian since that is the standard for this application.
+     *
+     * @param receiveBuff The byte[] in which to read in the data from the socket.
+     */
+    private void receiveInfo(byte[] receiveBuff) {
+	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
+	try {
+	    this.socket.receive(receivePacket);
+	}catch(Exception e) {
+	    System.out.println(e.toString());
+	}
+	byte[] receivedData = receivePacket.getData();
+	ByteBuffer bb = ByteBuffer.allocate(8);
+	bb.order(ByteOrder.BIG_ENDIAN);
+	bb.put(receivedData[0]);
+	bb.put(receivedData[1]);
+	bb.put(receivedData[2]);
+	bb.put(receivedData[3]);
+	bb.put(receivedData[4]);
+	bb.put(receivedData[5]);
+	bb.put(receivedData[6]);
+	bb.put(receivedData[7]);
+	int x = bb.getShort(0);
+	int y = bb.getShort(2);
+	int id = bb.getInt(4);
+	//System.out.println("========================RECEIVED==============================");
+	//System.out.println("Server received | " + Integer.toString(x) + " " + Integer.toString(y) + " for ID: " + Integer.toString(id));
+	//System.out.println("From ---- IP: "+ receivePacket.getAddress().toString() + " ------ Port: " + Integer.toString(receivePacket.getPort()));
+	//System.out.println("===============================================================");
+	if (id != 0) {
+	    this.gamethread.updatePlayer(x, y, id);
+	}
+    }
+    
     /**
      * @brief Skickar ut info om alla spelares positioner till alla i this.playerList. I playerList finns det info om vilken address och port den ska skicka till.
      *
@@ -64,7 +160,7 @@ public class DatagramServerThread extends Thread {
      * Sen gör den en byte[] som innehåller allas x och y värden samt deras id. Värdena serialiseras i BIG endian
      * Sen skickar den ut den listan till alla utom sig själv. (Servern står alltid högst upp i listan så index 0 hoppar den över)
      */
-    public void sendInfo() {
+    private void sendInfo() {
 	//System.out.println("updating");
 	if(this.gamethread.checkWinState()) {
 	    this.RMIthread.sendWin();
@@ -104,79 +200,32 @@ public class DatagramServerThread extends Thread {
 	}
     }
 
-    
     /**
-     * @brief Receives a UDP packet into param receiveBuff and updates the players x and y value with the same ID as was in the packet.
+     * Function used in debugging purposes. Prints the param bytearray in binary form.
      *
-     * The funktion deserializes the received message in BIG endian since that is the standard for this application.
+     * @todo Create a debugging class and put this function in it. This function is as of now in several classes.
      *
-     * @param receiveBuff The byte[] in which to read in the data from the socket.
+     * @param bytearray The bytearray to print
      */
-    private void receiveInfo(byte[] receiveBuff) {
-	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
-	try {
-	    this.socket.receive(receivePacket);
-	}catch(Exception e) {
-	    System.out.println(e.toString());
-	}
-	byte[] receivedData = receivePacket.getData();
-	ByteBuffer bb = ByteBuffer.allocate(8);
-	bb.order(ByteOrder.BIG_ENDIAN);
-	bb.put(receivedData[0]);
-	bb.put(receivedData[1]);
-	bb.put(receivedData[2]);
-	bb.put(receivedData[3]);
-	bb.put(receivedData[4]);
-	bb.put(receivedData[5]);
-	bb.put(receivedData[6]);
-	bb.put(receivedData[7]);
-	int x = bb.getShort(0);
-	int y = bb.getShort(2);
-	int id = bb.getInt(4);
-	//System.out.println("========================RECEIVED==============================");
-	//System.out.println("Server received | " + Integer.toString(x) + " " + Integer.toString(y) + " for ID: " + Integer.toString(id));
-	//System.out.println("From ---- IP: "+ receivePacket.getAddress().toString() + " ------ Port: " + Integer.toString(receivePacket.getPort()));
-	//System.out.println("===============================================================");
-	if (id != 0) {
-	    this.gamethread.updatePlayer(x, y, id);
-	}
-    }
-
-    public void debugByteArray(byte[] bytearray) {
+    private void debugByteArray(byte[] bytearray) {
 	String array = "";
 	for(int i = 0; i < bytearray.length; i++) {
 	    String str = String.format("%8s", Integer.toBinaryString(bytearray[i] & 0xFF)).replace(' ','0');
 	    array = array + str + " "; 
 	}
 	System.out.println(array);
-    }
-
-    public void setRun(boolean bool) {
-	if(!bool) {
-	    this.socket.close();
-	}
-	this.run = bool;
-    }
+    }    
     
-    public void run() {
-	int timeToSleep = 1000/this.hz;	
-	byte[] receiveBuff = new byte[8];
-	while(this.run) {
-	    if(this.listener) {
-		this.receiveInfo(receiveBuff);
-	    }
-	    else {
-		this.sendInfo();
-		sleep(timeToSleep);
-	    } 
-	}
-    }
-    
-    public void sleep(int time){
+    /**
+     * Puts the thread to sleep for param time amount of time
+     *
+     * @param time The time in ms to sleep
+     */
+    private void sleep(int time){
 	try {
 	    Thread.sleep(time);
 	}catch(InterruptedException e) {
 	    System.out.println(e.toString());
 	}	
-    }    
+    }
 }
