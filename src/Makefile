@@ -46,11 +46,16 @@ rmi:
 	rmiregistry &
 kill:
 	killall "rmiregistry"
+
+doc:
+	javadoc -tag brief:a:"Brief description:" -d documentation $(CLASSES)
+
 #for pid in $(ps -f | grep "rmiregistry" | awk '{print $2}'); do kill -9 $pid; done;
 clean:
 	rm -f *.class
 	rm -f *~
 	rm -f *#
+	rm -rf documentation
 
 test: TestClass.class
 	java TestClass
