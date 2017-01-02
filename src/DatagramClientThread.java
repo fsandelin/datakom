@@ -1,3 +1,6 @@
+/**
+ * Created by fsandelin in 12/2016
+ */
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -19,7 +22,19 @@ public class DatagramClientThread extends Thread{
     private boolean run;
     
     
+    //-------------------------------------------------------------
+    //-----------------------PUBLIC--------------------------------
+    //-------------------------------------------------------------
     
+    /**
+     * @brief Creates a DatagramClientThread object
+     *
+     * @param gamethread The gamethread to use.
+     * @param RMIthread The RMIthread to use.
+     * @param serverIp The IP of the server
+     * @param listener Boolean to deterrmine if the thread created sould send or receive UDP packets.
+     * @param debug Boolean to determine if the thread created should be in debug mode or not. Meaning that the ports are set to specific values.
+     */
     public DatagramClientThread(GameThread gamethread, ClientNetworkThread RMIthread, String serverIp, boolean listener, boolean debug){
 	super("DataClientThread");	
 	try {
@@ -82,27 +97,72 @@ public class DatagramClientThread extends Thread{
 	this.listener = listener;
 	this.run = true;
     }
-    
 
-    private void updatePlayerPos() {
-	this.playerX = this.gamethread.getPlayerXShort();
-	this.playerY = this.gamethread.getPlayerYShort();
-    }
-
+    /**
+     * Returns the value of the threads private variable playerX
+     */
     public short getX(){
 	return this.playerX;
     }
 
+    /**
+     * Returns the value of the threads private variable playerY
+     */
     public short getY() {
 	return this.playerY;	
     }
 
+    /**
+     * @brief Sets variable run to param bool.
+     * Used to terminate the thread by jumping out of its run method if param bool is set to false.
+     * Method also closes the sockets in use before changing the variable run.
+     *
+     * @param bool The boolean value to set the threads private variable run to.
+     */    
+    public void setRun(boolean bool) {
+	if (!bool) {
+	    this.socket.close();
+	}
+	this.run = bool;
+    }    
+
+    /**
+     * @brief The method that runs the threa
+     *
+     * The thread will be ceated as either a listener or not. If it is a listener it should run its private method receiveInfo.
+     * If it is not a listener it should run its private method sendInfo and then go to sleep for a certain amount of time.
+     */
+    public void run(){
+	int timeToSleep = 1000/this.hz;
+	byte[] sendBuff = new byte[8];	
+	while(this.run){
+	    if(this.listener) {
+		this.receiveInfo(this.playerList.size());
+	    }
+	    else {
+		this.sendInfo(sendBuff);
+		sleep(timeToSleep);
+	    }
+	}
+    }
+
+    
+    //-------------------------------------------------------------
+    //-----------------------PRIVATE-------------------------------
+    //-------------------------------------------------------------
+
+    /**
+     * Checks if the gamethread wants to disconnect, if true calls disconnect in the RMI thread.
+     */
     private void checkDisconnect() {
 	if (this.gamethread.getDisconnect()) {
 	    this.RMIthread.disconnect();
 	}
     }
 
+    /**
+     * Checks win state and and if win state is true, set variable so that gamethread prints winning statement on screen.
+     */
     private void checkWinState() {
 	if(this.gamethread.checkWinState()) {
 	    this.RMIthread.sendWin();
@@ -119,7 +179,7 @@ public class DatagramClientThread extends Thread{
      *
      * @param sendBuff The buffer in which to send info from
      */
-    public void sendInfo(byte[] sendBuff) {
+    private void sendInfo(byte[] sendBuff) {
 	this.checkDisconnect();
 	this.checkWinState();
 	this.updatePlayerPos();
@@ -153,7 +213,7 @@ public class DatagramClientThread extends Thread{
      *
      * @param players Amount of players it expect to receive.
      */
-    public void receiveInfo(int players) {
+    private void receiveInfo(int players) {
 	byte[] receiveBuff = new byte[4 + (players*8)];
 	DatagramPacket receivePacket = new DatagramPacket(receiveBuff, receiveBuff.length);
 	try {
@@ -211,28 +271,22 @@ public class DatagramClientThread extends Thread{
 	}	
     }
 
-    public void run(){
-	int timeToSleep = 1000/this.hz;
-	byte[] sendBuff = new byte[8];	
-	while(this.run){
-	    if(this.listener) {
-		this.receiveInfo(this.playerList.size());
-	    }
-	    else {
-		this.sendInfo(sendBuff);
-		sleep(timeToSleep);
-	    }
-	}
-    }
-
-    public void setRun(boolean bool) {
-	if (!bool) {
-	    this.socket.close();
-	}
-	this.run = bool;
+    /**
+     * Sets private variables playerX and playerY to the values found in the threads gamethread.
+     */
+    private void updatePlayerPos() {
+	this.playerX = this.gamethread.getPlayerXShort();
+	this.playerY = this.gamethread.getPlayerYShort();
     }
     
-    public void debugByteArray(byte[] bytearray) {
+    /**
+     * Function used in debugging purposes. Prints the param bytearray in binary form.
+     *
+     * @todo Create a debugging class and put this function in it. This function is as of now in several classes.
+     *
+     * @param bytearray The bytearray to print
+     */
+    private void debugByteArray(byte[] bytearray) {
 	String array = "";
 	for(int i = 0; i < bytearray.length; i++) {
 	    String str = String.format("%8s", Integer.toBinaryString(bytearray[i] & 0xFF)).replace(' ','0');
@@ -241,11 +295,16 @@ public class DatagramClientThread extends Thread{
 	System.out.println(array);
     }
 
-    public void sleep(int time){
+    /**
+     * Puts the thread to sleep for param time amount of time
+     *
+     * @param time The time in ms to sleep
+     */
+    private void sleep(int time){
 	try {
 	    Thread.sleep(time);
 	}catch(InterruptedException e) {
 	    System.out.println(e.toString());
 	}	
-    }
+    }        
 }
