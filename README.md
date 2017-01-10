@@ -1,3 +1,5 @@
 # datakom
-Unwanted eyes gtfo please, rest are welcome to stay
+make run - compiles and run the program
+make doc - creates documentation of documented code
+make clean - cleans class files and documentation
 
